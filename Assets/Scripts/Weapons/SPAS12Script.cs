@@ -1,7 +1,7 @@
 using UnityEngine;
 namespace WeaponsNS
 {
-    public class AKScript : MonoBehaviour, IWeaponDataProvider
+    public class SPAS12Script : MonoBehaviour, IWeaponDataProvider
     {
         public WeaponTemplate template; // add reference in Unity's spector
         public WeaponInfoStruct GetWeaponData()

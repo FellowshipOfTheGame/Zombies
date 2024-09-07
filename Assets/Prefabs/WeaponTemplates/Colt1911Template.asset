@@ -24,7 +24,7 @@ MonoBehaviour:
   caliber: .45 ACP
   reloadTime: 1.5
   reloadTimePartial: 1
-  switchTime: 0.2
+  switchTime: 1
   spread: 1
   range: 60
   decay: 10

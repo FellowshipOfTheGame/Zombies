@@ -10,21 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a46facf2a55f8b94286ba31f8fb8315b, type: 3}
-  m_Name: VectorTemplate
+  m_Name: SPAS12Template
   m_EditorClassIdentifier: 
   isClosedBolt: 1
-  isFullAuto: 1
-  weaponName: Vector
-  damage: 35
-  burstSize: 2
-  fireRate: 1200
-  magCapacity: 60
-  ammo: 60
-  totalAmmo: 480
-  caliber: .45 ACP
-  reloadTime: 2
-  reloadTimePartial: 1.5
-  switchTime: 1
-  spread: 1
-  range: 50
-  decay: 10
+  isFullAuto: 0
+  weaponName: SPAS 12
+  damage: 12
+  burstSize: 1
+  bulletCount: 10
+  fireRate: 400
+  magCapacity: 7
+  ammo: 7
+  totalAmmo: 300
+  caliber: 12 Gauge
+  reloadTime: 2.5
+  reloadTimePartial: 2
+  switchTime: 0.2
+  spread: 25
+  range: 100
+  decay: 6

@@ -13,6 +13,7 @@ namespace WeaponsNS
                 weaponName   = template.weaponName,
                 damage       = template.damage,
                 burstSize    = template.burstSize,
+                bulletCount  = template.bulletCount,
                 fireRate     = template.fireRate,
                 magSize      = template.magCapacity,
                 ammo         = template.ammo,

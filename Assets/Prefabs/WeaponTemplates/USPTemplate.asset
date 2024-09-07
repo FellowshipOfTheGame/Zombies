@@ -24,7 +24,7 @@ MonoBehaviour:
   caliber: 9x19 Parabellum
   reloadTime: 2
   reloadTimePartial: 1.5
-  switchTime: 0.2
+  switchTime: 1
   spread: 1
   range: 50
   decay: 10

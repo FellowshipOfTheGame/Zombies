@@ -8,6 +8,7 @@ public class WeaponTemplate : ScriptableObject
     public string weaponName   = "Weapon_Name";
     public int    damage       = 50;
     public int    burstSize    = 1;
+    public int    bulletCount  = 1;
     public float  fireRate     = 600f;
     public int    magCapacity  = 30;
     public int    ammo         = 30;

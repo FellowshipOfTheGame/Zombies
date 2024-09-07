@@ -24,7 +24,7 @@ MonoBehaviour:
   caliber: 7.62x39mm
   reloadTime: 2.5
   reloadTimePartial: 2
-  switchTime: 0.5
+  switchTime: 1
   spread: 1
   range: 350
   decay: 5

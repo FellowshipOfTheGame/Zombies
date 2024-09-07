@@ -1,0 +1,12 @@
+fileFormatVersion: 2
+guid: 37f7b620ce4c365c28e8b7123e5479fb
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - worldSpaceUIPrefab: {fileID: 3433633269811599418, guid: 7e3e78000d4e32194801cbf4ed71b6c4, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
