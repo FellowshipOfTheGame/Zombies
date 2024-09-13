@@ -22,7 +22,7 @@ public class Movement : MonoBehaviour
     }
     
     
-    void Update()
+    private void Update()
     {
         hinput = Input.GetAxis("Horizontal");
         vinput = Input.GetAxis("Vertical");  //raycast pra ver se encosta no chao \ maxDistance=altura/2
