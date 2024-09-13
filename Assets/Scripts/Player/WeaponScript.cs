@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Data.Common;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -73,6 +72,9 @@ public class WeaponScript : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip shootSound;
     public GameObject muzzleFlash;
+    private bool isSpecial = true;
+    public string special = "MissingHealth";
+    public int percentage = 10;
     
         
     private void Start()
@@ -102,8 +104,8 @@ public class WeaponScript : MonoBehaviour
             shootingC = StartCoroutine(weapon.isFullAuto ? ShootingM0() : ShootingM1());
         else if (Input.GetKeyDown(KeyCode.Mouse1)) shootingC = StartCoroutine(ShootingM1());
     }
-
-
+    
+    
     private void Shoot()
     {
         audioSource.PlayOneShot(shootSound);
@@ -119,31 +121,37 @@ public class WeaponScript : MonoBehaviour
             Quaternion spreadRotation = Quaternion.Euler(Random.Range(-weapon.spread/2, weapon.spread/2), 
                 Random.Range(-weapon.spread/2, weapon.spread/2), 0f);
             rayDirection = spreadRotation * rayDirection;
+            
             while (damage > 0) //chain raycasts to 
             {
                 if (Physics.Raycast(rayOrigin, rayDirection, out RaycastHit hit, rangeLeft))
                 {
-                    rangeLeft -= hit.distance;          //DMG * bullet remaining energy
-                    damage -= Mathf.FloorToInt(weapon.damage * hit.distance / (3 * weapon.range)); 
-
+                    rangeLeft -= hit.distance; //DMG * bullet remaining energy
+                    damage -= Mathf.FloorToInt(weapon.damage * hit.distance / (3 * weapon.range));
+                    
                     GameObject hitObject = hit.collider.gameObject;
-                    if (hitObject.CompareTag("Player"))
+                    if (!hitObject.CompareTag("Player")) break; //se nao acertou um player, para o while
+                    
+                    if (isSpecial)
                     {
-                        // comparar se o hit object foi diferente, pegar de uma variavel ou trocar se for diferente
-                        hitObject.GetComponent<Health>().TakeDamage(damage, hit.point, transform);
+                        hitObject.GetComponent<Interfaces.IDamageSpecial>().TakeDamageSpecial(damage, hit.point, transform, special, percentage);
                     }
-
+                    else
+                    {
+                        hitObject.GetComponent<Interfaces.IDamage>().TakeDamage(damage, hit.point, transform);
+                    }
+                    
                     //prepare to chain raycasts
                     rayOrigin = hit.point - hit.normal; // slightly offset to prevent self-collision
                     damage -= weapon.decay;
                 }
-                else damage = 0; //se nao acertou nada, para o while
+                else damage = 0;
             }
         }
     }
     
     
-    IEnumerator ShootingM0() //tiro normal / full auto
+    private IEnumerator ShootingM0() //tiro normal / full auto
     {
         isShooting = true;
         while (weapon.ammo > 0 && Input.GetKey(KeyCode.Mouse0)) //se tiver municao e continuar atirando
@@ -156,7 +164,7 @@ public class WeaponScript : MonoBehaviour
     }
     
     
-    IEnumerator ShootingM1() //tiro alternativo / controlado
+    private IEnumerator ShootingM1() //tiro alternativo / controlado
     {
         isShooting = true; int i = 0;
         while (weapon.ammo > 0 && i < weapon.burstSize)
@@ -169,7 +177,7 @@ public class WeaponScript : MonoBehaviour
     }
     
     
-    IEnumerator Reload(bool partial)
+    private IEnumerator Reload(bool partial)
     {
         isReloading = true;
         if (isShooting) StopCoroutine(shootingC); isShooting = false;
