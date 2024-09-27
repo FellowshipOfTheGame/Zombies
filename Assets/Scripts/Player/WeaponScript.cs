@@ -110,16 +110,15 @@ public class WeaponScript : MonoBehaviour
     {
         audioSource.PlayOneShot(shootSound);
         GameObject muzzleFlareInstantiate = Instantiate(muzzleFlash, muzzle.position, muzzle.rotation);
-        Destroy(muzzleFlareInstantiate, 0.01f);
+        Destroy(muzzleFlareInstantiate, 0.02f);
         
-        for (int i = 0; i < weapon.bulletCount; i++) //atirar varios raycasts per bala da arma
+        for (int i = 0; i < weapon.bulletCount; i++) //atirar varios raycasts se for escopeta
         {
             int damage = weapon.damage;
             float rangeLeft = 3 * weapon.range;
             Vector3 rayOrigin = mainCamera.transform.position;
             Vector3 rayDirection = mainCamera.transform.forward;
-            Quaternion spreadRotation = Quaternion.Euler(Random.Range(-weapon.spread/2, weapon.spread/2), 
-                Random.Range(-weapon.spread/2, weapon.spread/2), 0f);
+            Quaternion spreadRotation = Quaternion.Euler(Random.Range(-weapon.spread/2, weapon.spread/2), Random.Range(-weapon.spread/2, weapon.spread/2), 0f);
             rayDirection = spreadRotation * rayDirection;
             
             while (damage > 0) //chain raycasts to 
@@ -134,11 +133,11 @@ public class WeaponScript : MonoBehaviour
                     
                     if (isSpecial)
                     {
-                        hitObject.GetComponent<Interfaces.IDamageSpecial>().TakeDamageSpecial(damage, hit.point, transform, special, percentage);
+                        hitObject.GetComponent<Interfaces.IDamageSpecial>().TakeDamageSpecial(damage, hit.point, transform, Color.white, special, percentage);
                     }
                     else
                     {
-                        hitObject.GetComponent<Interfaces.IDamage>().TakeDamage(damage, hit.point, transform);
+                        hitObject.GetComponent<Interfaces.IDamage>().TakeDamage(damage, hit.point, transform, Color.white);
                     }
                     
                     //prepare to chain raycasts
