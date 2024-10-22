@@ -30,8 +30,8 @@ public class Movement : MonoBehaviour
         
         //input.normalize \ salva a V(y) \ "acelera" o player limita a velocidade pra maxSpeed \ restaura o V(y)
         moveDirection = (playerTransform.right * hinput + playerTransform.forward * vinput).normalized;
-        fallSpeed = rb.velocity.y;
-        currentSpeed = rb.velocity;
+        fallSpeed = rb.linearVelocity.y;
+        currentSpeed = rb.linearVelocity;
         currentSpeed.y = 0;
         currentSpeed *= 0.75f; //deixa o movimento mais controlavel
         currentSpeed += moveDirection * maxSpeed /5;
@@ -41,12 +41,12 @@ public class Movement : MonoBehaviour
         {
             isGrounded = false;
             currentSpeed.y = 6f;
-            rb.velocity = currentSpeed;
+            rb.linearVelocity = currentSpeed;
         }
         else
         {
             currentSpeed.y = fallSpeed;
-            rb.velocity = currentSpeed;
+            rb.linearVelocity = currentSpeed;
         }
     }
 }
