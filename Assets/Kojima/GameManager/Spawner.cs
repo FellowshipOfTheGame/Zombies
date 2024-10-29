@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using WeaponsNS;
 using Random = UnityEngine.Random;
 
 /// <summary>
@@ -57,10 +58,14 @@ public class Spawner : MonoBehaviour, IComparer<Transform>
     [Header("InnerCode")]
     public Transform player;
     public int remainingEnemies;
-    public int roundCount;
+    
+    [Header("WaveController")]
+    private Wave wave;
 
     private void Start()
     {
+        wave = GetComponent<Wave>();
+        
         spawnPoints = new List<Transform>();
         foreach (Transform point in spawnerParent) spawnPoints.Add(point);
         
@@ -69,12 +74,7 @@ public class Spawner : MonoBehaviour, IComparer<Transform>
         enemyList.Add(new EnemyData { enemyPF = enemyNormal, weight = 10, spawnChance = 5f });
         foreach (EnemyData enemy in enemyList) totalChance += enemy.spawnChance;
     }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Minus)) SpawnEnemies(10, 20);
-    }
-
+    
     public void SpawnEnemies(int maxEnemies, int waveWeight)
     {
         spawnPoints.Sort(Compare);
@@ -84,7 +84,7 @@ public class Spawner : MonoBehaviour, IComparer<Transform>
     
     private IEnumerator EnemySpawner(int maxEnemies, int waveWeight, List<Transform> spawners)
     {
-        int currentWeight = 0;
+        int currentWeight = 0; remainingEnemies = 0;
         while (remainingEnemies < maxEnemies && currentWeight < waveWeight)  // enquanto pode spawnar mais inimigos
         {
             float cumulativeChance = 0; float rand = Random.Range(0f, totalChance);
@@ -103,6 +103,7 @@ public class Spawner : MonoBehaviour, IComparer<Transform>
             }
             yield return new WaitForSeconds(0.5f);
         }
+        
     }
     
     public int Compare(Transform pointOne, Transform pointTwo)
