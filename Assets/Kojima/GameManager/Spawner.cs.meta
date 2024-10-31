@@ -1,2 +1,16 @@
 fileFormatVersion: 2
 guid: 4dc921a08599a217d8aa745df3b09a33
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - spawnerParent: {fileID: 5097209224816363330, guid: f10d6c9e5f9ab50f9abdb129342b0aac, type: 3}
+  - enemyTank: {fileID: 5330419678966961816, guid: a75923942249ced4aa6ef7543e353126, type: 3}
+  - enemyNormal: {fileID: 5330419678966961816, guid: 0f3d610c3afea528c89437eebb28e9bc, type: 3}
+  - enemyFast: {fileID: 5330419678966961816, guid: afc19d0dd7785df1fa1d52339e754c98, type: 3}
+  - player: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

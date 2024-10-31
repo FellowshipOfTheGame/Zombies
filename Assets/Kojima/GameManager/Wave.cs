@@ -1,17 +1,33 @@
-using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
-using Unity.Mathematics;
-using WeaponsNS;
-using Random = UnityEngine.Random;
+
+
+/// <summary>
+/// 
+///     Dependencias
+///     Esse script trabalha em conjunto com o script Spawner.
+///
+///     Funcao do script
+///     Esse script controla a progressao das waves, de uma forma automatica.
+/// Essa troca funciona da seguinte forma:
+///     WaveStart --(enemies==0)--> WaveS2E --> WaveEnd --(wave++)--> WaveE2S --> WaveStart
+///     
+///     No futuro, esse script pode ser reaproveitado para um Tower Defense,
+/// ou similares, ao implementar uma troca de waves manual e trocar a selecao
+/// de spawns para um ponto fixo.
+///     
+/// 
+/// </summary>
+
 
 public class Wave : MonoBehaviour
 {
     [Header("UI Elements")]
-    public TextMeshProUGUI waveCountText;
+    public TextMeshProUGUI waveCounterText;
     public TextMeshProUGUI remainingAmountText;
+    private readonly Color wine = new(0.69f, 0, 0);
+    private readonly Color lightGray = new(0.75f, 0.75f, 0.75f);
     public int waveCount;
     private int maxEnemies;
     private int weight;
@@ -19,31 +35,74 @@ public class Wave : MonoBehaviour
 
     [Header("InnerCode")]
     private Spawner spawner;
-    private Coroutine spawnCoroutine;
-    private bool canSpawn = true;
+    private Coroutine startCoroutine;
+    private Coroutine changeCoroutine;
+    private bool canSpawn;//= false;
     
     private void Start()
     {
         spawner = GetComponent<Spawner>();
-        remainingAmountText.text = remainingEnemies.ToString();
+        // remainingAmountText.text = remainingEnemies.ToString();
+        waveCounterText.text = waveCount.ToString("D2");
+        waveCounterText.color = lightGray;
+        // remainingAmountText.color = lightGray;  // {}{} fazer o texto de remaining cinza ?
+        WaveEnd();  // comeca no WaveEnd pro texto ir de cinza pra vinho
     }
     
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Minus)) spawner.SpawnEnemies(10, 20);
+        // if (Input.GetKeyDown(KeyCode.Minus)) spawner.SpawnEnemies(10, 20);
         remainingAmountText.text = remainingEnemies.ToString();
-        if (canSpawn && remainingEnemies == 0) spawnCoroutine = StartCoroutine(ChangeWave());
+        
+        if (canSpawn && remainingEnemies == 0)
+        {
+            canSpawn = false;
+            changeCoroutine = StartCoroutine(WaveStartToEnd());
+        }
     }
     
-    private IEnumerator ChangeWave()
+    private IEnumerator WaveStart()
     {
-        canSpawn = false;
-        ++waveCount; waveCountText.text = waveCount.ToString("D2");
-        maxEnemies=Mathf.FloorToInt(15+2*Mathf.Log(waveCount));  // floor( 15 + 2*ln(wave) )
-        weight = 40 + 8 * waveCount;
-        yield return new WaitForSeconds(1);
         spawner.SpawnEnemies(maxEnemies, weight);
         yield return new WaitForSeconds(1);
         canSpawn = true;
+    }
+    
+    private IEnumerator WaveStartToEnd()
+    {  // wine --> lightGray --> WaveEnd
+        for (float i = 0; i <= 50; i++)
+        {
+            waveCounterText.color = Color.Lerp(wine, lightGray, i/50f);
+            yield return new WaitForSeconds(0.02f);
+        }
+        // waveCounterText.color = lightGray;
+        // show power-up screen
+        yield return new WaitForSeconds(5f);
+        WaveEnd();
+    }
+    
+    private void WaveEnd()
+    {  // wave++ --> WaveE2S
+        // update wave info
+        ++waveCount;
+        maxEnemies=Mathf.FloorToInt(15 + 2*Mathf.Log(waveCount));  // floor( 15 + 2*ln(wave) )
+        weight = 40 + 8 * waveCount;
+        
+        // update HUD
+        waveCounterText.text = waveCount.ToString("D2");
+        // show power-up screen
+        
+        changeCoroutine = StartCoroutine(WaveEndToStart());
+    }
+    
+    private IEnumerator WaveEndToStart()
+    {  // lightGray --> red --> WaveStart
+        for (float i = 0; i <= 50; i++)
+        {
+            waveCounterText.color = Color.Lerp(lightGray, wine, i/50f);
+            yield return new WaitForSeconds(0.02f);
+        }
+        // waveCounterText.color = wine;
+        startCoroutine = StartCoroutine(WaveStart());
     }
 }

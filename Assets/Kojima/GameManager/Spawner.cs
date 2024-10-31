@@ -1,12 +1,13 @@
-// using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using WeaponsNS;
 using Random = UnityEngine.Random;
 
 /// <summary>
 /// 
+///     Dependencias:
+///     Esse script trabalha em conjunto com o script Spawner.
+///
 ///     Funcao do script:
 ///     Esse script spawna prefabs de inimigos, considerando a proximidade do player
 /// dos spawn points, a chance de spawn e o peso de cada inimigo, explicado a seguir.
@@ -96,7 +97,7 @@ public class Spawner : MonoBehaviour, IComparer<Transform>
                 {  // spawna o inimigo em um ponto proximo aleatorio e aumenta o peso da onda
                     Instantiate(enemy.enemyPF, spawners[Random.Range(0, maxSpawnPoints)].position, Quaternion.identity);
                     currentWeight += enemy.weight;
-                    ++remainingEnemies;
+                    ++remainingEnemies; wave.remainingEnemies = remainingEnemies;
                     Debug.Log("spawned: "+enemy.enemyPF);
                     break;
                 }

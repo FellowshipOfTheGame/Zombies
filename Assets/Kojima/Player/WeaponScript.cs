@@ -121,7 +121,7 @@ public class WeaponScript : MonoBehaviour
             Quaternion spreadRotation = Quaternion.Euler(Random.Range(-weapon.spread/2, weapon.spread/2), Random.Range(-weapon.spread/2, weapon.spread/2), 0f);
             rayDirection = spreadRotation * rayDirection;
             
-            while (damage > 0) //chain raycasts to 
+            while (damage > 0) //chain raycasts
             {
                 if (Physics.Raycast(rayOrigin, rayDirection, out RaycastHit hit, rangeLeft))
                 {
@@ -141,7 +141,7 @@ public class WeaponScript : MonoBehaviour
                     }
                     
                     //prepare to chain raycasts
-                    rayOrigin = hit.point - hit.normal; // slightly offset to prevent self-collision
+                    rayOrigin = hit.point + 0.5f*rayDirection; // slight offset to prevent self-collision
                     damage -= weapon.decay;
                 }
                 else damage = 0;
