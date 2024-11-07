@@ -2,21 +2,27 @@
 // using System.ComponentModel;
 // using Tests.NetworkTest.Serializers;
 
+using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using Collider = UnityEngine.Collider;
 using Random = UnityEngine.Random;
 
 public class EnemyHealth : MonoBehaviour, Interfaces.IDamage, Interfaces.IDamageSpecial
 {
      public int maxHealth = 100;
      private int health;
-     public float targetRadius = 10f;
+     public float targetRadius = 5f;
      private float missileSide;
      public GameObject worldSpaceUIPrefab;
      public GameObject missilePrefab;
+     public GameObject ricochetPrefab;
      public LayerMask playerLayerMask;
      // private readonly Color orange = new(1.0f, 0.25f, 0.0f);
+     private readonly Color purple = new(0.7f, 0.35f, 1.0f);
+     private LineRenderer lineRenderer;
      // private GameRules gameRule;
+     private int stacks = -1;
      
      private void Start()
      {
@@ -49,31 +55,61 @@ public class EnemyHealth : MonoBehaviour, Interfaces.IDamage, Interfaces.IDamage
           {
                Missile(damage/4, targetRadius, textRotateTarget);
           }
+          else if (special == "Ricochet")
+          {
+               Collider[] nearbyColliders = Physics.OverlapSphere(transform.position, targetRadius, playerLayerMask);
+               List<Transform> nearbyEnemies = new List<Transform>();
+               foreach (Collider ncollider in nearbyColliders)
+               {
+                    if (ncollider.transform != transform)
+                    {
+                         nearbyEnemies.Add(ncollider.transform);
+                    }
+               }
+               // select two random enemies
+               Transform enemy1;
+               switch (nearbyEnemies.Count)
+               {
+                    case 0:
+                         break;
+                    case 1:
+                         enemy1 = nearbyEnemies[Random.Range(0, nearbyEnemies.Count)].GetChild(0);
+                         Ricochet(enemy1, damage/2, hitPosition, textRotateTarget);
+                         break;
+                    default:
+                         enemy1 = nearbyEnemies[Random.Range(0, nearbyEnemies.Count)].GetChild(0);
+                         Transform enemy2 = nearbyEnemies[Random.Range(0, nearbyEnemies.Count)].GetChild(0);
+                         Ricochet(enemy1, damage/2, hitPosition, textRotateTarget);
+                         Ricochet(enemy2, damage/2, hitPosition, textRotateTarget);
+                         Debug.Log(enemy1);
+                         break;
+               }
+          }
           else 
           {
                switch (special)
                {
+                    // ricochet - purple
                     case "MaxHealth":
                          textColor = Color.green;
                          damage = Mathf.FloorToInt(maxHealth * percentage/100f);
                          break;
                     
                     case "MissingHealth":
-                         textColor = Color.black;
+                         textColor = Color.red;
                          damage = Mathf.FloorToInt((maxHealth - health) * percentage/100f);
                          break;
                     
-                    case "CurrentHealth":
-                         textColor = Color.yellow;
-                         damage = Mathf.FloorToInt(health * percentage/100f);
-                         break;
-
                     case "Extra":
                          textColor = Color.grey;
                          damage = Mathf.FloorToInt(damage * percentage/100f);
                          break;
+                    
+                    case "Stack":
+                         textColor = Color.grey;
+                         stacks += 2; damage = stacks; Debug.Log(stacks);
+                         break;
                }
-               
                health -= damage; FloatingDamage(damage, hitPosition, textRotateTarget, textColor);
           }
           
@@ -140,39 +176,89 @@ public class EnemyHealth : MonoBehaviour, Interfaces.IDamage, Interfaces.IDamage
 
      private void Missile(int damage, float radius, Transform textRotateTarget)
      {
-          float closestDistance1 = 2 * radius, closestDistance2 = 2 * radius;
-          Transform closestEnemy1 = null, closestEnemy2 = null;
           Collider[] nearbyColliders = Physics.OverlapSphere(transform.position, radius, playerLayerMask);
-          
-          foreach (Collider nearbyEnemy in nearbyColliders)
+          List<Transform> nearbyEnemies = new List<Transform>();
+          foreach (Collider ncollider in nearbyColliders)
           {
-               float distance = Vector3.Distance(transform.position, nearbyEnemy.transform.position);
-               if (distance < closestDistance1 && distance > 0.55f)  //novo 1º mais perto
+               if (ncollider.transform != transform)
                {
-                    closestEnemy2 = closestEnemy1;  //passa o 1º pro 2º lugar
-                    closestDistance2 = closestDistance1;
-                    closestEnemy1 = nearbyEnemy.transform;
-                    closestDistance1 = distance;
-               }
-               else if (distance < closestDistance2 && distance > 0.55f)  //novo 2º mais perto
-               {
-                    closestEnemy2 = nearbyEnemy.transform;
-                    closestDistance2 = distance;
+                    nearbyEnemies.Add(ncollider.transform);
                }
           }
-          //                                     sem alvos ? self target : missil no alvo
-          InstantiateMissile(closestDistance1 > radius ? transform : closestEnemy1, damage, textRotateTarget);
-
-          if (closestDistance2 > radius) return;
-          InstantiateMissile(closestEnemy2, damage, textRotateTarget);
+          
+          // select two random enemies
+          Transform enemy1;
+          switch (nearbyEnemies.Count)
+          {
+               case 0:
+                    InstantiateMissile(transform, damage, textRotateTarget);
+                    break;
+               case 1:
+                    enemy1 = nearbyEnemies[Random.Range(0, nearbyEnemies.Count)];
+                    InstantiateMissile(enemy1, damage, textRotateTarget);
+                    break;
+               default:
+                    enemy1 = nearbyEnemies[Random.Range(0, nearbyEnemies.Count)];
+                    Transform enemy2 = nearbyEnemies[Random.Range(0, nearbyEnemies.Count)];
+                    InstantiateMissile(enemy1, damage, textRotateTarget);
+                    InstantiateMissile(enemy2, damage, textRotateTarget);
+                    break;
+          }
+          
+          // // calculate the two closest enemies manually
+          // Transform closestEnemy1 = null, closestEnemy2 = null;
+          // float closestDistance1 = 2 * radius, closestDistance2 = 2 * radius;
+          // foreach (Collider nearbyEnemy in nearbyColliders)
+          // {
+          //      float distance = Vector3.Distance(transform.position, nearbyEnemy.transform.position);
+          //      if (distance < closestDistance1 && distance > 0.55f)  //novo 1º mais perto
+          //      {
+          //           closestEnemy2 = closestEnemy1;  //passa o 1º pro 2º lugar
+          //           closestDistance2 = closestDistance1;
+          //           closestEnemy1 = nearbyEnemy.transform;
+          //           closestDistance1 = distance;
+          //      }
+          //      else if (distance < closestDistance2 && distance > 0.55f)  //novo 2º mais perto
+          //      {
+          //           closestEnemy2 = nearbyEnemy.transform;
+          //           closestDistance2 = distance;
+          //      }
+          // }
+          // //                                     sem alvos ? self target : missil no alvo
+          // InstantiateMissile(closestDistance1 > radius ? transform : closestEnemy1, damage, textRotateTarget);
+          //
+          // if (closestDistance2 > radius) return;
+          // InstantiateMissile(closestEnemy2, damage, textRotateTarget);
      }
      
      private void InstantiateMissile(Transform target, int damage, Transform textRotateTarget)
      {
           Vector3 spawnP = transform.position + 0.6f * missileSide * textRotateTarget.right;
-          Quaternion spawnR = Quaternion.Euler(0, textRotateTarget.eulerAngles.y, missileSide * -Random.Range(85f,95f));
+          Quaternion spawnR = Quaternion.Euler(0, textRotateTarget.eulerAngles.y, missileSide * -Random.Range(85f,100f));
           GameObject missile = Instantiate(missilePrefab, spawnP, spawnR);
           missile.GetComponent<Missile>().Setter(damage, target, textRotateTarget);
           missileSide *= -1f;
+     }
+     
+     private void Ricochet(Transform target, int damage, Vector3 hitPosition, Transform textRotateTarget)
+     {
+          Vector3 direction = (target.position - transform.position)/2.1f;
+          // slight offset to prevent self collision
+          if (Physics.Raycast(hitPosition + direction.normalized, direction, 
+                   out RaycastHit targetHit, 1.5f * targetRadius))
+          {
+               GameObject hitObject = targetHit.collider.gameObject;
+               if (hitObject.CompareTag("Player"))
+               {
+                    hitObject.GetComponent<Interfaces.IDamage>().TakeDamage(damage, targetHit.point, textRotateTarget, purple);
+               }
+          }
+          // instancia o ricochetePF entre this.transform e target.transform
+          GameObject ricochetI = Instantiate(ricochetPrefab, hitPosition + direction,
+               Quaternion.LookRotation(direction));
+          // escala o ricochete pra ficar do tamanho certo
+          ricochetI.transform.localScale = new Vector3(ricochetI.transform.localScale.x, 
+               ricochetI.transform.localScale.y, direction.magnitude);
+          Destroy(ricochetI, 0.1f);
      }
 }

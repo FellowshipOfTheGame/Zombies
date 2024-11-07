@@ -73,7 +73,7 @@ public class WeaponScript : MonoBehaviour
     public AudioClip shootSound;
     public GameObject muzzleFlash;
     private bool isSpecial = true;
-    public string special = "MissingHealth";
+    public string special = "Stack";
     public int percentage = 10;
     
         

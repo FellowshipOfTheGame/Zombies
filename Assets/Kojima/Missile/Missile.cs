@@ -5,7 +5,7 @@ public class Missile : MonoBehaviour
     private int damage;
     private float angle;
     private const float speed = 10f;
-    private const float turnSpeed = 10f;
+    private const float turnSpeed = 7.5f;
     private Transform target;
     private Transform textRotateTarget;
     private Quaternion targetRotation;

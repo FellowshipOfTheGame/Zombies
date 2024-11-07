@@ -3,7 +3,7 @@ using UnityEngine;
 public class Movement : MonoBehaviour
 {
     [Header("Movement")]
-    private Rigidbody rb;
+    private Rigidbody rb;  // this.rigidBody
     private Vector3 moveDirection, currentSpeed;
     public Transform playerTransform;
     private const float maxSpeed = 10f;
