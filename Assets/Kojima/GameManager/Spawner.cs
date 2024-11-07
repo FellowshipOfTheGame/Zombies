@@ -7,11 +7,11 @@ using Random = UnityEngine.Random;
 /// 
 ///     Dependencias:
 ///     Esse script trabalha em conjunto com o script Spawner.
-///
+/// 
 ///     Funcao do script:
 ///     Esse script spawna prefabs de inimigos, considerando a proximidade do player
 /// dos spawn points, a chance de spawn e o peso de cada inimigo, explicado a seguir.
-///
+/// 
 ///     Proximidade:
 ///     Esse script considera a proximidade do player ate os spawns, spawnando os inimigos
 /// nos X spawns mais proximos. Esse numero X pode ser modificado, sendo que os inimigos
@@ -63,6 +63,7 @@ public class Spawner : MonoBehaviour, IComparer<Transform>
     [Header("WaveController")]
     private Wave wave;
 
+    
     private void Start()
     {
         wave = GetComponent<Wave>();
@@ -73,7 +74,7 @@ public class Spawner : MonoBehaviour, IComparer<Transform>
         enemyList.Add(new EnemyData { enemyPF = enemyTank,   weight = 20, spawnChance = 1f });
         enemyList.Add(new EnemyData { enemyPF = enemyFast,   weight = 5,  spawnChance = 3f });
         enemyList.Add(new EnemyData { enemyPF = enemyNormal, weight = 10, spawnChance = 5f });
-        foreach (EnemyData enemy in enemyList) totalChance += enemy.spawnChance;
+        foreach (EnemyData enemy in enemyList) { totalChance += enemy.spawnChance; }
     }
     
     public void SpawnEnemies(int maxEnemies, int waveWeight)

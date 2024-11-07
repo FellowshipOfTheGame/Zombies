@@ -8,56 +8,19 @@ using Random = UnityEngine.Random;
 
 public class WeaponScript : MonoBehaviour
 {
-    // TO-DO
-    //  > implementar spread
-    //
-    //  > colocar barrinha de reload embaixo da crosshair, branco com fundo preto e chanfro vermelho do parcial
-    //  
-    //  investigar se tem que puxar o bolt pra tras quando acaba a bala de uma closed bolt
-    //
-    //  fazer verificacao se tem municao o suficiente pra fazer o reload (totalAmmo>magSize)
-    //
-    //  ta fazendo reload parcial mesmo com a mag vazia
-    //
-    //  procurar saber como que faz pra ver o tempo que cada script demora pra executar
-    //      se esse script for muito pesado, testar otimizar trocando variaveis da página weapon
-    //      pra variaveis locais
-    //
-    //  na hora de separar os scripts, fazer que os scripts das armas estejam na mesma pasta que o ShootingScript
-    //      pra que usem o mesmo namespace
-    //      ou criar um script so pra definir o namespace e importar nos outros scripts que o usarem
-    //
-    //  fazer compras de arma terem um cooldown pra nao travar o script de trocar de arma
-    //
-    // fazer floating number damage indicators !!
-    //
-    // fazer formula pra aumentar o spread da arma com fogo continuo - log
-    //
-    // fazer slow ao tomar dano, num ienummerator com while pra aumentar a speed por tempo, assim como o slider aqui
-    //
-    //  verificar comentarios com {}{}
-    //
-    // otimizacao do salmaze com varios computadores
-    // testar ate quando vale comprimir uma mensagem → testar no load o ping e velocidade de processamento
-    // testar de novo a cada [medida de tempo] se tem que atualizar essa medida de processamento/compressao
-    //
-    // fazer a granada/lanca granada analisar o movimento com um raycast, se bater em alguma coisa,
-    //      transform=hit.position, se der pra mover, continua normalmente
-    //
-    // nao ta pegando as informacoes da arma nova corretamente depois que ta com o inventario cheio
-
-    // a trabalho
-    //  nao era pra dar pra recarregar quando totalAmmo==0
-    
-    
     [Header("UI Elements")]
     public Slider timerSlider;
     public GameObject timerGO;
     public TextMeshProUGUI ammoText;
     public TextMeshProUGUI totalAmmoText;
     public TextMeshProUGUI magSizeText;
-    public WeaponInfoStruct weapon;
     
+    [Header("Weapon")]
+    public WeaponInfoStruct weapon;
+    public AudioClip shootSound;
+    public GameObject muzzleFlash;
+    private Transform muzzle;
+
     [Header("Coroutines")] 
     private Coroutine isSwitchingC;
     private Coroutine reloadingC;
@@ -67,16 +30,15 @@ public class WeaponScript : MonoBehaviour
     public bool isShooting;
     
     [Header("Definitions")]
-    public Camera mainCamera;
-    private Transform muzzle;
     public AudioSource audioSource;
-    public AudioClip shootSound;
-    public GameObject muzzleFlash;
+    public Camera mainCamera;
+    
+    [Header("Variables")]
     private bool isSpecial = true;
     public string special = "Stack";
     public int percentage = 10;
     
-        
+    
     private void Start()
     {
         mainCamera = Camera.main;
@@ -133,11 +95,12 @@ public class WeaponScript : MonoBehaviour
                     
                     if (isSpecial)
                     {
-                        hitObject.GetComponent<Interfaces.IDamageSpecial>().TakeDamageSpecial(damage, hit.point, transform, Color.white, special, percentage);
+                        hitObject.GetComponent<Interfaces.IDmgSpecial>().
+                            TakeDmgSpecial(damage, hit.point, transform, Color.white, special, percentage);
                     }
                     else
                     {
-                        hitObject.GetComponent<Interfaces.IDamage>().TakeDamage(damage, hit.point, transform, Color.white);
+                        hitObject.GetComponent<Interfaces.IDmg>().TakeDmg(damage, hit.point, transform, Color.white);
                     }
                     
                     //prepare to chain raycasts

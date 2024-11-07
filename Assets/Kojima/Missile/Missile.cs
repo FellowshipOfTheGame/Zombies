@@ -3,20 +3,19 @@ using UnityEngine;
 public class Missile : MonoBehaviour
 {
     private int damage;
-    private float angle;
     private const float speed = 10f;
     private const float turnSpeed = 7.5f;
     private Transform target;
     private Transform textRotateTarget;
-    private Quaternion targetRotation;
-    private Quaternion newRotation;
-    private readonly Color orange = new (1f, 0.55f, 0.25f);
-
-    public void Setter(int newDamage, Transform newTarget, Transform newRotateTarget)
+    private Color color;
+    
+    
+    public void Setter(int newDamage, Transform newTarget, Transform newRotateTarget, Color newColor)
     {
         target = newTarget;
         damage = newDamage;
         textRotateTarget = newRotateTarget;
+        color = newColor;
     }
     
     private void Update()
@@ -26,10 +25,10 @@ public class Missile : MonoBehaviour
     }
     
     private void OnCollisionEnter(Collision collision) {
-        ContactPoint contactPoint = collision.GetContact(0);
+        ContactPoint contP = collision.GetContact(0);
         if (collision.gameObject.CompareTag("Player"))
         {
-            collision.gameObject.GetComponent<Interfaces.IDamage>().TakeDamage(damage, contactPoint.point, textRotateTarget, orange);
+            collision.gameObject.GetComponent<Interfaces.IDmg>().TakeDmg(damage, contP.point, textRotateTarget, color);
         }
         Destroy(gameObject);
     }

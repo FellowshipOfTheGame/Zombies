@@ -7,17 +7,17 @@ using TMPro;
 /// 
 ///     Dependencias
 ///     Esse script trabalha em conjunto com o script Spawner.
-///
+/// 
 ///     Funcao do script
 ///     Esse script controla a progressao das waves, de uma forma automatica.
 /// Essa troca funciona da seguinte forma:
-///     WaveStart --(enemies==0)--> WaveS2E --> WaveEnd --(wave++)--> WaveE2S --> WaveStart
+///     WaveStart --(enemies==0)--> WaveStartToEnd --> WaveEnd -->
+///          --(wave++)--> WaveEndToStart --> WaveStart
 ///     
 ///     No futuro, esse script pode ser reaproveitado para um Tower Defense,
-/// ou similares, ao implementar uma troca de waves manual e trocar a selecao
-/// de spawns para um ponto fixo.
+/// ou similares, ao implementar uma troca de waves manual (puxar ou antecipar
+/// a wave) e trocar o spawn para um ponto fixo.
 ///     
-/// 
 /// </summary>
 
 
@@ -28,16 +28,19 @@ public class Wave : MonoBehaviour
     public TextMeshProUGUI remainingAmountText;
     private readonly Color wine = new(0.69f, 0, 0);
     private readonly Color lightGray = new(0.75f, 0.75f, 0.75f);
+    
+    [Header("Variables")]
     public int waveCount;
+    public int remainingEnemies;
     private int maxEnemies;
     private int weight;
-    public int remainingEnemies;
-
+    private bool canSpawn;//= false;
+    
     [Header("InnerCode")]
     private Spawner spawner;
     private Coroutine startCoroutine;
     private Coroutine changeCoroutine;
-    private bool canSpawn;//= false;
+    
     
     private void Start()
     {
@@ -54,7 +57,7 @@ public class Wave : MonoBehaviour
         // if (Input.GetKeyDown(KeyCode.Minus)) spawner.SpawnEnemies(10, 20);
         remainingAmountText.text = remainingEnemies.ToString();
         
-        if (canSpawn && remainingEnemies == 0)
+        if (canSpawn && remainingEnemies == 0)  // ta no update pq os inimigos ainda nao tem funcao pra morte
         {
             canSpawn = false;
             changeCoroutine = StartCoroutine(WaveStartToEnd());

@@ -8,21 +8,40 @@ using TMPro;
 using Collider = UnityEngine.Collider;
 using Random = UnityEngine.Random;
 
-public class EnemyHealth : MonoBehaviour, Interfaces.IDamage, Interfaces.IDamageSpecial
+/// <summary>
+/// 
+///     Dependencias:
+///     Esse script trabalha em conjunto com o script de interfaces e canvasses de UI.
+///
+///     Funcao do script:
+///     Esse script serve para contabilizar a vida dos inimigos e para chamar as interacoes
+/// de dano especial, como ricochete e dano pela vida perdida.
+/// 
+/// </summary>
+
+public class EnemyHealth : MonoBehaviour, Interfaces.IDmg, Interfaces.IDmgSpecial
 {
+     [Header("InternalVariables")]
      public int maxHealth = 100;
      private int health;
+     public LayerMask playerLayerMask;
+     
+     [Header("SpecialVariables")]
      public float targetRadius = 5f;
      private float missileSide;
+     private int stacks = -1;
+     
+     [Header("Prefabs")]
      public GameObject worldSpaceUIPrefab;
      public GameObject missilePrefab;
      public GameObject ricochetPrefab;
-     public LayerMask playerLayerMask;
-     // private readonly Color orange = new(1.0f, 0.25f, 0.0f);
+     
+     [Header("Colors")]
+     private readonly Color orange = new (1f, 0.55f, 0.25f);
      private readonly Color purple = new(0.7f, 0.35f, 1.0f);
-     private LineRenderer lineRenderer;
+     
      // private GameRules gameRule;
-     private int stacks = -1;
+     
      
      private void Start()
      {
@@ -34,7 +53,7 @@ public class EnemyHealth : MonoBehaviour, Interfaces.IDamage, Interfaces.IDamage
           // gameRule = GameObject.Find("GameManager").GetComponent<GameRules>();
      }
 
-     public void TakeDamage(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor)
+     public void TakeDmg(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor)
      {
           FloatingDamage(damage, hitPosition, textRotateTarget, textColor);
           
@@ -46,7 +65,7 @@ public class EnemyHealth : MonoBehaviour, Interfaces.IDamage, Interfaces.IDamage
           Debug.Log(health);
      }
      
-     public void TakeDamageSpecial(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor,
+     public void TakeDmgSpecial(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor,
           string special, int percentage)
      {
           health -= damage; FloatingDamage(damage, hitPosition, textRotateTarget, textColor); //dano normal
@@ -236,7 +255,7 @@ public class EnemyHealth : MonoBehaviour, Interfaces.IDamage, Interfaces.IDamage
           Vector3 spawnP = transform.position + 0.6f * missileSide * textRotateTarget.right;
           Quaternion spawnR = Quaternion.Euler(0, textRotateTarget.eulerAngles.y, missileSide * -Random.Range(85f,100f));
           GameObject missile = Instantiate(missilePrefab, spawnP, spawnR);
-          missile.GetComponent<Missile>().Setter(damage, target, textRotateTarget);
+          missile.GetComponent<Missile>().Setter(damage, target, textRotateTarget, orange);
           missileSide *= -1f;
      }
      
@@ -250,7 +269,7 @@ public class EnemyHealth : MonoBehaviour, Interfaces.IDamage, Interfaces.IDamage
                GameObject hitObject = targetHit.collider.gameObject;
                if (hitObject.CompareTag("Player"))
                {
-                    hitObject.GetComponent<Interfaces.IDamage>().TakeDamage(damage, targetHit.point, textRotateTarget, purple);
+                    hitObject.GetComponent<Interfaces.IDmg>().TakeDmg(damage, targetHit.point, textRotateTarget, purple);
                }
           }
           // instancia o ricochetePF entre this.transform e target.transform

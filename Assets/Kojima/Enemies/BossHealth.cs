@@ -6,7 +6,7 @@ using UnityEngine;
 using TMPro;
 using Random = UnityEngine.Random;
 
-public class BossHealth : MonoBehaviour, Interfaces.IDamage, Interfaces.IDamageSpecial
+public class BossHealth : MonoBehaviour, Interfaces.IDmg, Interfaces.IDmgSpecial
 {
      public int maxHealth = 10000;
      private int health;
@@ -15,7 +15,7 @@ public class BossHealth : MonoBehaviour, Interfaces.IDamage, Interfaces.IDamageS
      public GameObject worldSpaceUIPrefab;
      public GameObject missilePrefab;
      public LayerMask playerLayerMask;
-     // private readonly Color orange = new(1.0f, 0.25f, 0.0f);
+     private readonly Color orange = new (1f, 0.55f, 0.25f);
      // private GameRules gameRule;
      
      private void Start()
@@ -28,7 +28,7 @@ public class BossHealth : MonoBehaviour, Interfaces.IDamage, Interfaces.IDamageS
           // gameRule = GameObject.Find("GameManager").GetComponent<GameRules>();
      }
 
-     public void TakeDamage(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor)
+     public void TakeDmg(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor)
      {
           FloatingDamage(damage, hitPosition, textRotateTarget, textColor);
           
@@ -40,7 +40,7 @@ public class BossHealth : MonoBehaviour, Interfaces.IDamage, Interfaces.IDamageS
           Debug.Log(health);
      }
 
-     public void TakeDamageSpecial(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor,
+     public void TakeDmgSpecial(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor,
           string special, int percentage)
      {
           health -= damage; FloatingDamage(damage, hitPosition, textRotateTarget, textColor); //dano normal
@@ -172,7 +172,7 @@ public class BossHealth : MonoBehaviour, Interfaces.IDamage, Interfaces.IDamageS
           Vector3 spawnPosition = transform.position + 0.7f * missileSide * textRotateTarget.right;
           Quaternion spawnRotation = Quaternion.Euler(0, textRotateTarget.eulerAngles.y, missileSide * -90);
           GameObject missile = Instantiate(missilePrefab, spawnPosition, spawnRotation);
-          missile.GetComponent<Missile>().Setter(damage, target, textRotateTarget);
+          missile.GetComponent<Missile>().Setter(damage, target, textRotateTarget, orange);
           missileSide *= -1f;
      }
 }

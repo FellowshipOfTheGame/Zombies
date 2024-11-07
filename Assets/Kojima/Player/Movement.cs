@@ -2,20 +2,22 @@ using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
-    [Header("Movement")]
+    [Header("Variables")]
+    public float maxSpeed = 10f;
+    public float jumpSpeed = 6f;
+    private float fallSpeed, hInput, vInput;
+    
+    [Header("Components")]
     private Rigidbody rb;  // this.rigidBody
     private Vector3 moveDirection, currentSpeed;
     public Transform playerTransform;
-    private const float maxSpeed = 10f;
-    private const float jumpForce = 4f;
-    private float fallSpeed, hinput, vinput;
-
+    
     [Header("Ground check")]
     public LayerMask groundMask;
     public bool isGrounded;
     
     
-    void Start()
+    private void Start()
     {
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
@@ -24,12 +26,12 @@ public class Movement : MonoBehaviour
     
     private void Update()
     {
-        hinput = Input.GetAxis("Horizontal");
-        vinput = Input.GetAxis("Vertical");  //raycast pra ver se encosta no chao \ maxDistance=altura/2
+        hInput = Input.GetAxis("Horizontal");
+        vInput = Input.GetAxis("Vertical");  //raycast pra ver se encosta no chao \ maxDistance=altura/2
         isGrounded = Physics.Raycast(playerTransform.position, Vector3.down, 1.05f, groundMask);
         
         //input.normalize \ salva a V(y) \ "acelera" o player limita a velocidade pra maxSpeed \ restaura o V(y)
-        moveDirection = (playerTransform.right * hinput + playerTransform.forward * vinput).normalized;
+        moveDirection = (playerTransform.right * hInput + playerTransform.forward * vInput).normalized;
         fallSpeed = rb.linearVelocity.y;
         currentSpeed = rb.linearVelocity;
         currentSpeed.y = 0;
@@ -40,7 +42,7 @@ public class Movement : MonoBehaviour
         if (Input.GetKey(KeyCode.Space) && isGrounded)
         {
             isGrounded = false;
-            currentSpeed.y = 6f;
+            currentSpeed.y = jumpSpeed;
             rb.linearVelocity = currentSpeed;
         }
         else

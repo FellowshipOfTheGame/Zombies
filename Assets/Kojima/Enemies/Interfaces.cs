@@ -2,18 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class Interfaces : MonoBehaviour
 {
-    
-    public interface IDamage
+    public interface IDmg
     {
-        void TakeDamage(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor);
+        void TakeDmg(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor);
     }
-
-    public interface IDamageSpecial
+    
+    public interface IDmgSpecial
     {
-        void TakeDamageSpecial(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor,
+        void TakeDmgSpecial(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor,
             string special, int percentage);
     }
-    
 }

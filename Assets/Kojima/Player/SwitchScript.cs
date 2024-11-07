@@ -5,6 +5,20 @@ using UnityEngine.UI;
 using TMPro;
 using WeaponsNS;
 
+/// <summary>
+///
+///     Dependencias:
+///     esse script depende dos outros scripts de arma: Inventory e Weapon
+///
+///     Funcao do script:
+///     Esse script se encarrega de adicionar novas armas ao Inventory e trocar
+/// qual arma esta ativa, atualizando as respectivas informacoes no HUD.
+///     Ao adicionar uma arma nova, ela [e automaticamente equipada e caso o
+/// Inventory esteja cheio, implementado como 3 armas, a arma que nao seja
+/// a primaria sera trocada.
+/// 
+/// </summary>
+
 public class SwitchScript : MonoBehaviour
 {
     [Header("UI Elements")]
@@ -26,7 +40,9 @@ public class SwitchScript : MonoBehaviour
     private Dictionary<int, WeaponInfoStruct> inventoryDict;
     private Transform muzzle;
     public Camera mainCamera;
-    private readonly Vector3 weaponOffset = new(0.35f, -0.4f, 0.5f);
+    
+    [Header("Variables")]
+    private readonly Vector3 weaponOffset = new(0.35f, -0.4f, 0.5f);  // offset de teste pra arma na tela
     private int selectedWeapon = 1;
     public int currentWeapon = 1;
     private const int inventorySize = 3;
@@ -65,7 +81,7 @@ public class SwitchScript : MonoBehaviour
     }
     
     
-    void Update()
+    private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Equals)) LoadWeapon(); //{}{}
         
