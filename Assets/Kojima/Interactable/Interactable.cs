@@ -3,5 +3,5 @@ using UnityEngine;
 public interface IInteractable
 {
     void Hover();
-    void Interact();
+    void Interact(GameObject player);
 }
