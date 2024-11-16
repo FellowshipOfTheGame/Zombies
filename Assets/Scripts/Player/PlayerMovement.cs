@@ -1,9 +1,11 @@
 using UnityEngine;
+using UnityEngine.Windows;
 
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private float walkSpeed;
     [SerializeField] private float runSpeed;
+    [SerializeField] private float acceleration = 1f;
     [SerializeField] private float mouseSensitivity = 100f;
     [SerializeField] private Transform playerCamera;
     [SerializeField] private float jumpHeight;
@@ -12,6 +14,8 @@ public class PlayerMovement : MonoBehaviour
     private float verticalVelocity = 0f;
     private const float gravity = -9.81f;
     private float xRotation = 0f;
+
+    private float currentSpeed = 0f;
 
     void Start()
     {
@@ -57,12 +61,23 @@ public class PlayerMovement : MonoBehaviour
     // Move o jogador
     private void Move()
     {
-        Vector3 move = new(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        Vector3 move = new(UnityEngine.Input.GetAxis("Horizontal"), 0, UnityEngine.Input.GetAxis("Vertical"));
         // Transforma o vetor de movimento considerando a direcao do jogador
         move = transform.TransformDirection(move);
 
         // Checa se o jogador esta andando ou correndo
-        float currentSpeed = Input.GetKey(KeyCode.LeftShift) ? runSpeed : walkSpeed;
+        bool running = UnityEngine.Input.GetKey(KeyCode.LeftShift);
+        float targetSpeed = running ? runSpeed : walkSpeed;
+
+        if (move.magnitude > 0)
+        {
+            // Acelera mais rapido se o jogador estiver correndo
+            currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, (running ? acceleration * walkSpeed : acceleration * runSpeed) * Time.deltaTime);
+        }
+        else
+        {
+            currentSpeed = Mathf.MoveTowards(currentSpeed, 0, acceleration * walkSpeed * Time.deltaTime); // Desacelera
+        }
 
         characterController.Move(currentSpeed * Time.deltaTime * move);
     }
@@ -70,7 +85,7 @@ public class PlayerMovement : MonoBehaviour
     // Faz o jogador pular
     private void Jump()
     {
-        if (IsGrounded() && Input.GetKeyDown(KeyCode.Space))
+        if (IsGrounded() && UnityEngine.Input.GetKeyDown(KeyCode.Space))
         {
             verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
@@ -83,8 +98,8 @@ public class PlayerMovement : MonoBehaviour
     private void Rotate()
     {
         // Input do mouse
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+        float mouseX = UnityEngine.Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
+        float mouseY = UnityEngine.Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
         // Rotaciona o jogador horizontalmente (o modelo n gira pq o characterController trava a rotacao)
         transform.Rotate(Vector3.up * mouseX);
