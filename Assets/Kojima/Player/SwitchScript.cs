@@ -40,7 +40,10 @@ public class SwitchScript : MonoBehaviour
     private Dictionary<int, WeaponInfoStruct> inventoryDict;
     private Transform muzzle;
     public Camera mainCamera;
-    
+
+    [Header("Upgrades")]
+    private Upgrade upgrade;
+
     [Header("Variables")]
     private readonly Vector3 weaponOffset = new(0.35f, -0.4f, 0.5f);  // offset de teste pra arma na tela
     private int selectedWeapon = 1;

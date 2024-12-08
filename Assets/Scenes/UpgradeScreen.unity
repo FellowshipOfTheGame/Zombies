@@ -875,6 +875,64 @@ RectTransform:
   m_AnchoredPosition: {x: 200, y: -200}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 1}
+--- !u!1 &621545732
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 621545734}
+  - component: {fileID: 621545733}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &621545733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 621545732}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc35faa87b20005468a20f44ce451782, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canvas: {fileID: 2071251605}
+  upgradeTypesUI:
+  - {fileID: 611607691}
+  - {fileID: 918820585}
+  - {fileID: 95205477}
+  - {fileID: 522779086}
+  upgradeTypesText: []
+  upgradeTypesLevel: []
+  upgradeTypesLevelGreatIndicator: []
+--- !u!224 &621545734
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 621545732}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -7}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2071251609}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 959.5, y: 537.375}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &657422675
 GameObject:
   m_ObjectHideFlags: 0
@@ -3847,7 +3905,7 @@ RectTransform:
   - {fileID: 918820586}
   - {fileID: 95205478}
   - {fileID: 522779087}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 621545734}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -3866,6 +3924,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc35faa87b20005468a20f44ce451782, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canvas: {fileID: 0}
   upgradeTypesUI:
   - {fileID: 611607691}
   - {fileID: 918820585}
@@ -4088,6 +4147,6 @@ SceneRoots:
   m_Roots:
   - {fileID: 911011796}
   - {fileID: 657422677}
-  - {fileID: 2071251609}
   - {fileID: 391564928}
   - {fileID: 676712926}
+  - {fileID: 621545734}

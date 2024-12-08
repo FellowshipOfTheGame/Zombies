@@ -10,7 +10,7 @@ public class Upgrade : MonoBehaviour
     {
         private readonly Upgrade upgrade; // Reference to the Upgrade instance
         public readonly string name;
-        private readonly float startingValue;
+        private float startingValue;
         private readonly float growthBase;
         private readonly bool isInteger;
         public int currentLevel { get; private set; }
@@ -65,6 +65,12 @@ public class Upgrade : MonoBehaviour
                 if (!upgrade.upgradeTypesOnLevelGreat.Contains(this))
                     upgrade.upgradeTypesOnLevelGreat.Add(this);
             }
+        }
+
+        public void SetStartingValue(float value)
+        {
+            startingValue = value;
+            currentValue = value;
         }
     }
 
