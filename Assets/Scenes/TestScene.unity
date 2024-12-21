@@ -1221,43 +1221,55 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 758310803183665846, guid: 303eb4bfeaaf2d906b9ed7cae586dd31, type: 3}
+    - target: {fileID: 948806194636430327, guid: 303eb4bfeaaf2d906b9ed7cae586dd31, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.69
+      objectReference: {fileID: 0}
+    - target: {fileID: 948806194636430327, guid: 303eb4bfeaaf2d906b9ed7cae586dd31, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 948806194636430327, guid: 303eb4bfeaaf2d906b9ed7cae586dd31, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -30.999924
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
       propertyPath: special
       value: Ricochet
       objectReference: {fileID: 0}
-    - target: {fileID: 758310803183665846, guid: 303eb4bfeaaf2d906b9ed7cae586dd31, type: 3}
+    - target: {fileID: 0}
       propertyPath: timerGO
       value: 
       objectReference: {fileID: 398477857}
-    - target: {fileID: 758310803183665846, guid: 303eb4bfeaaf2d906b9ed7cae586dd31, type: 3}
+    - target: {fileID: 0}
       propertyPath: ammoText
       value: 
       objectReference: {fileID: 1026427050}
-    - target: {fileID: 758310803183665846, guid: 303eb4bfeaaf2d906b9ed7cae586dd31, type: 3}
+    - target: {fileID: 0}
       propertyPath: mainCamera
       value: 
       objectReference: {fileID: 1010933418}
-    - target: {fileID: 758310803183665846, guid: 303eb4bfeaaf2d906b9ed7cae586dd31, type: 3}
+    - target: {fileID: 0}
       propertyPath: shootSound
       value: 
       objectReference: {fileID: 8300000, guid: 726945a351c796e0697b51dfff04046a, type: 3}
-    - target: {fileID: 758310803183665846, guid: 303eb4bfeaaf2d906b9ed7cae586dd31, type: 3}
+    - target: {fileID: 0}
       propertyPath: audioSource
       value: 
       objectReference: {fileID: 1982920209}
-    - target: {fileID: 758310803183665846, guid: 303eb4bfeaaf2d906b9ed7cae586dd31, type: 3}
+    - target: {fileID: 0}
       propertyPath: magSizeText
       value: 
       objectReference: {fileID: 1739677523}
-    - target: {fileID: 758310803183665846, guid: 303eb4bfeaaf2d906b9ed7cae586dd31, type: 3}
+    - target: {fileID: 0}
       propertyPath: muzzleFlash
       value: 
       objectReference: {fileID: 8887728906692807729, guid: 42a558a4fd35615798a93eb0d751ee23, type: 3}
-    - target: {fileID: 758310803183665846, guid: 303eb4bfeaaf2d906b9ed7cae586dd31, type: 3}
+    - target: {fileID: 0}
       propertyPath: timerSlider
       value: 
       objectReference: {fileID: 398477859}
-    - target: {fileID: 758310803183665846, guid: 303eb4bfeaaf2d906b9ed7cae586dd31, type: 3}
+    - target: {fileID: 0}
       propertyPath: totalAmmoText
       value: 
       objectReference: {fileID: 1577255504}
