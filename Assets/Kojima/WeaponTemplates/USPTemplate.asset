@@ -12,19 +12,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a46facf2a55f8b94286ba31f8fb8315b, type: 3}
   m_Name: USPTemplate
   m_EditorClassIdentifier: 
-  isClosedBolt: 1
-  isFullAuto: 0
-  weaponName: USP9
-  damage: 30
-  burstSize: 1
-  fireRate: 450
-  magCapacity: 15
-  ammo: 15
-  totalAmmo: 600
-  caliber: 9x19 Parabellum
-  reloadTime: 2
-  reloadTimePartial: 1.5
-  switchTime: 1
-  spread: 1
-  range: 50
-  decay: 10
+  data:
+    isClosedBolt: 1
+    isFullAuto: 0
+    weaponName: USP9
+    damage: 35
+    burstSize: 1
+    bulletCount: 1
+    fireRate: 600
+    fireTime: 0
+    magSize: 15
+    ammo: 15
+    totalAmmo: 300
+    caliber: 9x19mm
+    reloadTime: 2.5
+    reloadTimePartial: 2
+    switchTime: 0.5
+    spread: 1
+    range: 50
+    decay: 10
+    recoil: 1.5

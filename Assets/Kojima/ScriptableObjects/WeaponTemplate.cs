@@ -21,33 +21,31 @@ public struct WeaponStruct
     public float  spread;
     public float  range;
     public int    decay;
-    // public float  recoil;
+    public float  recoil;
 }
 
 [CreateAssetMenu(fileName = "Weapon_name", menuName = "Weapon Template")]
 public class WeaponTemplate : ScriptableObject
 {
-    public WeaponStruct data;
-
-    private void OnValidate()
+    public WeaponStruct data = new()
     {
-        // Set default values
-        data.isFullAuto = true;
-        data.weaponName = "Weapon_Name";
-        data.damage = 50;
-        data.burstSize = 1;
-        data.bulletCount = 1;
-        data.fireRate = 600f;
-        data.magSize = 30;
-        data.ammo = 30;
-        data.totalAmmo = 300;
-        data.caliber = "Caliber";
-        data.reloadTime = 2.5f;
-        data.reloadTimePartial = 2.0f;
-        data.switchTime = 0.2f;
-        data.spread = 1f;
-        data.range = 100f;
-        data.decay = 10;
-        // data.recoil = 1.5f
-    }
+        isClosedBolt = true,
+        isFullAuto = true,
+        weaponName = "Weapon_Name",
+        damage = 50,
+        burstSize = 1,
+        bulletCount = 1,
+        fireRate = 600f,
+        magSize = 30,
+        ammo = 30,
+        totalAmmo = 300,
+        caliber = "Caliber",
+        reloadTime = 2.5f,
+        reloadTimePartial = 2.0f,
+        switchTime = 0.5f,
+        spread = 1f,
+        range = 100f,
+        decay = 10,
+        recoil = 1.5f
+    };
 }

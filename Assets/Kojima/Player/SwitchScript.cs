@@ -1,20 +1,28 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
 /// <summary>
+///     Start()
+///         desliga o elemento de hud do timer
+///         carrega as armas do player
+///         atualiza as informacoes no HUD
+/// 
+///     Update()
+///         verifica inputs do usuario
 ///
-///     Dependencias:
-///     esse script depende dos outros scripts de arma: Inventory e Weapon
+///     LoadWeapon()
+///         realiza a logica pra pegar uma arma nova
 ///
-///     Funcao do script:
-///     Esse script se encarrega de adicionar novas armas ao Inventory e trocar
-/// qual arma esta ativa, atualizando as respectivas informacoes no HUD.
-///     Ao adicionar uma arma nova, ela [e automaticamente equipada e caso o
-/// Inventory esteja cheio, implementado como 3 armas, a arma que nao seja
-/// a primaria sera trocada.
+///     SaveWeapon()
+///         salva a arma nova no inventario e aplica o offset na tela
+///
+///     SwitchWeapon()
+///         troca qual arma esta ativa na tela
+///
+///     ThrowWeapon()
+///         descarta a arma atual, caso o jogador aperte T
+///         ou pegue uma arma nova com inventario cheio
 /// 
 /// </summary>
 
@@ -35,49 +43,36 @@ public class SwitchScript : MonoBehaviour
     [Header("Definitions")]
     public Camera mainCamera;
     private Transform inventory;
-    private Transform muzzle;
     private WeaponScript weaponScript;
     
     [Header("Variables")]
     private readonly Vector3 weaponOffset = new(0.35f, -0.4f, 0.5f);  // offset de teste pra arma na tela
-    private int selectedWeapon = 1;
+    public int selectedWeapon = 1;
     public int currentWeapon = 1;
     private const int inventorySize = 3;
-    
-    //to-do
-    
-    //trocar arma
-    // desativar arma atual e ativar a nova arma
-    // verificar quantas armas tem pelo inventory.childcount
-    
-    //adicionar armas
-    // pegar arma nova e colocar como filho da camera
-    
-    //descartar armas
-    // se tiver com o inventario cheio e nao for a arma 1, ao pegar uma arma nova, tem que descartar a antiga
+    // private float switchTime;
     
     
-    private void Start() //por algum motivo nao [e so colocar um LoadWeapon() no start entao ta com codigo dobrado
+    private void Start()
     { 
         inventory = mainCamera.transform;
         timerGO.SetActive(false);
-        
-        //load weapon
-        //pega a arma como filha do player e mexe pra filha da camera
-
-        //update UI
-        //carrega as informacoes da arma na tela
-
-
-
+        SaveWeapon(1);
+        SwitchWeapon();
     }
     
     
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Equals)) LoadWeapon(); //{}{}
-        
         if (isSwitching) return;
+        
+        if (Input.GetKeyDown(KeyCode.Equals)) LoadWeapon(); //{}{}
+        if (Input.GetKeyDown(KeyCode.T) && currentWeapon != 1)
+        {
+            ThrowWeapon();
+            --selectedWeapon; --currentWeapon;
+            SwitchWeapon();
+        }
         
         //se apertou pra trocar de arma
         if      (Input.GetKeyDown(KeyCode.Alpha1)) selectedWeapon = 1;
@@ -86,23 +81,44 @@ public class SwitchScript : MonoBehaviour
         else if (Input.GetAxis("Mouse ScrollWheel") > 0f)
         {
             --selectedWeapon;
-            if (selectedWeapon < 1) selectedWeapon = inventory.childCount;
+            Debug.Log("--");
+            if (selectedWeapon < 1) selectedWeapon = inventory.childCount - 1;
         }
         else if (Input.GetAxis("Mouse ScrollWheel") < 0f)
         {
             ++selectedWeapon;
-            if (selectedWeapon > inventory.childCount) selectedWeapon = 1;
+            Debug.Log("++");
+            if (selectedWeapon > inventory.childCount- 1) selectedWeapon = 1;
         }
-        
+        // inventorySize < selectedWeapon < 1
         //se da pra trocar de arma
         if (currentWeapon != selectedWeapon)
         {
-            // switchingC = StartCoroutine(SwitchWeapon());
+            SwitchWeapon();
         }
     }
 
     
     private void LoadWeapon()
+    {
+        if (inventory.childCount < inventorySize + 1)  // inventario com espaco
+        {
+            SaveWeapon(inventory.childCount);
+            selectedWeapon = currentWeapon + 1;
+        }
+        else if (currentWeapon == 1)
+        {
+            currentWeapon = 2;
+        }
+        else
+        {
+            ThrowWeapon();
+            SaveWeapon(currentWeapon);
+        }
+        SwitchWeapon();
+    }
+
+    private void SaveWeapon(int index)
     {
         Transform newWeapon = transform.GetChild(2); //pega a arma nova
 
@@ -111,10 +127,40 @@ public class SwitchScript : MonoBehaviour
                                  mainCamera.transform.right * weaponOffset.x +
                                  mainCamera.transform.up * weaponOffset.y +
                                  mainCamera.transform.forward * weaponOffset.z;
+        
         newWeapon.transform.position = weaponPosition;
         newWeapon.transform.rotation = mainCamera.transform.rotation * Quaternion.Euler(90f, 0f, 0f); 
-                                                        //{}{} remendo temporario pros prefabs de teste *Quaternion
+        //{}{} posicao temporaria pros prefabs de teste * Quaternion
+        
+        newWeapon.SetParent(inventory);
+        newWeapon.SetSiblingIndex(index);
+    }
 
+    // private void PickWeapon()
+    // {
+    //     //remove rb
+    //     LoadWeapon();
+    // }
+
+    private void SwitchWeapon()
+    {
+        inventory.GetChild(currentWeapon).gameObject.SetActive(false);
+        //timer
+        inventory.GetChild(selectedWeapon).gameObject.SetActive(true);
+        
+        //updateHUD
+        currentWeapon = selectedWeapon;
+    }
+
+    private void ThrowWeapon()
+    {
+        Transform thrownWeapon = inventory.GetChild(currentWeapon);
+        thrownWeapon.SetParent(null);
+        // Rigidbody thrownWeaponRB = thrownWeapon.GetComponent<Rigidbody>();  // se ja tiver o RB na arma
+        // thrownWeaponRB.useGravity = true;
+        thrownWeapon.gameObject.AddComponent<Rigidbody>();
+        Rigidbody thrownWeaponRB = thrownWeapon.GetComponent<Rigidbody>();
+        thrownWeaponRB.AddForce(mainCamera.transform.forward * 2f);
     }
 
 
@@ -157,8 +203,8 @@ public class SwitchScript : MonoBehaviour
     //     shootScript.isSwitching = false;
     // }
     
-    public void Stop()
-    {
-        if (isSwitching) StopCoroutine(switchingC);
-    }
+    // public void Stop()
+    // {
+    //     if (isSwitching) StopCoroutine(switchingC);
+    // }
 }

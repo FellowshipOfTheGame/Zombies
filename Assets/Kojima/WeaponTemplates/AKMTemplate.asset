@@ -12,19 +12,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a46facf2a55f8b94286ba31f8fb8315b, type: 3}
   m_Name: AKMTemplate
   m_EditorClassIdentifier: 
-  isClosedBolt: 1
-  isFullAuto: 1
-  weaponName: AKM
-  damage: 50
-  burstSize: 1
-  fireRate: 600
-  magCapacity: 30
-  ammo: 30
-  totalAmmo: 300
-  caliber: 7.62x39mm
-  reloadTime: 2.5
-  reloadTimePartial: 2
-  switchTime: 1
-  spread: 1
-  range: 350
-  decay: 5
+  data:
+    isClosedBolt: 1
+    isFullAuto: 1
+    weaponName: AKM
+    damage: 50
+    burstSize: 1
+    bulletCount: 1
+    fireRate: 600
+    fireTime: 0
+    magSize: 30
+    ammo: 30
+    totalAmmo: 300
+    caliber: 7.62x39mm
+    reloadTime: 2.5
+    reloadTimePartial: 2
+    switchTime: 0.5
+    spread: 1
+    range: 350
+    decay: 10
+    recoil: 1.5

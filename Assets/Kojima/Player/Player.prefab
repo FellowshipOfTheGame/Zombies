@@ -17,7 +17,6 @@ GameObject:
   - component: {fileID: 9040991197177471259}
   - component: {fileID: 4735164568990000258}
   - component: {fileID: 185501053006609931}
-  - component: {fileID: 7642978788224263102}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -197,6 +196,7 @@ MonoBehaviour:
   magSizeText: {fileID: 5095556543342082008}
   weaponInfoText: {fileID: 480573760082833102}
   mainCamera: {fileID: 2275953076466039066}
+  selectedWeapon: 1
   currentWeapon: 1
 --- !u!82 &185501053006609931
 AudioSource:
@@ -295,27 +295,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!135 &7642978788224263102
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 654281398916619796}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 2.39
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &2152117744876677798
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -593,6 +572,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77f80f27a2b676a71beac1dba53e29c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ammoText: {fileID: 0}
+  totalAmmoText: {fileID: 0}
 --- !u!224 &9095211981617206762 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7198287896319360844, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}

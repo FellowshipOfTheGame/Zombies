@@ -8,7 +8,7 @@ public class WeaponScript : MonoBehaviour
     public WeaponTemplate template;  // add reference in Unity's spector
     public WeaponStruct data;
     private TimerSliderScript timer;
-    private AmmoHUDScript ammoHUD;
+    // private AmmoHUDScript ammoHUD;
     
     [Header("Coroutines")]
     private Coroutine switchingC;
@@ -26,7 +26,7 @@ public class WeaponScript : MonoBehaviour
     private bool partial;
     
     [Header("Definitions")]
-    public AudioSource audioSource;
+    private AudioSource audioSource;
     private Transform mainCamera;
     
     
@@ -34,10 +34,10 @@ public class WeaponScript : MonoBehaviour
     {
         mainCamera = transform.parent;
         data = template.data;
-        data.fireTime = 60f/template.data.fireRate; 
-        //calcula o tempo entre-tiros com base no balas por minuto (fireRate)
+        data.fireTime = 60f/template.data.fireRate;
+        muzzle = transform.GetChild(0);
         
-        timer = GetComponent<TimerSliderScript>();
+        audioSource = GetComponent<AudioSource>();
     }
     
 
@@ -121,16 +121,14 @@ public class WeaponScript : MonoBehaviour
             }
         }
         
-        ammoHUD.UpdateAmmoText(data.ammo);
+        // ammoHUD.UpdateAmmoText(data.ammo);
     }
     
     
     private void Reload()
     {
         isReloading = true;
-        timer.OnTimerComplete += OnTimerFinished;  // evento pro timer usado pro reload
         if (isShooting) StopCoroutine(shootingC); isShooting = false;
-        timer.Count(partial ? data.reloadTimePartial : data.reloadTime, data.reloadTime);
     }
     
     private void OnTimerFinished()
@@ -147,9 +145,9 @@ public class WeaponScript : MonoBehaviour
             data.totalAmmo = 0;
         }
         
-        timer.OnTimerComplete -= OnTimerFinished; 
-        ammoHUD.UpdateTotalAmmoText(data.totalAmmo);
-        ammoHUD.UpdateAmmoText(data.ammo);
+        // timer.OnTimerComplete -= OnTimerFinished; 
+        // ammoHUD.UpdateTotalAmmoText(data.totalAmmo);
+        // ammoHUD.UpdateAmmoText(data.ammo);
         isReloading = false;
         partial = false;
     }
@@ -159,7 +157,7 @@ public class WeaponScript : MonoBehaviour
     {   // se cancelar o reload (como ao trocar de arma), apaga os flags
         partial = false;
         isReloading = false;
-        timer.OnTimerComplete -= OnTimerFinished;
+        // timer.OnTimerComplete -= OnTimerFinished;
     }
 
 

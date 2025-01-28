@@ -44,6 +44,7 @@ GameObject:
   - component: {fileID: 1933792248335203278}
   - component: {fileID: 7171699829935232497}
   - component: {fileID: 801217022148908225}
+  - component: {fileID: -8708971671822446113}
   m_Layer: 2
   m_Name: Colt1911PF
   m_TagString: Untagged
@@ -92,10 +93,13 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 12d7300ef162dc776841390af0379de4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -149,7 +153,128 @@ MonoBehaviour:
   m_GameObject: {fileID: 8825504131115366856}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1fc7d8d4acb2705e49886b45d5ee07ce, type: 3}
+  m_Script: {fileID: 11500000, guid: c693b559027f1e10c8e19f0bdc551c4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   template: {fileID: 11400000, guid: d158dc819ddb22b5983a5a2bf50104f1, type: 2}
+  data:
+    isClosedBolt: 0
+    isFullAuto: 0
+    weaponName: 
+    damage: 0
+    burstSize: 0
+    bulletCount: 0
+    fireRate: 0
+    fireTime: 0
+    magSize: 0
+    ammo: 0
+    totalAmmo: 0
+    caliber: 
+    reloadTime: 0
+    reloadTimePartial: 0
+    switchTime: 0
+    spread: 0
+    range: 0
+    decay: 0
+    recoil: 0
+  shootSound: {fileID: 8300000, guid: 726945a351c796e0697b51dfff04046a, type: 3}
+  muzzleFlash: {fileID: 8887728906692807729, guid: 42a558a4fd35615798a93eb0d751ee23, type: 3}
+  isReloading: 0
+  isShooting: 0
+--- !u!82 &-8708971671822446113
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8825504131115366856}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

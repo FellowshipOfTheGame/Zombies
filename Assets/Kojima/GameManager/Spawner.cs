@@ -6,7 +6,7 @@ using Random = UnityEngine.Random;
 /// <summary>
 /// 
 ///     Dependencias:
-///     Esse script trabalha em conjunto com o script Spawner.
+///     Esse script trabalha em conjunto com o script Wave.
 /// 
 ///     Funcao do script:
 ///     Esse script spawna prefabs de inimigos, considerando a proximidade do player
