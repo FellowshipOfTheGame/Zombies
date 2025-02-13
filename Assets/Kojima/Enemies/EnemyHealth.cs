@@ -39,7 +39,9 @@ public class EnemyHealth : MonoBehaviour, Interfaces.IDmg, Interfaces.IDmgSpecia
      [Header("Colors")]
      private readonly Color orange = new (1f, 0.55f, 0.25f);
      private readonly Color purple = new(0.7f, 0.35f, 1.0f);
-     
+
+     [Header("Scripts")]
+     private Wave wave;
      // private GameRules gameRule;
      
      
@@ -51,6 +53,7 @@ public class EnemyHealth : MonoBehaviour, Interfaces.IDmg, Interfaces.IDmgSpecia
           missileSide = randomValue == 0 ? 1 : -1;
           
           // gameRule = GameObject.Find("GameManager").GetComponent<GameRules>();
+          wave = GetComponent<Wave>();
      }
 
      public void TakeDmg(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor)
@@ -60,7 +63,7 @@ public class EnemyHealth : MonoBehaviour, Interfaces.IDmg, Interfaces.IDmgSpecia
           health -= damage;
           if (health <= 0)
           {
-               // Morreu();
+               Morreu();
           }
           Debug.Log(health);
      }
@@ -134,18 +137,20 @@ public class EnemyHealth : MonoBehaviour, Interfaces.IDmg, Interfaces.IDmgSpecia
           
           if (health <= 0)
           {
-               // Morreu();
+               Morreu();
           }
           Debug.Log(health);
      }
      
      
-     // public void Morreu()
-     // {
-     //      ConnectionSingleton.Instance.Connection.UDP_Send_Message(
-     //           new Message("DIE", new byte[]{0}));
-     //      gameRule.pontuacao++;
-     // }
+     private void Morreu()
+     {
+          // ConnectionSingleton.Instance.Connection.UDP_Send_Message(
+          //      new Message("DIE", new byte[]{0}));
+          // gameRule.pontuacao++;
+
+          wave.remainingEnemies--;
+     }
      
      
      private void FloatingDamage(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor)

@@ -39,8 +39,8 @@ using Random = UnityEngine.Random;
 public class Spawner : MonoBehaviour, IComparer<Transform>
 {
     [Header("Debugging")]
-    public bool debugSpawn = false;
-    public bool debugChance = false;
+    public bool debugSpawn;
+    public bool debugChance;
     
     [Header("SpawnPoints")]
     public Transform spawnerParent;

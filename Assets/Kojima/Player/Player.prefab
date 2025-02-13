@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 2116800836133706834}
   - component: {fileID: 9040991197177471259}
   - component: {fileID: 4735164568990000258}
+  - component: {fileID: -2451839721789287905}
   - component: {fileID: 185501053006609931}
   m_Layer: 6
   m_Name: Player
@@ -198,6 +199,24 @@ MonoBehaviour:
   mainCamera: {fileID: 2275953076466039066}
   selectedWeapon: 1
   currentWeapon: 1
+--- !u!114 &-2451839721789287905
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 654281398916619796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf986e810676611f381a28fd05a50f61, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timerSlider: {fileID: 2007355092270407907}
+  timerGO: {fileID: 5811975021785133574}
+  ammoText: {fileID: 206930518871800530}
+  totalAmmoText: {fileID: 2080631550611440781}
+  magSizeText: {fileID: 5095556543342082008}
+  weaponInfoText: {fileID: 480573760082833102}
 --- !u!82 &185501053006609931
 AudioSource:
   m_ObjectHideFlags: 0

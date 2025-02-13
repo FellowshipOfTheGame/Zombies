@@ -1,14 +1,13 @@
-using System;
 using UnityEngine;
 using System.Collections;
 using Random = UnityEngine.Random;
 
 public class WeaponScript : MonoBehaviour
 {
-    public WeaponTemplate template;  // add reference in Unity's spector
+    public WeaponTemplate template;  // add the weapon's template in Unity's spector
     public WeaponStruct data;
     private TimerSliderScript timer;
-    // private AmmoHUDScript ammoHUD;
+    private UpdateHUD updateHUD;
     
     [Header("Coroutines")]
     private Coroutine switchingC;
@@ -38,13 +37,14 @@ public class WeaponScript : MonoBehaviour
         muzzle = transform.GetChild(0);
         
         audioSource = GetComponent<AudioSource>();
+        updateHUD = GetComponentInParent<UpdateHUD>();
     }
     
 
     private void Update()
     {
         if (isReloading) return;
-        
+
         if (data.ammo == 0 && (Input.GetKeyDown(KeyCode.Mouse0) || Input.GetKeyDown(KeyCode.Mouse1) || Input.GetKeyDown(KeyCode.R)))
         { partial = false; Reload(); }  //empty reload
         
@@ -54,7 +54,7 @@ public class WeaponScript : MonoBehaviour
         //checar isReloading duas vezes pra nao dar erro de recarregar e atirar ao mesmo tempo
         if (isReloading || isShooting) return;
         
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+        if (Input.GetKey(KeyCode.Mouse0))
         { shootingC = StartCoroutine(data.isFullAuto ? ShootAuto() : ShootSingle()); }
         
         // if (Input.GetKeyDown(KeyCode.Mouse1))
@@ -101,7 +101,7 @@ public class WeaponScript : MonoBehaviour
             Quaternion spreadRotation = Quaternion.Euler(Random.Range(-data.spread/2, data.spread/2), Random.Range(-data.spread/2, data.spread/2), 0f);
             rayDirection = spreadRotation * rayDirection;
             
-            while (damage > 0) //chain raycasts
+            while (damage > 0) //chain raycasts to pierce through enemies
             {
                 if (Physics.Raycast(rayOrigin, rayDirection, out RaycastHit hit, rangeLeft))
                 {
@@ -120,8 +120,7 @@ public class WeaponScript : MonoBehaviour
                 else damage = 0;
             }
         }
-        
-        // ammoHUD.UpdateAmmoText(data.ammo);
+        updateHUD.CurrentAmmo(data.ammo);
     }
     
     
@@ -130,7 +129,7 @@ public class WeaponScript : MonoBehaviour
         isReloading = true;
         if (isShooting) StopCoroutine(shootingC); isShooting = false;
     }
-    
+    //FAZER UM AWAIT(TRUE) E COLOCAR UM RETORNO NO TIMER
     private void OnTimerFinished()
     {
         data.totalAmmo += data.ammo;
@@ -146,12 +145,25 @@ public class WeaponScript : MonoBehaviour
         }
         
         // timer.OnTimerComplete -= OnTimerFinished; 
-        // ammoHUD.UpdateTotalAmmoText(data.totalAmmo);
-        // ammoHUD.UpdateAmmoText(data.ammo);
+        updateHUD.CurrentAmmo(data.ammo);
+        updateHUD.TotalAmmo(data.totalAmmo);
         isReloading = false;
         partial = false;
     }
 
+    private void UpdatePlayerHUD()
+    {
+        updateHUD.CurrentAmmo(data.ammo);
+        updateHUD.TotalAmmo(data.totalAmmo);
+        updateHUD.MagSize(data.magSize);
+        updateHUD.WeaponInfo(data.weaponName, data.caliber);
+    }
+
+    private void OnEnable()
+    {  // ta duplicado pra garantir que carregue certo (racing contra o start) e caso troque de parent/player
+        updateHUD = GetComponentInParent<UpdateHUD>();
+        UpdatePlayerHUD();
+    }
 
     private void OnDisable()
     {   // se cancelar o reload (como ao trocar de arma), apaga os flags

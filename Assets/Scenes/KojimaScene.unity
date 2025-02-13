@@ -1299,6 +1299,18 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 2275953076466039066, guid: 303eb4bfeaaf2d906b9ed7cae586dd31, type: 3}
+      propertyPath: orthographic
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2275953076466039066, guid: 303eb4bfeaaf2d906b9ed7cae586dd31, type: 3}
+      propertyPath: field of view
+      value: 77.55214
+      objectReference: {fileID: 0}
+    - target: {fileID: 2275953076466039066, guid: 303eb4bfeaaf2d906b9ed7cae586dd31, type: 3}
+      propertyPath: m_FOVAxisMode
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3361299065580868434, guid: 303eb4bfeaaf2d906b9ed7cae586dd31, type: 3}
       propertyPath: m_Layer
       value: 6

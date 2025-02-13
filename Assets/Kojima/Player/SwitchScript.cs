@@ -1,6 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 
 /// <summary>
 ///     Start()
@@ -28,14 +26,6 @@ using TMPro;
 
 public class SwitchScript : MonoBehaviour
 {
-    [Header("UI Elements")]
-    public Slider timerSlider;
-    public GameObject timerGO;
-    public TextMeshProUGUI ammoText;
-    public TextMeshProUGUI totalAmmoText;
-    public TextMeshProUGUI magSizeText;
-    public TextMeshProUGUI weaponInfoText;
-
     [Header("Coroutines")]
     private Coroutine switchingC;
     private bool isSwitching;
@@ -43,7 +33,6 @@ public class SwitchScript : MonoBehaviour
     [Header("Definitions")]
     public Camera mainCamera;
     private Transform inventory;
-    private WeaponScript weaponScript;
     
     [Header("Variables")]
     private readonly Vector3 weaponOffset = new(0.35f, -0.4f, 0.5f);  // offset de teste pra arma na tela
@@ -54,9 +43,8 @@ public class SwitchScript : MonoBehaviour
     
     
     private void Start()
-    { 
+    {
         inventory = mainCamera.transform;
-        timerGO.SetActive(false);
         SaveWeapon(1);
         SwitchWeapon();
     }
@@ -101,7 +89,7 @@ public class SwitchScript : MonoBehaviour
     
     private void LoadWeapon()
     {
-        if (inventory.childCount < inventorySize + 1)  // inventario com espaco
+        if (inventory.childCount <= inventorySize)  // inventario com espaco
         {
             SaveWeapon(inventory.childCount);
             selectedWeapon = currentWeapon + 1;
@@ -147,8 +135,7 @@ public class SwitchScript : MonoBehaviour
         inventory.GetChild(currentWeapon).gameObject.SetActive(false);
         //timer
         inventory.GetChild(selectedWeapon).gameObject.SetActive(true);
-        
-        //updateHUD
+
         currentWeapon = selectedWeapon;
     }
 
