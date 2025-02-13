@@ -38,6 +38,10 @@ using Random = UnityEngine.Random;
 
 public class Spawner : MonoBehaviour, IComparer<Transform>
 {
+    [Header("Debugging")]
+    public bool debugSpawn = false;
+    public bool debugChance = false;
+    
     [Header("SpawnPoints")]
     public Transform spawnerParent;
     private List<Transform> spawnPoints;
@@ -80,7 +84,7 @@ public class Spawner : MonoBehaviour, IComparer<Transform>
     public void SpawnEnemies(int maxEnemies, int waveWeight)
     {
         spawnPoints.Sort(Compare);
-        Debug.Log("1: "+spawnPoints[0]+", 2: "+spawnPoints[1]);
+        if (debugSpawn) { Debug.Log("1: " + spawnPoints[0] + ", 2: " + spawnPoints[1]); }
         StartCoroutine(EnemySpawner(maxEnemies, waveWeight, spawnPoints));
     }
     
@@ -93,19 +97,23 @@ public class Spawner : MonoBehaviour, IComparer<Transform>
             foreach (EnemyData enemy in enemyList)  // compara a chance de spawn
             {  // tem que somar a chance pra cada slot ter o comprimento desejado, mudando os valores delimitantes:
                 cumulativeChance += enemy.spawnChance;  // 1,3,5 -> [0 <--(1)--> 1 <--(3)--> 4 <--(5)--> 9]
-                Debug.Log("rand: "+rand.ToString("F1")+" / chance: "+cumulativeChance.ToString("F1")+" / PF: "+enemy.enemyPF );
+
+                if (debugChance)  // output: "rand: n.n / chance: m.m / PF: nome"
+                { Debug.Log("rand: " + rand.ToString("F1") + " / chance: " +
+                            cumulativeChance.ToString("F1") + " / PF: " + enemy.enemyPF); }
+                
                 if (rand < cumulativeChance)
                 {  // spawna o inimigo em um ponto proximo aleatorio e aumenta o peso da onda
                     Instantiate(enemy.enemyPF, spawners[Random.Range(0, maxSpawnPoints)].position, Quaternion.identity);
                     currentWeight += enemy.weight;
                     ++remainingEnemies; wave.remainingEnemies = remainingEnemies;
-                    Debug.Log("spawned: "+enemy.enemyPF);
-                    break;
+                    
+                    if (debugSpawn) { Debug.Log("spawned: " + enemy.enemyPF); }
+                    break;  // quebra o foreach pra rodar os numeros de novo e spawnar outro inimigo
                 }
             }
             yield return new WaitForSeconds(0.5f);
         }
-        
     }
     
     public int Compare(Transform pointOne, Transform pointTwo)

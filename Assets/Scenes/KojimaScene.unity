@@ -1691,6 +1691,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1982920208}
     - target: {fileID: 7022587168976972981, guid: 01ae13e6ab11712309556c43e037e454, type: 3}
+      propertyPath: debugSpawn
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7022587168976972981, guid: 01ae13e6ab11712309556c43e037e454, type: 3}
+      propertyPath: debugChance
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7022587168976972981, guid: 01ae13e6ab11712309556c43e037e454, type: 3}
       propertyPath: spawnerParent
       value: 
       objectReference: {fileID: 4363353765229133942}
