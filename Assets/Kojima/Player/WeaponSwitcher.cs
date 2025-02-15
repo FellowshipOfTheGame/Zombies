@@ -134,7 +134,9 @@ public class WeaponSwitcher : MonoBehaviour
     {
         inventory.GetChild(currentWeapon).gameObject.SetActive(false);
         //timer
+        
         inventory.GetChild(selectedWeapon).gameObject.SetActive(true);
+        GetComponentInChildren<WeaponController>().UpdatePlayerHUD();
 
         currentWeapon = selectedWeapon;
     }

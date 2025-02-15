@@ -30,7 +30,6 @@ public class WeaponController : MonoBehaviour
     
     private void Start()
     {
-        mainCamera = transform.parent;
         data = template.data;
         data.fireTime = 60f/template.data.fireRate;
         muzzle = transform.GetChild(0);
@@ -64,10 +63,10 @@ public class WeaponController : MonoBehaviour
     private IEnumerator ShootAuto() //tiro normal / full auto
     {
         isShooting = true;
-        while (data.ammo > 0 && Input.GetKey(KeyCode.Mouse0)) //se tiver municao e continuar atirando
+        while (data.ammo > 0 && Input.GetKey(KeyCode.Mouse0)) //enquanto tiver municao e continuar atirando
         {
-            Shoot(); --data.ammo;
-            yield return new WaitForSeconds(data.fireTime); //muda o tempo em relacao a fire rate da arma
+            Shoot();
+            yield return new WaitForSeconds(data.fireTime);
         }
         isShooting = false;
     }
@@ -78,8 +77,8 @@ public class WeaponController : MonoBehaviour
         isShooting = true; int i = 0;
         while (data.ammo > 0 && i < data.burstSize)
         {
-            Shoot(); --data.ammo; ++i;
-            yield return new WaitForSeconds(data.fireTime); //muda o tempo em relacao a fire rate da arma
+            Shoot(); ++i;
+            yield return new WaitForSeconds(data.fireTime);
         }
         isShooting = false;
     }
@@ -90,14 +89,21 @@ public class WeaponController : MonoBehaviour
         audioSource.PlayOneShot(shootSound);
         GameObject muzzleFlareInstantiate = Instantiate(muzzleFlash, muzzle.position, muzzle.rotation);
         Destroy(muzzleFlareInstantiate, 0.02f);
+        --data.ammo; playerHUD.CurrentAmmo(data.ammo);
         
         for (int i = 0; i < data.bulletCount; i++) //atirar varios raycasts se for escopeta
         {
             int damage = data.damage;
             float rangeLeft = 3 * data.range;
-            Vector3 rayOrigin = mainCamera.transform.position;
-            Vector3 rayDirection = mainCamera.transform.forward;
-            Quaternion spreadRotation = Quaternion.Euler(Random.Range(-data.spread/2, data.spread/2), Random.Range(-data.spread/2, data.spread/2), 0f);
+            
+            Quaternion spreadRotation = Quaternion.Euler(
+                Random.Range(-data.spread/2, data.spread/2), 
+                Random.Range(-data.spread/2, data.spread/2), 
+                0f);
+            
+            Vector3 rayOrigin = mainCamera.transform.position;  // tiro sai da camera
+            // Vector3 rayOrigin = muzzle.position;  // tiro sai da arma
+            Vector3 rayDirection = transform.up;
             rayDirection = spreadRotation * rayDirection;
             
             while (damage > 0) //chain raycasts to pierce through enemies
@@ -119,7 +125,6 @@ public class WeaponController : MonoBehaviour
                 else damage = 0;
             }
         }
-        playerHUD.CurrentAmmo(data.ammo);
     }
     
     private void Reload()
@@ -149,20 +154,16 @@ public class WeaponController : MonoBehaviour
         partial = false;
     }
 
-    private void UpdatePlayerHUD()
+    public void UpdatePlayerHUD()
     {
+        playerHUD = GetComponentInParent<PlayerHUD>();
         playerHUD.CurrentAmmo(data.ammo);
         playerHUD.TotalAmmo(data.totalAmmo);
         playerHUD.MagSize(data.magSize);
         playerHUD.WeaponInfo(data.weaponName, data.caliber);
+        mainCamera = transform.parent;
     }
-
-    private void OnEnable()
-    {  // ta duplicado pra garantir que carregue certo (racing contra o start) e caso troque de parent/player
-        playerHUD = GetComponentInParent<PlayerHUD>();
-        UpdatePlayerHUD();
-    }
-
+    
     private void OnDisable()
     {   // se cancelar o reload (como ao trocar de arma), apaga os flags
         partial = false;
