@@ -1,7 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using TMPro;
-
 
 /// <summary>
 /// 
@@ -20,92 +18,40 @@ using TMPro;
 ///     
 /// </summary>
 
-
 public class Wave : MonoBehaviour
 {
-    [Header("UI Elements")]
-    public TextMeshProUGUI waveCounterText;
-    public TextMeshProUGUI remainingAmountText;
-    private readonly Color wine = new(0.69f, 0, 0);
-    private readonly Color lightGray = new(0.75f, 0.75f, 0.75f);
-    
     [Header("Variables")]
-    public int waveCount;
-    public int remainingEnemies;
-    private int maxEnemies;
-    private int weight;
-    private bool canSpawn;//= false;
+    public int waveCount = 1;
+    private int maxEnemies = 15;
+    private int weight = 48;
     
     [Header("InnerCode")]
     private Spawner spawner;
+    private HUDScript hudScript;
     private Coroutine startCoroutine;
     private Coroutine changeCoroutine;
     
-    
-    private void Start()
+    private IEnumerator Start()
     {
         spawner = GetComponent<Spawner>();
-        // remainingAmountText.text = remainingEnemies.ToString();
-        waveCounterText.text = waveCount.ToString("D2");
-        waveCounterText.color = lightGray;
-        // remainingAmountText.color = lightGray;  // {}{} fazer o texto de remaining cinza ?
-        WaveEnd();  // comeca no WaveEnd pro texto ir de cinza pra vinho
-    }
-    
-    private void Update()
-    {
-        // if (Input.GetKeyDown(KeyCode.Minus)) spawner.SpawnEnemies(10, 20);
-        remainingAmountText.text = remainingEnemies.ToString();
         
-        if (canSpawn && remainingEnemies == 0)  // ta no update pq os inimigos ainda nao tem funcao pra morte
-        {
-            canSpawn = false;
-            changeCoroutine = StartCoroutine(WaveStartToEnd());
-        }
-    }
-    
-    private IEnumerator WaveStart()
-    {
-        spawner.SpawnEnemies(maxEnemies, weight);
         yield return new WaitForSeconds(1);
-        canSpawn = true;
+        spawner.SpawnEnemies(maxEnemies, weight);
     }
     
-    private IEnumerator WaveStartToEnd()
-    {  // wine --> lightGray --> WaveEnd
-        for (float i = 0; i <= 50; i++)
-        {
-            waveCounterText.color = Color.Lerp(wine, lightGray, i/50f);
-            yield return new WaitForSeconds(0.02f);
-        }
-        // waveCounterText.color = lightGray;
-        // show power-up screen
-        yield return new WaitForSeconds(5f);
-        WaveEnd();
-    }
-    
-    private void WaveEnd()
-    {  // wave++ --> WaveE2S
-        // update wave info
+    public void StartNewWave() { StartCoroutine(NewWave()); }
+
+    private IEnumerator NewWave()
+    {
         ++waveCount;
-        maxEnemies=Mathf.FloorToInt(15 + 2*Mathf.Log(waveCount));  // floor( 15 + 2*ln(wave) )
+        Events.IncreaseWaveCounter(waveCount);  // atualiza o valor e troca a cor dos counters de vinho pra cinza
+        yield return new WaitForSeconds(5);
+        Events.StartWave();  // troca a cor de cinza pra vinho
+        yield return new WaitForSeconds(1.75f);
+        
+        maxEnemies = Mathf.FloorToInt(15 + 2*Mathf.Log(waveCount));  // floor( 15 + 2*ln(wave) )
         weight = 40 + 8 * waveCount;
-        
-        // update HUD
-        waveCounterText.text = waveCount.ToString("D2");
-        // show power-up screen
-        
-        changeCoroutine = StartCoroutine(WaveEndToStart());
+        spawner.SpawnEnemies(maxEnemies, weight);
     }
     
-    private IEnumerator WaveEndToStart()
-    {  // lightGray --> red --> WaveStart
-        for (float i = 0; i <= 50; i++)
-        {
-            waveCounterText.color = Color.Lerp(lightGray, wine, i/50f);
-            yield return new WaitForSeconds(0.02f);
-        }
-        // waveCounterText.color = wine;
-        startCoroutine = StartCoroutine(WaveStart());
-    }
 }

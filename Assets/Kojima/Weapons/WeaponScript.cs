@@ -6,8 +6,7 @@ public class WeaponScript : MonoBehaviour
 {
     public WeaponTemplate template;  // add the weapon's template in Unity's spector
     public WeaponStruct data;
-    private TimerSliderScript timer;
-    private UpdateHUD updateHUD;
+    private HUDScript hudScript;
     
     [Header("Coroutines")]
     private Coroutine switchingC;
@@ -37,7 +36,7 @@ public class WeaponScript : MonoBehaviour
         muzzle = transform.GetChild(0);
         
         audioSource = GetComponent<AudioSource>();
-        updateHUD = GetComponentInParent<UpdateHUD>();
+        hudScript = GetComponentInParent<HUDScript>();
     }
     
 
@@ -120,9 +119,8 @@ public class WeaponScript : MonoBehaviour
                 else damage = 0;
             }
         }
-        updateHUD.CurrentAmmo(data.ammo);
+        hudScript.CurrentAmmo(data.ammo);
     }
-    
     
     private void Reload()
     {
@@ -145,23 +143,23 @@ public class WeaponScript : MonoBehaviour
         }
         
         // timer.OnTimerComplete -= OnTimerFinished; 
-        updateHUD.CurrentAmmo(data.ammo);
-        updateHUD.TotalAmmo(data.totalAmmo);
+        hudScript.CurrentAmmo(data.ammo);
+        hudScript.TotalAmmo(data.totalAmmo);
         isReloading = false;
         partial = false;
     }
 
     private void UpdatePlayerHUD()
     {
-        updateHUD.CurrentAmmo(data.ammo);
-        updateHUD.TotalAmmo(data.totalAmmo);
-        updateHUD.MagSize(data.magSize);
-        updateHUD.WeaponInfo(data.weaponName, data.caliber);
+        hudScript.CurrentAmmo(data.ammo);
+        hudScript.TotalAmmo(data.totalAmmo);
+        hudScript.MagSize(data.magSize);
+        hudScript.WeaponInfo(data.weaponName, data.caliber);
     }
 
     private void OnEnable()
     {  // ta duplicado pra garantir que carregue certo (racing contra o start) e caso troque de parent/player
-        updateHUD = GetComponentInParent<UpdateHUD>();
+        hudScript = GetComponentInParent<HUDScript>();
         UpdatePlayerHUD();
     }
 

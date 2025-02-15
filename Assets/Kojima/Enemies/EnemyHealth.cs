@@ -149,7 +149,8 @@ public class EnemyHealth : MonoBehaviour, Interfaces.IDmg, Interfaces.IDmgSpecia
           //      new Message("DIE", new byte[]{0}));
           // gameRule.pontuacao++;
 
-          wave.remainingEnemies--;
+          Events.EnemyDied();
+          Destroy(gameObject);
      }
      
      

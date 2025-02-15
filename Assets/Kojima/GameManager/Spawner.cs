@@ -38,10 +38,6 @@ using Random = UnityEngine.Random;
 
 public class Spawner : MonoBehaviour, IComparer<Transform>
 {
-    [Header("Debugging")]
-    public bool debugSpawn;
-    public bool debugChance;
-    
     [Header("SpawnPoints")]
     public Transform spawnerParent;
     private List<Transform> spawnPoints;
@@ -64,13 +60,14 @@ public class Spawner : MonoBehaviour, IComparer<Transform>
     public Transform player;
     public int remainingEnemies;
     
-    [Header("WaveController")]
+    [Header("Scripts")]
     private Wave wave;
 
     
     private void Start()
     {
         wave = GetComponent<Wave>();
+        Events.OnEnemyDeath += DecreaseEnemyCounter;
         
         spawnPoints = new List<Transform>();
         foreach (Transform point in spawnerParent) spawnPoints.Add(point);
@@ -84,7 +81,7 @@ public class Spawner : MonoBehaviour, IComparer<Transform>
     public void SpawnEnemies(int maxEnemies, int waveWeight)
     {
         spawnPoints.Sort(Compare);
-        if (debugSpawn) { Debug.Log("1: " + spawnPoints[0] + ", 2: " + spawnPoints[1]); }
+        // Debug.Log("1: " + spawnPoints[0] + ", 2: " + spawnPoints[1]);
         StartCoroutine(EnemySpawner(maxEnemies, waveWeight, spawnPoints));
     }
     
@@ -98,22 +95,32 @@ public class Spawner : MonoBehaviour, IComparer<Transform>
             {  // tem que somar a chance pra cada slot ter o comprimento desejado, mudando os valores delimitantes:
                 cumulativeChance += enemy.spawnChance;  // 1,3,5 -> [0 <--(1)--> 1 <--(3)--> 4 <--(5)--> 9]
 
-                if (debugChance)  // output: "rand: n.n / chance: m.m / PF: nome"
-                { Debug.Log("rand: " + rand.ToString("F1") + " / chance: " +
-                            cumulativeChance.ToString("F1") + " / PF: " + enemy.enemyPF); }
+                // output: "rand: n.n / chance: m.m / PF: nome"
+                // Debug.Log("rand: " + rand.ToString("F1") + " / chance: " +
+                //           cumulativeChance.ToString("F1") + " / PF: " + enemy.enemyPF);
                 
                 if (rand < cumulativeChance)
                 {  // spawna o inimigo em um ponto proximo aleatorio e aumenta o peso da onda
                     Instantiate(enemy.enemyPF, spawners[Random.Range(0, maxSpawnPoints)].position, Quaternion.identity);
                     currentWeight += enemy.weight;
-                    ++remainingEnemies; wave.remainingEnemies = remainingEnemies;
+                    ++remainingEnemies;
+                    Events.UpdateEnemiesCounter(remainingEnemies);
                     
-                    if (debugSpawn) { Debug.Log("spawned: " + enemy.enemyPF); }
+                    // printa o prefab do inimigo spawnado
+                    // Debug.Log("spawned: " + enemy.enemyPF);
                     break;  // quebra o foreach pra rodar os numeros de novo e spawnar outro inimigo
                 }
             }
-            yield return new WaitForSeconds(0.5f);
+            // delay que vai ficando menor com o tempo
+            yield return new WaitForSeconds(Mathf.Exp(-0.15f * remainingEnemies - 0.05f) + 0.17f);
         }
+    }
+    
+    private void DecreaseEnemyCounter()
+    {
+        --remainingEnemies;
+        Events.UpdateEnemiesCounter(remainingEnemies);
+        if (remainingEnemies==0) { wave.StartNewWave(); }
     }
     
     public int Compare(Transform pointOne, Transform pointTwo)

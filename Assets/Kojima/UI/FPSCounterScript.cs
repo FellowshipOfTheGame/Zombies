@@ -1,14 +1,14 @@
 using UnityEngine;
 using TMPro;
 
-public class FPSdisplayUI : MonoBehaviour
+public class FPSCounterScript : MonoBehaviour
 {
     public TextMeshProUGUI fpsText;
-    private float pollingTime = 0.5f;
+    private const float pollingTime = 0.5f;
     private float elapsedTime;
     private int frameCount;
     
-    void Update()
+    private void Update()
     {
         elapsedTime += Time.deltaTime;  //tem que ser com isso pra pegar o tempo da execucao de frames
         ++frameCount;
