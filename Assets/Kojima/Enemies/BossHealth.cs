@@ -6,7 +6,7 @@ using UnityEngine;
 using TMPro;
 using Random = UnityEngine.Random;
 
-public class BossHealth : MonoBehaviour, Interfaces.IDmg, Interfaces.IDmgSpecial
+public class BossHealth : MonoBehaviour, InterfacesMNG.IDmg, InterfacesMNG.IDmgSpecial
 {
      public int maxHealth = 10000;
      private int health;
@@ -172,7 +172,7 @@ public class BossHealth : MonoBehaviour, Interfaces.IDmg, Interfaces.IDmgSpecial
           Vector3 spawnPosition = transform.position + 0.7f * missileSide * textRotateTarget.right;
           Quaternion spawnRotation = Quaternion.Euler(0, textRotateTarget.eulerAngles.y, missileSide * -90);
           GameObject missile = Instantiate(missilePrefab, spawnPosition, spawnRotation);
-          missile.GetComponent<Missile>().Setter(damage, target, textRotateTarget, orange);
+          missile.GetComponent<MissileTargeting>().Setter(damage, target, textRotateTarget, orange);
           missileSide *= -1f;
      }
 }

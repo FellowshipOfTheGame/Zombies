@@ -19,7 +19,7 @@ using Random = UnityEngine.Random;
 /// 
 /// </summary>
 
-public class EnemyHealth : MonoBehaviour, Interfaces.IDmg, Interfaces.IDmgSpecial
+public class EnemyHealth : MonoBehaviour, InterfacesMNG.IDmg, InterfacesMNG.IDmgSpecial
 {
      [Header("InternalVariables")]
      public int maxHealth = 100;
@@ -41,7 +41,7 @@ public class EnemyHealth : MonoBehaviour, Interfaces.IDmg, Interfaces.IDmgSpecia
      private readonly Color purple = new(0.7f, 0.35f, 1.0f);
 
      [Header("Scripts")]
-     private Wave wave;
+     private WaveMNG waveMNG;
      // private GameRules gameRule;
      
      
@@ -53,7 +53,7 @@ public class EnemyHealth : MonoBehaviour, Interfaces.IDmg, Interfaces.IDmgSpecia
           missileSide = randomValue == 0 ? 1 : -1;
           
           // gameRule = GameObject.Find("GameManager").GetComponent<GameRules>();
-          wave = GetComponent<Wave>();
+          waveMNG = GetComponent<WaveMNG>();
      }
 
      public void TakeDmg(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor)
@@ -149,7 +149,7 @@ public class EnemyHealth : MonoBehaviour, Interfaces.IDmg, Interfaces.IDmgSpecia
           //      new Message("DIE", new byte[]{0}));
           // gameRule.pontuacao++;
 
-          Events.EnemyDied();
+          EventsMNG.EnemyDied();
           Destroy(gameObject);
      }
      
@@ -249,7 +249,7 @@ public class EnemyHealth : MonoBehaviour, Interfaces.IDmg, Interfaces.IDmgSpecia
           //           closestDistance2 = distance;
           //      }
           // }
-          // //                                     sem alvos ? self target : missil no alvo
+          // //                                     sem alvos ? self target : missel no alvo
           // InstantiateMissile(closestDistance1 > radius ? transform : closestEnemy1, damage, textRotateTarget);
           //
           // if (closestDistance2 > radius) return;
@@ -261,7 +261,7 @@ public class EnemyHealth : MonoBehaviour, Interfaces.IDmg, Interfaces.IDmgSpecia
           Vector3 spawnP = transform.position + 0.6f * missileSide * textRotateTarget.right;
           Quaternion spawnR = Quaternion.Euler(0, textRotateTarget.eulerAngles.y, missileSide * -Random.Range(85f,100f));
           GameObject missile = Instantiate(missilePrefab, spawnP, spawnR);
-          missile.GetComponent<Missile>().Setter(damage, target, textRotateTarget, orange);
+          missile.GetComponent<MissileTargeting>().Setter(damage, target, textRotateTarget, orange);
           missileSide *= -1f;
      }
      
@@ -275,7 +275,7 @@ public class EnemyHealth : MonoBehaviour, Interfaces.IDmg, Interfaces.IDmgSpecia
                GameObject hitObject = targetHit.collider.gameObject;
                if (hitObject.CompareTag("Player"))
                {
-                    hitObject.GetComponent<Interfaces.IDmg>().TakeDmg(damage, targetHit.point, textRotateTarget, purple);
+                    hitObject.GetComponent<InterfacesMNG.IDmg>().TakeDmg(damage, targetHit.point, textRotateTarget, purple);
                }
           }
           // instancia o ricochetePF entre this.transform e target.transform

@@ -14,10 +14,11 @@ GameObject:
   - component: {fileID: 5135437652465674835}
   - component: {fileID: 2345505113251013337}
   - component: {fileID: 2116800836133706834}
-  - component: {fileID: 9040991197177471259}
+  - component: {fileID: 1605655904093145302}
   - component: {fileID: 4735164568990000258}
   - component: {fileID: 1722816878073955608}
   - component: {fileID: 185501053006609931}
+  - component: {fileID: 8145685145233958827}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -120,7 +121,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 112
   m_CollisionDetection: 1
 --- !u!136 &2345505113251013337
 CapsuleCollider:
@@ -159,7 +160,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   worldSpaceUIPrefab: {fileID: 3433633269811599418, guid: 7e3e78000d4e32194801cbf4ed71b6c4, type: 3}
---- !u!114 &9040991197177471259
+--- !u!114 &1605655904093145302
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -168,16 +169,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 654281398916619796}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5852e56e609d1cd32ab4730ca96ba85c, type: 3}
+  m_Script: {fileID: 11500000, guid: c20bdb6ebaed56342917e701577cf07a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSpeed: 10
-  jumpSpeed: 6
-  playerTransform: {fileID: 3756527758745793427}
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 1
-  isGrounded: 0
+  walkSpeed: 5
+  runSpeed: 10
+  acceleration: 1
+  mouseSensitivity: 250
+  playerCamera: {fileID: 1651573643715026828}
+  jumpHeight: 0.75
 --- !u!114 &4735164568990000258
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -209,8 +209,8 @@ MonoBehaviour:
   fpsCounter: {fileID: 2249523862599328338}
   timeSlider: {fileID: 2007355092270407907}
   ammoText: {fileID: 206930518871800530}
-  totalAmmoText: {fileID: 2080631550611440781}
   magSizeText: {fileID: 5095556543342082008}
+  totalAmmoText: {fileID: 2080631550611440781}
   weaponInfoText: {fileID: 480573760082833102}
   waveCounter: {fileID: 2009435910707697312}
   remainingEnemies: {fileID: 4052388465862622160}
@@ -311,6 +311,31 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!143 &8145685145233958827
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 654281398916619796}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 2
+  m_Radius: 0.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &2152117744876677798
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -322,6 +347,10 @@ PrefabInstance:
     - target: {fileID: 68887683753443098, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
       propertyPath: m_Layer
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 210034926321338612, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
+      propertyPath: m_Name
+      value: FPSCounter
       objectReference: {fileID: 0}
     - target: {fileID: 210034926321338612, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
       propertyPath: m_Layer
@@ -357,7 +386,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1745725039661065386, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2294838201975638702, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
       propertyPath: m_SizeDelta.x
@@ -385,7 +414,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3708819980238502388, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5581529847555053728, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
       propertyPath: m_Layer
@@ -626,14 +655,6 @@ PrefabInstance:
     - target: {fileID: 4045951864310358945, guid: a35c75b8a4ced1ebf87cc8c41d7fccc9, type: 3}
       propertyPath: m_Layer
       value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 4230109438510387405, guid: a35c75b8a4ced1ebf87cc8c41d7fccc9, type: 3}
-      propertyPath: player
-      value: 
-      objectReference: {fileID: 3756527758745793427}
-    - target: {fileID: 4595728854658837914, guid: a35c75b8a4ced1ebf87cc8c41d7fccc9, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4595728854658837914, guid: a35c75b8a4ced1ebf87cc8c41d7fccc9, type: 3}
       propertyPath: m_LocalPosition.y
