@@ -40,10 +40,13 @@ public class WeaponSwitcher : MonoBehaviour
     public int currentWeapon = 1;
     private const int inventorySize = 3;
     // private float switchTime;
+    private PlayerHUD playerHUD;
+    private WeaponController activeWeapon;
     
     
     private void Start()
     {
+        playerHUD = GetComponent<PlayerHUD>();
         inventory = mainCamera.transform;
         SaveWeapon(1);
         SwitchWeapon();
@@ -69,21 +72,16 @@ public class WeaponSwitcher : MonoBehaviour
         else if (Input.GetAxis("Mouse ScrollWheel") > 0f)
         {
             --selectedWeapon;
-            Debug.Log("--");
             if (selectedWeapon < 1) selectedWeapon = inventory.childCount - 1;
         }
         else if (Input.GetAxis("Mouse ScrollWheel") < 0f)
         {
             ++selectedWeapon;
-            Debug.Log("++");
             if (selectedWeapon > inventory.childCount- 1) selectedWeapon = 1;
         }
         // inventorySize < selectedWeapon < 1
         //se da pra trocar de arma
-        if (currentWeapon != selectedWeapon)
-        {
-            SwitchWeapon();
-        }
+        if (currentWeapon != selectedWeapon) { SwitchWeapon(); }
     }
 
     
@@ -132,13 +130,16 @@ public class WeaponSwitcher : MonoBehaviour
 
     private void SwitchWeapon()
     {
+        activeWeapon = GetComponentInChildren<WeaponController>();
         inventory.GetChild(currentWeapon).gameObject.SetActive(false);
-        //timer
-        
+        currentWeapon = selectedWeapon;
+        StartCoroutine(playerHUD.Timer(activeWeapon.data.switchTime, activeWeapon.data.switchTime, SwitchWeaponFinished));
+    }
+
+    private void SwitchWeaponFinished()
+    {
         inventory.GetChild(selectedWeapon).gameObject.SetActive(true);
         GetComponentInChildren<WeaponController>().UpdatePlayerHUD();
-
-        currentWeapon = selectedWeapon;
     }
 
     private void ThrowWeapon()

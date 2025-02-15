@@ -35,7 +35,6 @@ public class WeaponController : MonoBehaviour
         muzzle = transform.GetChild(0);
         
         audioSource = GetComponent<AudioSource>();
-        playerHUD = GetComponentInParent<PlayerHUD>();
     }
     
 
@@ -126,14 +125,17 @@ public class WeaponController : MonoBehaviour
             }
         }
     }
-    
+
     private void Reload()
     {
         isReloading = true;
-        if (isShooting) StopCoroutine(shootingC); isShooting = false;
+        if (isShooting) StopCoroutine(shootingC);
+        isShooting = false;
+        StartCoroutine(playerHUD.Timer(partial ? data.reloadTimePartial : data.reloadTime,
+            data.reloadTime, ReloadFinished));
     }
-    //FAZER UM AWAIT(TRUE) E COLOCAR UM RETORNO NO TIMER
-    private void OnTimerFinished()
+    
+    private void ReloadFinished()
     {
         data.totalAmmo += data.ammo;
         if (data.totalAmmo > data.magSize) //se tiver bastante municao
@@ -147,7 +149,6 @@ public class WeaponController : MonoBehaviour
             data.totalAmmo = 0;
         }
         
-        // timer.OnTimerComplete -= OnTimerFinished; 
         playerHUD.CurrentAmmo(data.ammo);
         playerHUD.TotalAmmo(data.totalAmmo);
         isReloading = false;
@@ -168,7 +169,6 @@ public class WeaponController : MonoBehaviour
     {   // se cancelar o reload (como ao trocar de arma), apaga os flags
         partial = false;
         isReloading = false;
-        // timer.OnTimerComplete -= OnTimerFinished;
     }
 
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -39,9 +40,9 @@ public class PlayerHUD : MonoBehaviour
     // private void ShowTimeSlider() { timeSlider.gameObject.SetActive(true); }
     // private void HideTimeSlider() { timeSlider.gameObject.SetActive(false); }
     
-    public void Count(float countTime, float sliderSize) { StartCoroutine(Timer(countTime, sliderSize)); }
+    // public void Timer(float countTime, float sliderSize) { StartCoroutine(Count(countTime, sliderSize)); }
     
-    private IEnumerator Timer(float countTime, float sliderSize)
+    public IEnumerator Timer(float countTime, float sliderSize, Action onComplete)
     {
         // ShowTimeSlider();
         timeSlider.gameObject.SetActive(true);
@@ -54,6 +55,7 @@ public class PlayerHUD : MonoBehaviour
         }
         // HideTimeSlider();
         timeSlider.gameObject.SetActive(false);
+        onComplete?.Invoke();
     }
     
     public void CurrentAmmo(int ammo) { ammoText.text = ammo.ToString("D2") + "/"; }

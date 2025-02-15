@@ -59,6 +59,7 @@ public class EnemySpawner : MonoBehaviour, IComparer<Transform>
     [Header("InnerCode")]
     public Transform player;
     public int remainingEnemies;
+    private bool isSpawning = true;
     
     [Header("Scripts")]
     private WaveMNG waveMNG;
@@ -87,6 +88,7 @@ public class EnemySpawner : MonoBehaviour, IComparer<Transform>
     
     private IEnumerator Spawn(int maxEnemies, int waveWeight, List<Transform> spawners)
     {
+        isSpawning = true;
         int currentWeight = 0; remainingEnemies = 0;
         while (remainingEnemies < maxEnemies && currentWeight < waveWeight)  // enquanto pode spawnar mais inimigos
         {
@@ -114,13 +116,14 @@ public class EnemySpawner : MonoBehaviour, IComparer<Transform>
             // delay que vai ficando menor com o tempo
             yield return new WaitForSeconds(Mathf.Exp(-0.15f * remainingEnemies - 0.05f) + 0.17f);
         }
+        isSpawning = false;
     }
     
     private void DecreaseEnemyCounter()
     {
         --remainingEnemies;
         EventsMNG.UpdateEnemiesCounter(remainingEnemies);
-        if (remainingEnemies==0) { waveMNG.StartNewWave(); }
+        if (remainingEnemies==0 && !isSpawning) { waveMNG.StartNewWave(); }
     }
     
     public int Compare(Transform pointOne, Transform pointTwo)

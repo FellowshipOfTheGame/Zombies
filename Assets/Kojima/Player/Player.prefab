@@ -176,8 +176,8 @@ MonoBehaviour:
   runSpeed: 10
   acceleration: 1
   mouseSensitivity: 250
-  playerCamera: {fileID: 1651573643715026828}
   jumpHeight: 0.75
+  playerCamera: {fileID: 1651573643715026828}
 --- !u!114 &4735164568990000258
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -205,7 +205,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45eb56f4a604ef39a97887166ae252d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  crosshair: {fileID: 4543425382553896160}
+  crosshair: {fileID: 7094072674921107982}
   fpsCounter: {fileID: 2249523862599328338}
   timeSlider: {fileID: 2007355092270407907}
   ammoText: {fileID: 206930518871800530}
@@ -608,11 +608,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &4543425382553896160 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2508688610697293382, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
-  m_PrefabInstance: {fileID: 2152117744876677798}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &5095556543342082008 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6587312709075869054, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
@@ -624,6 +619,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &7094072674921107982 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9200552964820449448, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
+  m_PrefabInstance: {fileID: 2152117744876677798}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &7212457247808309844 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8775844452972241138, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
