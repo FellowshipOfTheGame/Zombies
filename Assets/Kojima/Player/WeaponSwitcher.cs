@@ -116,6 +116,7 @@ public class WeaponSwitcher : MonoBehaviour
     private void SaveWeapon(int index)
     {
         Transform newWeapon = transform.GetChild(2); //pega a arma nova
+        newWeapon.GetComponent<Rigidbody>().isKinematic = true;
 
         //atualiza a posicao da arma comparando com o transform da camera
         Vector3 weaponPosition = mainCamera.transform.position + weaponOffset;
