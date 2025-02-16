@@ -49,11 +49,16 @@ public class WeaponSwitcher : MonoBehaviour
         playerHUD = GetComponent<PlayerHUD>();
         inventory = mainCamera.transform;
         
-        SaveWeapon(1);  // salva a arma primaria
-        SwitchWeapon();  // equipa a arma
+        SaveWeapon(1);
+        SwitchWeapon();
         
-        SaveWeapon(2);  // salva a arma secundaria
-        inventory.GetChild(2).gameObject.SetActive(false);  // tem que desativar a arma nao selecionada
+        int i = 2;
+        while (transform.childCount > 2)
+        {
+            SaveWeapon(i);
+            inventory.GetChild(i).gameObject.SetActive(false);
+            ++i;
+        }
     }
     
     
@@ -62,7 +67,7 @@ public class WeaponSwitcher : MonoBehaviour
         if (isSwitching) return;
         
         if (Input.GetKeyDown(KeyCode.Equals)) LoadWeapon(); //{}{}
-        if (Input.GetKeyDown(KeyCode.T))
+        if (Input.GetKeyDown(KeyCode.T) && inventory.childCount > 2)
         {
             if (currentWeapon == 1)
             {
@@ -81,12 +86,12 @@ public class WeaponSwitcher : MonoBehaviour
         else if (Input.GetAxis("Mouse ScrollWheel") > 0f)
         {
             --selectedWeapon;
-            if (selectedWeapon < 1) selectedWeapon = inventory.childCount - 1;
+            if (selectedWeapon < 1) { selectedWeapon = inventory.childCount - 1; }
         }
         else if (Input.GetAxis("Mouse ScrollWheel") < 0f)
         {
             ++selectedWeapon;
-            if (selectedWeapon > inventory.childCount- 1) selectedWeapon = 1;
+            if (selectedWeapon > inventory.childCount- 1) { selectedWeapon = 1; }
         }
         // inventorySize < selectedWeapon < 1
         //se da pra trocar de arma
@@ -123,9 +128,9 @@ public class WeaponSwitcher : MonoBehaviour
         
         // testar isso se nao estiver considerando a rotacao em coordenadas locais da camera
         // Vector3 weaponPosition = mainCamera.transform.position +
-        //                          mainCamera.transform.right * weaponOffset.x +
-        //                          mainCamera.transform.up * weaponOffset.y +
-        //                          mainCamera.transform.forward * weaponOffset.z;
+                                 // mainCamera.transform.right * weaponOffset.x +
+                                 // mainCamera.transform.up * weaponOffset.y +
+                                 // mainCamera.transform.forward * weaponOffset.z;
         
         newWeapon.transform.position = weaponPosition;
         // quaternion euler pra arrumar a rotacao do prefab de teste
@@ -155,6 +160,7 @@ public class WeaponSwitcher : MonoBehaviour
     {
         inventory.GetChild(selectedWeapon).gameObject.SetActive(true);
         activeWeaponWC = GetComponentInChildren<WeaponController>();
+        activeWeaponWC.enabled = true;
         activeWeaponWC.UpdatePlayerHUD();
         isSwitching = false;
     }
@@ -164,6 +170,7 @@ public class WeaponSwitcher : MonoBehaviour
         isSwitching = true;
         Transform thrownWeapon = inventory.GetChild(currentWeapon);
         thrownWeapon.SetParent(null);
+        activeWeaponWC.enabled = false;
         
         Rigidbody thrownWeaponRB = thrownWeapon.GetComponent<Rigidbody>();
         thrownWeaponRB.isKinematic = false;
