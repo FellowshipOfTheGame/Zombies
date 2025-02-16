@@ -102,10 +102,10 @@ public class WeaponController : MonoBehaviour
             
             Vector3 rayOrigin = mainCamera.transform.position;  // tiro sai da camera
             // Vector3 rayOrigin = muzzle.position;  // tiro sai da arma
-            Vector3 rayDirection = transform.up;
+            Vector3 rayDirection = transform.up;  // pros prefabs de teste, essa e a direcao do cano
             rayDirection = spreadRotation * rayDirection;
             
-            while (damage > 0) //chain raycasts to pierce through enemies
+            while (damage > 0)  // chain raycasts to pierce through enemies
             {
                 if (Physics.Raycast(rayOrigin, rayDirection, out RaycastHit hit, rangeLeft))
                 {
@@ -115,7 +115,7 @@ public class WeaponController : MonoBehaviour
                     GameObject hitObject = hit.collider.gameObject;
                     if (!hitObject.CompareTag("Player")) break; //se nao acertou um player, para o while
                     
-                    hitObject.GetComponent<InterfacesMNG.IDmg>().TakeDmg(damage, hit.point, transform, Color.white);
+                    hitObject.GetComponent<InterfacesMNG.IDmg>().TakeDmg(damage, hit.point, mainCamera, Color.white);
                     
                     //prepare to chain raycasts
                     rayOrigin = hit.point + 0.5f*rayDirection; // slight offset to prevent self-collision

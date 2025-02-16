@@ -48,8 +48,12 @@ public class WeaponSwitcher : MonoBehaviour
     {
         playerHUD = GetComponent<PlayerHUD>();
         inventory = mainCamera.transform;
-        SaveWeapon(1);
-        SwitchWeapon();
+        
+        SaveWeapon(1);  // salva a arma primaria
+        SwitchWeapon();  // equipa a arma
+        
+        SaveWeapon(2);  // salva a arma secundaria
+        inventory.GetChild(2).gameObject.SetActive(false);  // tem que desativar a arma nao selecionada
     }
     
     
@@ -81,7 +85,7 @@ public class WeaponSwitcher : MonoBehaviour
         }
         // inventorySize < selectedWeapon < 1
         //se da pra trocar de arma
-        if (currentWeapon != selectedWeapon) { SwitchWeapon(); }
+        if (currentWeapon != selectedWeapon && !isSwitching) { SwitchWeapon(); }
     }
 
     
@@ -130,16 +134,19 @@ public class WeaponSwitcher : MonoBehaviour
 
     private void SwitchWeapon()
     {
+        isSwitching = true;
         activeWeapon = GetComponentInChildren<WeaponController>();
         inventory.GetChild(currentWeapon).gameObject.SetActive(false);
         currentWeapon = selectedWeapon;
-        StartCoroutine(playerHUD.Timer(activeWeapon.data.switchTime, activeWeapon.data.switchTime, SwitchWeaponFinished));
+        StartCoroutine(playerHUD.Timer(activeWeapon.data.switchTime, 
+            activeWeapon.data.switchTime, SwitchWeaponFinished));
     }
 
     private void SwitchWeaponFinished()
     {
         inventory.GetChild(selectedWeapon).gameObject.SetActive(true);
         GetComponentInChildren<WeaponController>().UpdatePlayerHUD();
+        isSwitching = false;
     }
 
     private void ThrowWeapon()
@@ -153,46 +160,6 @@ public class WeaponSwitcher : MonoBehaviour
         thrownWeaponRB.AddForce(mainCamera.transform.forward * 2f);
     }
 
-
-    // IEnumerator SwitchWeapon()
-    // {
-    //     isSwitching = true;
-    //     weaponScript.Stop();
-    //     
-    //     if (!fullInv) //salva as informacoes da arma, caso tenha inventario cheio nao salva pra deletar o que tinha
-    //     {
-    //         Transform currentWeaponT = transform.GetChild(0).GetChild(currentWeapon);
-    //         currentWeaponT.gameObject.SetActive(false); //esconde a arma atual
-    //         inventoryDict[currentWeapon] = weaponScript.weapon; //salva a arma atual no inventario
-    //     }
-    //     
-    //     float switchTime = data.switchTime;
-    //     timerGO.SetActive(true);
-    //     timerSlider.maxValue = data.switchTime;
-    //     while (switchTime >= 0)
-    //     {
-    //         timerSlider.value = switchTime;
-    //         switchTime -= Time.deltaTime;
-    //         yield return null;
-    //     }
-    //     timerGO.SetActive(false);
-    //
-    //     Transform selectedWeaponT = transform.GetChild(0).GetChild(selectedWeapon); 
-    //     selectedWeaponT.gameObject.SetActive(true); //pega o transform novo liga
-    //     
-    //     currentWeapon = selectedWeapon; //atualiza o indice da arma atual
-    //     
-    //     weaponInfoText.text = weapon.caliber + " - " + weapon.weaponName;
-    //     ammoText.text = weapon.ammo.ToString("D2") + "/";
-    //     totalAmmoText.text = weapon.totalAmmo.ToString("D3");
-    //     magSizeText.text = weapon.magSize.ToString();
-    //     
-    //     muzzle = selectedWeaponT.GetChild(0);
-    //     shootScript.UpdateWeapon(weapon, muzzle);
-    //     isSwitching = false;
-    //     shootScript.isSwitching = false;
-    // }
-    
     // public void Stop()
     // {
     //     if (isSwitching) StopCoroutine(switchingC);
