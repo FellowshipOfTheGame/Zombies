@@ -7,9 +7,12 @@ public class WeaponController : MonoBehaviour
     [Header("Variables")]
     private bool isReloading;
     private bool isShooting;
-    private bool isSwitching;
+    private bool isSwitchingModes;
     private bool partial;
     private const float fireModeSwitchTime = 0.2f;
+    private string oldFireMode;
+    private string newFireMode;
+    private string shortFireMode;
     
     [Header("References")] 
     [SerializeField] private AudioClip  shootSound;
@@ -21,7 +24,7 @@ public class WeaponController : MonoBehaviour
     [Header("Declarations")]
     public WeaponStruct data;
     public Coroutine timerC;
-    private Coroutine reloadingC;
+    private Coroutine fireModeC;
     private Coroutine shootingC;
     private PlayerHUD playerHUD;
     private AudioSource audioSource;
@@ -48,32 +51,37 @@ public class WeaponController : MonoBehaviour
         currentFireMode = data.isFullAuto ? FireMode.FullAuto : 
             data.burstSize > 1 ? FireMode.Burst : FireMode.SemiAuto;
         SetShootFunction(currentFireMode);
-        
-        Debug.Log(data.weaponName+" "+currentFireMode);
     }
     
 
     private void Update()
     {
-        if (isReloading) return;
+        if (isReloading) { return; }
 
         if (data.ammo == 0 && (Input.GetKeyDown(KeyCode.Mouse0) || Input.GetKeyDown(KeyCode.Mouse1) || Input.GetKeyDown(KeyCode.R)))
-        { partial = false; Reload(); }  //empty reload
-        
+        {   // empty reload
+            if (timerC != null) { StopCoroutine(timerC); isSwitchingModes = false; }
+            partial = false; Reload(); 
+        }
+
         if (Input.GetKeyDown(KeyCode.R) && data.ammo < data.magSize)
-        { partial = true; Reload(); }  //manual reload
+        {   // manual reload
+            if (timerC != null) { StopCoroutine(timerC); isSwitchingModes = false; }
+            partial = true; Reload(); 
+        }
         
+        if (isReloading || isSwitchingModes) { return; }
         if (Input.GetKeyDown(KeyCode.C) && data.hasFireSelector)
         {
-            isSwitching = true;
-            if (isShooting) StopCoroutine(shootingC); isShooting = false;
+            if (isShooting) { StopCoroutine(shootingC); isShooting = false; } 
+            
             timerC = StartCoroutine(playerHUD.Timer(fireModeSwitchTime, fireModeSwitchTime,
                 CycleFireMode));
+            isSwitchingModes = true;
         }
         
         //checar isReloading duas vezes pra nao dar erro de recarregar e atirar ao mesmo tempo
-        if (isReloading || isShooting || isSwitching) { return; }
-        
+        if (isReloading || isSwitchingModes || isShooting) { return; }
         if (Input.GetKeyDown(KeyCode.Mouse0))
         { shootingC = StartCoroutine(shootFunction()); }
         
@@ -87,29 +95,40 @@ public class WeaponController : MonoBehaviour
         {
             FireMode.FullAuto => data.burstSize > 1 ? FireMode.Burst : FireMode.SemiAuto,
             FireMode.Burst    => FireMode.SemiAuto,
-            FireMode.SemiAuto => FireMode.FullAuto,
-            _ => currentFireMode
+            FireMode.SemiAuto => data.isFullAuto ? FireMode.FullAuto : FireMode.Burst,
+            _                 => currentFireMode
         };
-
         SetShootFunction(currentFireMode);
     }
     
     private void SetShootFunction(FireMode mode)
     {
-        shootFunction = mode switch
+        oldFireMode = newFireMode;
+        switch (mode)
         {
-            FireMode.FullAuto => ShootFullAuto,
-            FireMode.Burst    => ShootBurst,
-            FireMode.SemiAuto => ShootSemiAuto,
-            _                 => null
-        };
-        isSwitching = false;
+            case FireMode.FullAuto:
+                shootFunction = ShootFullAuto;
+                newFireMode = "Full Auto"; shortFireMode = "FULL";
+                break;
+            case FireMode.Burst:
+                shootFunction = ShootBurst;
+                newFireMode = data.burstSize + "-Shot Burst"; shortFireMode = data.burstSize + "-SHOT";
+                break;
+            case FireMode.SemiAuto:
+                shootFunction = ShootSemiAuto;
+                newFireMode = "Semi Auto"; shortFireMode = "SEMI";
+                break;
+        }
+        playerHUD.FireMode(shortFireMode);
+        if (fireModeC != null) { StopCoroutine(fireModeC); }
+        fireModeC = StartCoroutine(playerHUD.FireModePopUp(oldFireMode, newFireMode)); // pop-up visual
+        isSwitchingModes = false;
     }
     
     private IEnumerator ShootFullAuto()
     {
         isShooting = true;
-        while (data.ammo > 0 && Input.GetKey(KeyCode.Mouse0)) //enquanto tiver municao e continuar atirando
+        while (data.ammo > 0 && Input.GetKey(KeyCode.Mouse0)) // enquanto tiver municao e continuar atirando
         {
             Shoot();
             yield return new WaitForSeconds(data.fireTime);
@@ -215,6 +234,7 @@ public class WeaponController : MonoBehaviour
         playerHUD.TotalAmmo(data.totalAmmo);
         playerHUD.MagSize(data.magSize);
         playerHUD.WeaponInfo(data.weaponName, data.caliber);
+        playerHUD.FireMode(shortFireMode);
         mainCamera = transform.parent;
     }
     
@@ -223,14 +243,13 @@ public class WeaponController : MonoBehaviour
         partial = false;
         isShooting = false;
         isReloading = false;
-        isSwitching = false;
     }
 
 
     public void Stop()
     {
         if (isShooting)  StopCoroutine(shootingC);  isShooting = false;
-        if (isReloading) StopCoroutine(reloadingC); isReloading = false;
+        if (isReloading) StopCoroutine(timerC); isReloading = false;
     }
 
 }

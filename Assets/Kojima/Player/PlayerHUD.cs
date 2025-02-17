@@ -12,20 +12,25 @@ public class PlayerHUD : MonoBehaviour
 
     [Header("References")] 
     [SerializeField] private GameObject crosshair;
-    [SerializeField] private GameObject fpsCounter;
+    [SerializeField] private GameObject fpsCounter; // D2
     [SerializeField] private Slider     timeSlider;
     // [SerializeField] private GameObject ammoHUD;
-    [SerializeField] private TextMeshProUGUI ammoText;  // D2
-    [SerializeField] private TextMeshProUGUI magSizeText;  // D2
-    [SerializeField] private TextMeshProUGUI totalAmmoText;  // D3
-    [SerializeField] private TextMeshProUGUI weaponInfoText;  // weapon name - bullet caliber
+    [SerializeField] private TextMeshProUGUI ammoText; // D2
+    [SerializeField] private TextMeshProUGUI magSizeText; // D2
+    [SerializeField] private TextMeshProUGUI totalAmmoText; // D3
+    [SerializeField] private TextMeshProUGUI weaponInfoText; // weapon name - bullet caliber
+    [SerializeField] private TextMeshProUGUI fireModeText; // SEMI
+    [SerializeField] private TextMeshProUGUI fireModePopUp; // FULL AUTO > 2-SHOT BURST
     // [SerializeField] private GameObject waveHUD;
-    [SerializeField] private TextMeshProUGUI waveCounter;  // D2
-    [SerializeField] private TextMeshProUGUI remainingEnemies;  // D2
+    [SerializeField] private TextMeshProUGUI waveCounter; // D2
+    [SerializeField] private TextMeshProUGUI remainingEnemies; // D2
+    [SerializeField] private TextMeshProUGUI healthBar; // D3
     
     private void Start()
     {
         timeSlider.gameObject.SetActive(false);
+        fireModePopUp.gameObject.SetActive(false);
+        
         EventsMNG.OnRemainingEnemiesUpdate += UpdateEnemiesCounter;
         EventsMNG.OnWaveFinish += IncreaseWaveCounter;
         EventsMNG.OnWaveStart += WaveStart;
@@ -61,6 +66,25 @@ public class PlayerHUD : MonoBehaviour
     public void TotalAmmo(int totalAmmo) { totalAmmoText.text = totalAmmo.ToString("D3"); }
     public void WeaponInfo(string weaponName, string ammoCaliber)
     { weaponInfoText.text = weaponName + " - " + ammoCaliber; }
+    public void FireMode(string fireMode) { fireModeText.text = fireMode; }
+    public IEnumerator FireModePopUp(string oldMode, string newMode)
+    {
+        fireModePopUp.gameObject.SetActive(true);
+        fireModePopUp.text = oldMode + " > " + newMode;
+        fireModePopUp.alpha = 1f;
+        yield return new WaitForSeconds(0.5f);
+        float elapsed = 0f;
+        while (elapsed < 0.5f)
+        {
+            elapsed += Time.deltaTime;
+            // color.a = Mathf.Lerp(1f, 0f, elapsed / 0.5f);
+            // textObject.color = color;
+            fireModePopUp.alpha = Mathf.Lerp(1f, 0f, elapsed / 0.5f);
+            yield return null;
+        }
+        fireModePopUp.gameObject.SetActive(false);
+    }
+    
     private void UpdateEnemiesCounter(int enemies) { remainingEnemies.text = enemies.ToString("D2"); }
     
     private void IncreaseWaveCounter(int wave)
@@ -96,5 +120,10 @@ public class PlayerHUD : MonoBehaviour
         }
         waveCounter.color = wine;
         remainingEnemies.color = wine;
+    }
+
+    public void Health(int health)
+    {
+        healthBar.text = health.ToString("D3");
     }
 }

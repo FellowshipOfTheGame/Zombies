@@ -1,6 +1,8 @@
 // using System;
 // using System.ComponentModel;
 // using Tests.NetworkTest.Serializers;
+
+using System.Collections;
 using UnityEngine;
 using TMPro;
 using Random = UnityEngine.Random;
@@ -8,33 +10,72 @@ using Random = UnityEngine.Random;
 public class PlayerHealth : MonoBehaviour
 {
      [Header("Variables")]
-     [SerializeField] private int maxHealth = 100; 
-                      private int health;
+     [SerializeField] private int maxHealth = 200; 
+                      private int currentHealth;
+     [SerializeField] private float regenPerSecond = 1f;
+     [SerializeField] private float regenIncreaseRate = 0.25f;
+     [SerializeField] private float regenTarget = 10f;
+     [SerializeField] private float regenDelayTime = 4f;
      // private readonly Color orange = new(1.0f, 0.25f, 0.0f);
      
      [Header("References")] 
      [SerializeField] private GameObject worldSpaceUIPrefab;
      
-     // [Header("Declarations")]
+     [Header("Declarations")]
+     private PlayerHUD playerHUD;
+     private Coroutine regenC;
      // private GameRules gameRule;
 
      private void Start()
      {
-          health = maxHealth;
+          playerHUD = GetComponent<PlayerHUD>();
+          
+          currentHealth = maxHealth;
           // gameRule = GameObject.Find("GameManager").GetComponent<GameRules>();
+          playerHUD.Health(currentHealth);
+     }
+
+     private void Update()
+     {
+          if (Input.GetKeyDown(KeyCode.Minus)) { TakeDamage(5, transform.position, transform); }
      }
 
      public void TakeDamage(int damage, Vector3 hitPosition, Transform textRotateTarget)
      {
-          health -= damage; FloatingDamage(damage, hitPosition, textRotateTarget, Color.white);
+          currentHealth -= damage; FloatingDamage(damage, hitPosition, textRotateTarget, Color.white);
+
+          if (regenC != null) { StopCoroutine(regenC); }
           
-          if (health <= 0)
+          if (currentHealth <= 0)
           {
                // Morreu();
+               currentHealth = 0;
           }
-          Debug.Log(health);
+          playerHUD.Health(currentHealth);
+          Debug.Log(currentHealth);
+
+          regenC = StartCoroutine(RegenDelay());
+     }
+
+     private IEnumerator RegenDelay()
+     {
+          yield return new WaitForSeconds(regenDelayTime);
+          regenC = StartCoroutine(RegenHealth());
      }
      
+     private IEnumerator RegenHealth()
+     {
+          float currentRegenPerSecond = regenPerSecond;
+          float regenTickTime = 1/currentRegenPerSecond;
+          while (currentHealth < maxHealth)
+          {
+               Debug.Log(currentRegenPerSecond.ToString("F2"));
+               ++currentHealth; playerHUD.Health(currentHealth);
+               yield return new WaitForSeconds(regenTickTime);
+               currentRegenPerSecond += regenIncreaseRate * (1- Mathf.Pow(currentRegenPerSecond/regenTarget, 2) );
+               regenTickTime = 1 / currentRegenPerSecond;
+          }
+     }
      
      // public void Morreu()
      // {
