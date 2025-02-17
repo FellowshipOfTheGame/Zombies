@@ -27,7 +27,6 @@ using UnityEngine;
 public class WeaponSwitcher : MonoBehaviour
 {
     [Header("Coroutines")]
-    private Coroutine switchingC;
     private bool isSwitching;
     
     [Header("Definitions")]
@@ -169,6 +168,7 @@ public class WeaponSwitcher : MonoBehaviour
     {
         isSwitching = true;
         Transform thrownWeapon = inventory.GetChild(currentWeapon);
+        if (activeWeaponWC.reloadC !=  null) { StopCoroutine(activeWeaponWC.reloadC); }
         thrownWeapon.SetParent(null);
         activeWeaponWC.enabled = false;
         

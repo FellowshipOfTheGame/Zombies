@@ -9,7 +9,7 @@ public class WeaponController : MonoBehaviour
     private PlayerHUD playerHUD;
     
     [Header("Coroutines")]
-    private Coroutine switchingC;
+    public Coroutine reloadC;
     
     [Header("Weapon")]
     public AudioClip  shootSound;
@@ -59,7 +59,7 @@ public class WeaponController : MonoBehaviour
     }
     
     
-    private IEnumerator ShootAuto() //tiro normal / full auto
+    private IEnumerator ShootAuto() // tiro normal / full auto
     {
         isShooting = true;
         while (data.ammo > 0 && Input.GetKey(KeyCode.Mouse0)) //enquanto tiver municao e continuar atirando
@@ -71,7 +71,7 @@ public class WeaponController : MonoBehaviour
     }
     
     
-    private IEnumerator ShootSingle() //tiro alternativo / controlado
+    private IEnumerator ShootSingle() // tiro alternativo / controlado
     {
         isShooting = true; int i = 0;
         while (data.ammo > 0 && i < data.burstSize)
@@ -131,7 +131,7 @@ public class WeaponController : MonoBehaviour
         isReloading = true;
         if (isShooting) StopCoroutine(shootingC);
         isShooting = false;
-        StartCoroutine(playerHUD.Timer(partial ? data.reloadTimePartial : data.reloadTime,
+        reloadC = StartCoroutine(playerHUD.Timer(partial ? data.reloadTimePartial : data.reloadTime,
             data.reloadTime, ReloadFinished));
     }
     
