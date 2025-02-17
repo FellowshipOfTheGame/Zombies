@@ -21,11 +21,11 @@ using UnityEngine;
 public class WaveMNG : MonoBehaviour
 {
     [Header("Variables")]
-    public int waveCount = 1;
+    [SerializeField] private int waveCount = 1;
     private int maxEnemies = 15;
     private int weight = 48;
     
-    [Header("InnerCode")]
+    [Header("Declarations")]
     private EnemySpawner enemySpawner;
     private PlayerHUD playerHUD;
     private Coroutine startCoroutine;

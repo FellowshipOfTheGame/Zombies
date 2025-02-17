@@ -38,16 +38,22 @@ using Random = UnityEngine.Random;
 
 public class EnemySpawner : MonoBehaviour, IComparer<Transform>
 {
-    [Header("SpawnPoints")]
-    public Transform spawnerParent;
-    private List<Transform> spawnPoints;
-    public int maxSpawnPoints = 2;
+    [Header("Variables")]
+    [SerializeField] private int maxSpawnPoints = 2;
+    [SerializeField] private int remainingEnemies;
+                     private float totalChance;
+                     private bool isSpawning = true;
+                     private List<Transform> spawnPoints;
     
-    [Header("Enemies")] 
-    public GameObject enemyTank;
-    public GameObject enemyNormal;
-    public GameObject enemyFast;
-    private float totalChance;
+    [Header("References")] 
+    [SerializeField] private GameObject enemyTank;
+    [SerializeField] private GameObject enemyNormal;
+    [SerializeField] private GameObject enemyFast;
+    [SerializeField] private Transform spawnerParent;
+    [SerializeField] private Transform player;
+    
+    [Header("Declarations")]
+    private WaveMNG waveMNG;
     private struct EnemyData
     {
         public GameObject enemyPF;
@@ -55,14 +61,6 @@ public class EnemySpawner : MonoBehaviour, IComparer<Transform>
         public float spawnChance;
     }
     private readonly List<EnemyData> enemyList = new();
-    
-    [Header("InnerCode")]
-    public Transform player;
-    public int remainingEnemies;
-    private bool isSpawning = true;
-    
-    [Header("Scripts")]
-    private WaveMNG waveMNG;
 
     
     private void Start()

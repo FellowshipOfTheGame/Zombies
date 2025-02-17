@@ -3,7 +3,7 @@ using TMPro;
 
 public class FPSCounter : MonoBehaviour
 {
-    public TextMeshProUGUI fpsText;
+    [SerializeField] private TextMeshProUGUI fpsText;
     private const float pollingTime = 0.5f;
     private float elapsedTime;
     private int frameCount;

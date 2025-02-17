@@ -6,22 +6,22 @@ using UnityEngine.UI;
 
 public class PlayerHUD : MonoBehaviour
 {
+    [Header("Variables")]
+    private readonly Color wine      = new(0.69f, 0, 0);
+    private readonly Color lightGray = new(0.75f, 0.75f, 0.75f);
+
+    [Header("References")] 
     [SerializeField] private GameObject crosshair;
     [SerializeField] private GameObject fpsCounter;
     [SerializeField] private Slider     timeSlider;
-    
     // [SerializeField] private GameObject ammoHUD;
     [SerializeField] private TextMeshProUGUI ammoText;  // D2
     [SerializeField] private TextMeshProUGUI magSizeText;  // D2
     [SerializeField] private TextMeshProUGUI totalAmmoText;  // D3
     [SerializeField] private TextMeshProUGUI weaponInfoText;  // weapon name - bullet caliber
-    
     // [SerializeField] private GameObject waveHUD;
     [SerializeField] private TextMeshProUGUI waveCounter;  // D2
     [SerializeField] private TextMeshProUGUI remainingEnemies;  // D2
-    
-    private readonly Color wine      = new(0.69f, 0, 0);
-    private readonly Color lightGray = new(0.75f, 0.75f, 0.75f);
     
     private void Start()
     {
@@ -39,8 +39,6 @@ public class PlayerHUD : MonoBehaviour
     
     // private void ShowTimeSlider() { timeSlider.gameObject.SetActive(true); }
     // private void HideTimeSlider() { timeSlider.gameObject.SetActive(false); }
-    
-    // public void Timer(float countTime, float sliderSize) { StartCoroutine(Count(countTime, sliderSize)); }
     
     public IEnumerator Timer(float countTime, float sliderSize, Action onComplete)
     {

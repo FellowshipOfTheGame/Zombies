@@ -26,19 +26,18 @@ using UnityEngine;
 
 public class WeaponSwitcher : MonoBehaviour
 {
-    [Header("Coroutines")]
-    private bool isSwitching;
-    
-    [Header("Definitions")]
-    public Camera mainCamera;
-    private Transform inventory;
-    
     [Header("Variables")]
-    private readonly Vector3 weaponOffset = new(0.35f, -0.4f, 0.5f);  // offset de teste pra arma na tela
-    public int selectedWeapon = 1;
-    public int currentWeapon = 1;
-    private const int inventorySize = 3;
+    [SerializeField] private int selectedWeapon = 1;
+    [SerializeField] private int currentWeapon = 1;
+                     private bool isSwitching;
+                     private const int inventorySize = 3;
+                     private readonly Vector3 weaponOffset = new(0.35f, -0.4f, 0.5f);  // offset visual pra arma
+
+    [Header("References")] 
+    [SerializeField] private Camera mainCamera;
+                     private Transform inventory;
     
+    [Header("Declarations")]
     private PlayerHUD playerHUD;
     private WeaponController activeWeaponWC;
     

@@ -7,10 +7,15 @@ using Random = UnityEngine.Random;
 
 public class PlayerHealth : MonoBehaviour
 {
-     public int maxHealth = 100;
-     private int health;
-     public GameObject worldSpaceUIPrefab;
+     [Header("Variables")]
+     [SerializeField] private int maxHealth = 100; 
+                      private int health;
      // private readonly Color orange = new(1.0f, 0.25f, 0.0f);
+     
+     [Header("References")] 
+     [SerializeField] private GameObject worldSpaceUIPrefab;
+     
+     // [Header("Declarations")]
      // private GameRules gameRule;
 
      private void Start()

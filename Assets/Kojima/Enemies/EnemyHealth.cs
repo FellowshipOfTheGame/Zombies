@@ -21,27 +21,22 @@ using Random = UnityEngine.Random;
 
 public class EnemyHealth : MonoBehaviour, InterfacesMNG.IDmg, InterfacesMNG.IDmgSpecial
 {
-     [Header("InternalVariables")]
-     public int maxHealth = 100;
-     private int health;
-     public LayerMask playerLayerMask;
+     [Header("Variables")]
+     [SerializeField] private int maxHealth = 100;
+                      private int health;
+     [SerializeField] private float targetRadius = 5f;
+                      private float missileSide;
+                      private int stacks = -1;
+                      private readonly Color orange = new (1f, 0.55f, 0.25f);
+                      private readonly Color purple = new(0.7f, 0.35f, 1.0f);
      
-     [Header("SpecialVariables")]
-     public float targetRadius = 5f;
-     private float missileSide;
-     private int stacks = -1;
+     [Header("References")]
+     [SerializeField] private GameObject worldSpaceUIPrefab;
+     [SerializeField] private GameObject missilePrefab;
+     [SerializeField] private GameObject ricochetPrefab;
+     [SerializeField] private LayerMask playerLayerMask;
      
-     [Header("Prefabs")]
-     public GameObject worldSpaceUIPrefab;
-     public GameObject missilePrefab;
-     public GameObject ricochetPrefab;
-     
-     [Header("Colors")]
-     private readonly Color orange = new (1f, 0.55f, 0.25f);
-     private readonly Color purple = new(0.7f, 0.35f, 1.0f);
-
-     [Header("Scripts")]
-     private WaveMNG waveMNG;
+     // [Header("Declarations")]
      // private GameRules gameRule;
      
      
@@ -49,11 +44,9 @@ public class EnemyHealth : MonoBehaviour, InterfacesMNG.IDmg, InterfacesMNG.IDmg
      {
           health = maxHealth;
           
-          int randomValue = Random.Range(0, 2);
-          missileSide = randomValue == 0 ? 1 : -1;
+          missileSide = Random.Range(0, 2) == 0 ? 1 : -1;
           
           // gameRule = GameObject.Find("GameManager").GetComponent<GameRules>();
-          waveMNG = GetComponent<WaveMNG>();
      }
 
      public void TakeDmg(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor)
@@ -249,7 +242,7 @@ public class EnemyHealth : MonoBehaviour, InterfacesMNG.IDmg, InterfacesMNG.IDmg
           //           closestDistance2 = distance;
           //      }
           // }
-          // //                                     sem alvos ? self target : missel no alvo
+          // //                                     sem alvos ? self target : missil no alvo
           // InstantiateMissile(closestDistance1 > radius ? transform : closestEnemy1, damage, textRotateTarget);
           //
           // if (closestDistance2 > radius) return;

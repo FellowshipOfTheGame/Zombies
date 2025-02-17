@@ -8,14 +8,19 @@ using Random = UnityEngine.Random;
 
 public class BossHealth : MonoBehaviour, InterfacesMNG.IDmg, InterfacesMNG.IDmgSpecial
 {
-     public int maxHealth = 10000;
-     private int health;
-     public float targetRadius = 10f;
-     private float missileSide;
-     public GameObject worldSpaceUIPrefab;
-     public GameObject missilePrefab;
-     public LayerMask playerLayerMask;
-     private readonly Color orange = new (1f, 0.55f, 0.25f);
+     [Header("Variables")]
+     [SerializeField] private int maxHealth = 10000;
+                      private int health;
+     [SerializeField] private float targetRadius = 10f;
+                      private float missileSide;
+                      private readonly Color orange = new (1f, 0.55f, 0.25f);
+     
+     [Header("References")]
+     [SerializeField] private GameObject worldSpaceUIPrefab;
+     [SerializeField] private GameObject missilePrefab;
+     [SerializeField] private LayerMask playerLayerMask;
+
+     // [Header("Declarations")]
      // private GameRules gameRule;
      
      private void Start()

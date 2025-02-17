@@ -4,35 +4,30 @@ using Random = UnityEngine.Random;
 
 public class WeaponController : MonoBehaviour
 {
-    public WeaponTemplate template;  // add the weapon's template in Unity's spector
-    public WeaponStruct data;
-    private PlayerHUD playerHUD;
-    
-    [Header("Coroutines")]
-    public Coroutine timerC;
-    
-    [Header("Weapon")]
-    public AudioClip  shootSound;
-    public GameObject muzzleFlash;
-    private Transform muzzle;
-
-    [Header("Coroutines")] 
-    private Coroutine reloadingC;
-    private Coroutine shootingC;
+    [Header("Variables")]
     private bool isReloading;
     private bool isShooting;
     private bool isSwitching;
     private bool partial;
     private const float fireModeSwitchTime = 0.2f;
-
-    [Header("Definitions")]
-    private AudioSource audioSource;
-    private Transform mainCamera;
     
+    [Header("References")] 
+    [SerializeField] private AudioClip  shootSound;
+    [SerializeField] private GameObject muzzleFlash;
+    [SerializeField] private WeaponTemplate template;  // add the weapon's template in Unity's spector
+    private Transform muzzle;
+    private Transform mainCamera;
+
+    [Header("Declarations")]
+    public WeaponStruct data;
+    public Coroutine timerC;
+    private Coroutine reloadingC;
+    private Coroutine shootingC;
+    private PlayerHUD playerHUD;
+    private AudioSource audioSource;
     // usado pra definir qual funcao chamar ao atirar ao inves de usar ifs ou switches
     private delegate IEnumerator FireDelegate();
     private FireDelegate shootFunction; 
-    
     private enum FireMode
     {
         FullAuto,
