@@ -168,7 +168,7 @@ public class WeaponSwitcher : MonoBehaviour
     {
         isSwitching = true;
         Transform thrownWeapon = inventory.GetChild(currentWeapon);
-        if (activeWeaponWC.reloadC !=  null) { StopCoroutine(activeWeaponWC.reloadC); }
+        if (activeWeaponWC.timerC !=  null) { StopCoroutine(activeWeaponWC.timerC); }
         thrownWeapon.SetParent(null);
         activeWeaponWC.enabled = false;
         

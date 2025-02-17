@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SPAS12
   m_EditorClassIdentifier: 
   data:
-    isClosedBolt: 1
+    hasFireSelector: 0
     isFullAuto: 0
     weaponName: SPAS-12
     damage: 10

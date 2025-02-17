@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 1911
   m_EditorClassIdentifier: 
   data:
-    isClosedBolt: 1
+    hasFireSelector: 0
     isFullAuto: 0
     weaponName: M1911A1
     damage: 35

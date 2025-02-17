@@ -3,11 +3,11 @@ using UnityEngine;
 [System.Serializable]
 public struct WeaponStruct
 {
-    public bool   isClosedBolt;
+    public bool   hasFireSelector;
     public bool   isFullAuto;
     public string weaponName;
     public int    damage;
-    public int    burstSize;
+    public int    burstSize; // se for 1, desliga a opcao de burst
     public int    bulletCount;
     public float  fireRate;
     public float  fireTime;
@@ -29,7 +29,7 @@ public class WeaponTemplate : ScriptableObject
 {
     public WeaponStruct data = new()
     {
-        isClosedBolt = true,
+        hasFireSelector = true,
         isFullAuto = true,
         weaponName = "Weapon_Name",
         damage = 50,
