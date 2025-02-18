@@ -42,6 +42,7 @@ public class WeaponController : MonoBehaviour
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
+        playerHUD = GetComponentInParent<PlayerHUD>();
         
         data = template.data;
         data.fireTime = 60f/template.data.fireRate;
