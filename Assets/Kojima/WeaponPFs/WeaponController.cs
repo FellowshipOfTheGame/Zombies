@@ -35,7 +35,8 @@ public class WeaponController : MonoBehaviour
     {
         FullAuto,
         Burst,
-        SemiAuto
+        SemiAuto,
+        HyperAuto // special fire mode for AN94
     }
     private FireMode currentFireMode;
     
@@ -46,11 +47,15 @@ public class WeaponController : MonoBehaviour
         
         data = template.data;
         data.fireTime = 60f/template.data.fireRate;
+        
         muzzle = transform.GetChild(0);
         
         // currentFireMode = o modo com mais tiros possivel
         currentFireMode = data.isFullAuto ? FireMode.FullAuto : 
             data.burstSize > 1 ? FireMode.Burst : FireMode.SemiAuto;
+        
+        if (data.weaponName == "AN94") { currentFireMode = FireMode.HyperAuto; }
+        
         SetShootFunction(currentFireMode);
     }
     
@@ -119,6 +124,10 @@ public class WeaponController : MonoBehaviour
                 shootFunction = ShootSemiAuto;
                 newFireMode = "Semi Auto"; shortFireMode = "SEMI";
                 break;
+            case FireMode.HyperAuto: // AN94
+                shootFunction = ShootHyper;
+                newFireMode = "Hyper Auto"; shortFireMode = "HYPER";
+                break;
         }
         playerHUD.FireMode(shortFireMode);
         if (fireModeC != null) { StopCoroutine(fireModeC); }
@@ -153,6 +162,22 @@ public class WeaponController : MonoBehaviour
         isShooting = true;
         Shoot();
         yield return new WaitForSeconds(data.fireTime);
+        isShooting = false;
+    }
+
+    private IEnumerator ShootHyper() // funcao de tiro da AN94
+    {
+        isShooting = true; 
+        Shoot();
+        yield return new WaitForSeconds(1f/1300);
+        if (data.ammo !=0)
+        {
+            while (data.ammo > 0 && Input.GetKey(KeyCode.Mouse0))
+            {
+                Shoot();
+                yield return new WaitForSeconds(data.fireTime);
+            }
+        }
         isShooting = false;
     }
     
