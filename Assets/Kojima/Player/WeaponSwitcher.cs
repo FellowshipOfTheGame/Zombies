@@ -46,12 +46,12 @@ public class WeaponSwitcher : MonoBehaviour
         else if (Input.GetAxis("Mouse ScrollWheel") > 0f)
         {
             --selectedWeapon;
-            if (selectedWeapon < 1) { selectedWeapon = inventory.Count - 1; }
+            if (selectedWeapon < 0) { selectedWeapon = inventory.Count - 1; }
         }
         else if (Input.GetAxis("Mouse ScrollWheel") < 0f)
         {
             ++selectedWeapon;
-            if (selectedWeapon > inventory.Count- 1) { selectedWeapon = 1; }
+            if (selectedWeapon > inventory.Count- 1) { selectedWeapon = 0; }
         }
         // inventorySize < selectedWeapon < 1
         //se da pra trocar de arma

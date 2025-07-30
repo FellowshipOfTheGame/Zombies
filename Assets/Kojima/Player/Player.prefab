@@ -194,9 +194,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7de9c8d72ff3b16b7bf0242364655663, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  selectedWeapon: 1
-  currentWeapon: 1
-  mainCamera: {fileID: 2275953076466039066}
 --- !u!114 &1722816878073955608
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -221,6 +218,7 @@ MonoBehaviour:
   waveCounter: {fileID: 105835610473490450}
   remainingEnemies: {fileID: 4951018368703719441}
   healthBar: {fileID: 6470602070869249800}
+  hitmarker: {fileID: 5005605540294839001}
 --- !u!82 &185501053006609931
 AudioSource:
   m_ObjectHideFlags: 0
@@ -366,6 +364,10 @@ PrefabInstance:
     - target: {fileID: 5168505471021192261, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
       propertyPath: m_Name
       value: Health
+      objectReference: {fileID: 0}
+    - target: {fileID: 6389095046606495871, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7198287896319360844, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
       propertyPath: m_Pivot.x
@@ -534,6 +536,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &5005605540294839001 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6389095046606495871, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
+  m_PrefabInstance: {fileID: 2152117744876677798}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &5095556543342082008 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6587312709075869054, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
@@ -641,10 +648,5 @@ PrefabInstance:
 --- !u!4 &1651573643715026828 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4595728854658837914, guid: a35c75b8a4ced1ebf87cc8c41d7fccc9, type: 3}
-  m_PrefabInstance: {fileID: 2966990834865271318}
-  m_PrefabAsset: {fileID: 0}
---- !u!20 &2275953076466039066 stripped
-Camera:
-  m_CorrespondingSourceObject: {fileID: 3943201857128418060, guid: a35c75b8a4ced1ebf87cc8c41d7fccc9, type: 3}
   m_PrefabInstance: {fileID: 2966990834865271318}
   m_PrefabAsset: {fileID: 0}

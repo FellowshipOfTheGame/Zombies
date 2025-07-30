@@ -215,6 +215,7 @@ public class WeaponController : MonoBehaviour
                     if (!hitObject.CompareTag("Player")) break; //se nao acertou um player, para o while
                     
                     hitObject.GetComponent<InterfacesMNG.IDmg>().TakeDmg(damage, hit.point, mainCamera, Color.white);
+                    playerHUD.ShowHitmarker();
                     
                     //prepare to chain raycasts
                     rayOrigin = hit.point + 0.5f*rayDirection; // slight offset to prevent self-collision

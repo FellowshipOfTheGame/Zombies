@@ -25,6 +25,7 @@ public class PlayerHUD : MonoBehaviour
     [SerializeField] private TextMeshProUGUI waveCounter; // D2
     [SerializeField] private TextMeshProUGUI remainingEnemies; // D2
     [SerializeField] private TextMeshProUGUI healthBar; // D3
+    [SerializeField] private GameObject hitmarker;
     
     private void Start()
     {
@@ -38,6 +39,14 @@ public class PlayerHUD : MonoBehaviour
 
     public void ShowCrosshair() { crosshair.SetActive(true); }
     public void HideCrosshair() { crosshair.SetActive(false); }
+
+    public void ShowHitmarker()
+    {
+        hitmarker.SetActive(true);
+        Invoke("HideHitmarker", 0.1f);
+    }
+
+    public void HideHitmarker() { hitmarker.SetActive(false); }
 
     public void ShowFPSCounter() { fpsCounter.SetActive(true); }
     public void HideFPSCounter() { fpsCounter.SetActive(false); }
