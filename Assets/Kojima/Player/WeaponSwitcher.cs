@@ -80,7 +80,7 @@ public class WeaponSwitcher : MonoBehaviour
     {
         currentWeapon = selectedWeapon;
         inventory[currentWeapon].SetActive(true);
-        weaponController = inventory[currentWeapon].GetComponent<WeaponController>();
+        weaponController.enabled = true;  // liga o script da arma, ja que script desligado tem que ser manualmente ligado
         weaponController.UpdatePlayerHUD();
         
         isSwitching = false;
@@ -122,18 +122,22 @@ public class WeaponSwitcher : MonoBehaviour
     
     private void ThrowCurrentWeapon()
     {
-        if (currentWeapon == 1)
+        if (isSwitching) return;
+        
+        if (currentWeapon == 0)
         {
-            selectedWeapon = Random.Range(1,  inventory.Count);
+            selectedWeapon = Random.Range(1, inventory.Count);
         }  // cant throw primary weapon
         else
         {
-            // FAZER ISSO NAO DESLIGA AS FUNCOES DE ATIRAR
-            inventory[currentWeapon].transform.SetParent(null);  // parent to the game tree
+            weaponController.enabled = false;
+            inventory[currentWeapon].GetComponent<Rigidbody>().isKinematic = false;  // liga a fisica
+            inventory[currentWeapon].transform.SetParent(null);
             inventory.RemoveAt(currentWeapon);
             selectedWeapon = inventory.Count - 1;
+            currentWeapon = 0;
         }
-
+        
         SwitchWeapon();
     }
     
