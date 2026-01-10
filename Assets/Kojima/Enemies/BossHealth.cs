@@ -6,7 +6,7 @@ using UnityEngine;
 using TMPro;
 using Random = UnityEngine.Random;
 
-public class BossHealth : MonoBehaviour, InterfacesMNG.IDmg, InterfacesMNG.IDmgSpecial
+public class BossHealth : MonoBehaviour, InterfacesMNG.ICombat
 {
      [Header("Variables")]
      [SerializeField] private int maxHealth = 10000;
@@ -33,7 +33,7 @@ public class BossHealth : MonoBehaviour, InterfacesMNG.IDmg, InterfacesMNG.IDmgS
           // gameRule = GameObject.Find("GameManager").GetComponent<GameRules>();
      }
 
-     public void TakeDmg(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor)
+     public void TakeDamage(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor)
      {
           FloatingDamage(damage, hitPosition, textRotateTarget, textColor);
           
@@ -117,7 +117,7 @@ public class BossHealth : MonoBehaviour, InterfacesMNG.IDmg, InterfacesMNG.IDmgS
           Rigidbody textRB = wsInstance.GetComponentInChildren<Rigidbody>();
           textRB.AddForce(impulse, ForceMode.Impulse);
           
-          //implementacao com getchild, provavelmente vai ter que usar um setactive pra que instancie desligado por padrao
+          //implementacao com getChild, provavelmente vai ter que usar um setActive pra que instancie desligado por padrao
           //pra pegar o filho tem que usar o .transform.GetChild(i) e depois pegar o GO referente a esse transform
           // Transform floatingDmgTF = worldSpaceUIPrefab.transform.GetChild(0);
           // GameObject fDmgGO = floatingDmgTF.gameObject; //pega o FloatingDamage do worldSpaceUI prefab

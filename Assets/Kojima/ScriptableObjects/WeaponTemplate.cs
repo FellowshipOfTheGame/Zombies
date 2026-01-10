@@ -22,6 +22,15 @@ public struct WeaponStruct
     public float  range;
     public int    decay;
     public float  recoil;
+    public enum Special
+    {
+        None,
+        Explosive,
+        LowHealth,
+        HighHealth,
+        Echo
+    }
+    public Special special;
 }
 
 [CreateAssetMenu(fileName = "Weapon_name", menuName = "Weapon Template")]

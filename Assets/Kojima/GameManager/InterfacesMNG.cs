@@ -2,14 +2,16 @@ using UnityEngine;
 
 public static class InterfacesMNG
 {
-    public interface IDmg
+    public interface ICombat
     {
-        void TakeDmg(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor);
+        void TakeDamage(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor);
     }
     
-    public interface IDmgSpecial
+    public interface IGet
     {
-        void TakeDmgSpecial(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor,
-            string special, int percentage);
+        int GetHealth();
+        int GetMaxHealth();
+        float GetHealthRatio();
     }
+    
 }

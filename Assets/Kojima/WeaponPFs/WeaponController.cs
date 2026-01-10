@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using static InterfacesMNG;
 using Random = UnityEngine.Random;
 
 public class WeaponController : MonoBehaviour
@@ -23,11 +24,12 @@ public class WeaponController : MonoBehaviour
 
     [Header("Declarations")]
     public WeaponStruct data;
-    public Coroutine timerC;
+    private Coroutine timerC;
     private Coroutine fireModeC;
     private Coroutine shootingC;
     private PlayerHUD playerHUD;
     private AudioSource audioSource;
+    
     // usado pra definir qual funcao chamar ao atirar ao inves de usar ifs ou switches
     private delegate IEnumerator FireDelegate();
     private FireDelegate shootFunction; 
@@ -36,9 +38,13 @@ public class WeaponController : MonoBehaviour
         FullAuto,
         Burst,
         SemiAuto,
-        HyperAuto // special fire mode for AN94
+        HyperAuto // special hardcoded fire mode for AN94
     }
     private FireMode currentFireMode;
+    
+    //usado pra mudar o especial da arma
+    private delegate void DealDamage(RaycastHit target, int damage);
+    private DealDamage dealDamage;
     
     private void Start()
     {
@@ -56,7 +62,7 @@ public class WeaponController : MonoBehaviour
         
         if (data.weaponName == "AN94") { currentFireMode = FireMode.HyperAuto; }
         
-        SetShootFunction(currentFireMode);
+        SetFireMode(currentFireMode);
     }
     
 
@@ -104,10 +110,10 @@ public class WeaponController : MonoBehaviour
             FireMode.SemiAuto => data.isFullAuto ? FireMode.FullAuto : FireMode.Burst,
             _                 => currentFireMode
         };
-        SetShootFunction(currentFireMode);
+        SetFireMode(currentFireMode);
     }
     
-    private void SetShootFunction(FireMode mode)
+    private void SetFireMode(FireMode mode)
     {
         oldFireMode = newFireMode;
         switch (mode)
@@ -120,19 +126,63 @@ public class WeaponController : MonoBehaviour
                 shootFunction = ShootBurst;
                 newFireMode = data.burstSize + "-Shot Burst"; shortFireMode = data.burstSize + "-SHOT";
                 break;
-            case FireMode.SemiAuto:
-                shootFunction = ShootSemiAuto;
-                newFireMode = "Semi Auto"; shortFireMode = "SEMI";
-                break;
             case FireMode.HyperAuto: // AN94
                 shootFunction = ShootHyper;
                 newFireMode = "Hyper Auto"; shortFireMode = "HYPER";
+                break;
+            default:
+            case FireMode.SemiAuto:
+                shootFunction = ShootSemiAuto;
+                newFireMode = "Semi Auto"; shortFireMode = "SEMI";
                 break;
         }
         playerHUD.FireMode(shortFireMode);
         if (fireModeC != null) { StopCoroutine(fireModeC); }
         fireModeC = StartCoroutine(playerHUD.FireModePopUp(oldFireMode, newFireMode)); // pop-up visual
         isSwitchingModes = false;
+    }
+    
+    private void NormalDamage(RaycastHit target, int damage)
+    {
+        print(target.collider.GetComponent<IGet>().GetHealth());
+        target.collider.GetComponent<ICombat>().TakeDamage(damage, target.point, mainCamera, Color.white);
+    }
+
+    private void ExplosiveDamage(RaycastHit target, int damage)
+    {
+        NormalDamage(target, damage);
+        float radius = 3f;
+        foreach (Collider col in Physics.OverlapSphere(target.point, radius))
+        {
+            if (col.gameObject == target.collider.gameObject) continue;
+
+            var combat = col.GetComponent<ICombat>();
+            combat?.TakeDamage(Mathf.RoundToInt(damage * 0.4f), target.point, mainCamera, 0.8f*Color.red);
+        }
+    }
+
+    private void LowHealthDamage(RaycastHit target, int damage)
+    {
+        NormalDamage(target, damage);
+        target.collider.GetComponent<ICombat>().TakeDamage(
+            Mathf.FloorToInt(0.5f * damage * (1f-target.collider.gameObject.GetComponent<IGet>().GetHealthRatio())),
+            target.point, mainCamera, 0.3f*Color.white);
+    }
+
+    private void HighHealthDamage(RaycastHit target, int damage)
+    {
+        target.collider.GetComponent<ICombat>().TakeDamage(
+            Mathf.FloorToInt(0.4f * damage * target.collider.GetComponent<IGet>().GetHealthRatio()),
+            target.point, mainCamera, 0.5f*Color.black);
+        NormalDamage(target, damage);
+    }
+
+    private void EchoDamage(RaycastHit target, int damage)
+    {
+        NormalDamage(target, damage);
+        target.collider.GetComponent<ICombat>().TakeDamage(
+            Mathf.FloorToInt(0.3f * damage ),
+            target.point, mainCamera, 0.85f*Color.green);
     }
     
     private IEnumerator ShootFullAuto()
@@ -200,28 +250,27 @@ public class WeaponController : MonoBehaviour
                 0f);
             
             Vector3 rayOrigin = mainCamera.transform.position;  // tiro sai da camera
-            // Vector3 rayOrigin = muzzle.position;  // tiro sai da arma
+            // Vector3 rayOrigin = muzzle.position; // tiro sai da arma
             Vector3 rayDirection = transform.up;  // pros prefabs de teste, essa e a direcao do cano
             rayDirection = spreadRotation * rayDirection;
             
             while (damage > 0)  // chain raycasts to pierce through enemies
             {
-                if (Physics.Raycast(rayOrigin, rayDirection, out RaycastHit hit, rangeLeft))
+                if (Physics.Raycast(rayOrigin, rayDirection, out RaycastHit target, rangeLeft))
                 {
-                    rangeLeft -= hit.distance; //DMG * bullet remaining energy
-                    damage -= Mathf.FloorToInt(data.damage * hit.distance / (3 * data.range));
+                    rangeLeft -= target.distance;
+                    damage -= Mathf.FloorToInt(data.damage * target.distance/(3 * data.range)); //DMG * bullet remaining energy
                     
-                    GameObject hitObject = hit.collider.gameObject;
-                    if (!hitObject.CompareTag("Player")) break; //se nao acertou um player, para o while
-                    
-                    hitObject.GetComponent<InterfacesMNG.IDmg>().TakeDmg(damage, hit.point, mainCamera, Color.white);
+                    if (!target.collider.gameObject.CompareTag("Player")) break; //se nao acertou um player, para o while
+
+                    dealDamage.Invoke(target, damage);
                     playerHUD.ShowHitmarker();
                     
                     //prepare to chain raycasts
-                    rayOrigin = hit.point + 0.5f*rayDirection; // slight offset to prevent self-collision
+                    rayOrigin = target.point + 0.5f*rayDirection; // slight offset to prevent self-collision
                     damage -= data.decay;
                 }
-                else damage = 0;
+                else break;
             }
         }
     }
@@ -237,7 +286,7 @@ public class WeaponController : MonoBehaviour
     private void ReloadFinished()
     {
         data.totalAmmo += data.ammo;
-        if (data.totalAmmo > data.magSize) //se tiver bastante municao
+        if (data.totalAmmo > data.magSize) //se tiver municao suficiente pra um pente
         {
             data.ammo = partial ? data.magSize + 1 : data.magSize;
             data.totalAmmo -= data.ammo;
@@ -265,6 +314,19 @@ public class WeaponController : MonoBehaviour
         mainCamera = transform.parent;
     }
     
+    private void OnEnable()
+    {
+        dealDamage = data.special switch
+        {
+            WeaponStruct.Special.None       => NormalDamage,
+            WeaponStruct.Special.Explosive  => ExplosiveDamage,
+            WeaponStruct.Special.LowHealth  => LowHealthDamage,
+            WeaponStruct.Special.HighHealth => HighHealthDamage,
+            WeaponStruct.Special.Echo       => EchoDamage,
+            _                               => NormalDamage
+        };
+    }
+
     private void OnDisable()
     {   // se cancelar o reload (como ao trocar de arma), apaga os flags
         partial = false;

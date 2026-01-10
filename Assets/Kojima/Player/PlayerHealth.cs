@@ -40,7 +40,7 @@ public class PlayerHealth : MonoBehaviour
           if (Input.GetKeyDown(KeyCode.Minus)) { TakeDamage(5, transform.position, transform); }
      }
 
-     public void TakeDamage(int damage, Vector3 hitPosition, Transform textRotateTarget)
+     private void TakeDamage(int damage, Vector3 hitPosition, Transform textRotateTarget)
      {
           currentHealth -= damage; FloatingDamage(damage, hitPosition, textRotateTarget, Color.white);
 
@@ -104,7 +104,7 @@ public class PlayerHealth : MonoBehaviour
           Rigidbody textRB = wsInstance.GetComponentInChildren<Rigidbody>();
           textRB.AddForce(impulse, ForceMode.Impulse);
           
-          //implementacao com getchild, provavelmente vai ter que usar um setactive pra que instancie desligado por padrao
+          //implementacao com getChild, provavelmente vai ter que usar um setActive pra que instancie desligado por padrao
           //pra pegar o filho tem que usar o .transform.GetChild(i) e depois pegar o GO referente a esse transform
           // Transform floatingDmgTF = worldSpaceUIPrefab.transform.GetChild(0);
           // GameObject fDmgGO = floatingDmgTF.gameObject; //pega o FloatingDamage do worldSpaceUI prefab

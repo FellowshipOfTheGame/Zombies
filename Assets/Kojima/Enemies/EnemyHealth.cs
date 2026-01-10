@@ -1,6 +1,7 @@
 // using System;
 // using System.ComponentModel;
 // using Tests.NetworkTest.Serializers;
+using static InterfacesMNG;
 
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,7 +20,7 @@ using Random = UnityEngine.Random;
 /// 
 /// </summary>
 
-public class EnemyHealth : MonoBehaviour, InterfacesMNG.IDmg, InterfacesMNG.IDmgSpecial
+public class EnemyHealth : MonoBehaviour, ICombat, IGet
 {
      [Header("Variables")]
      [SerializeField] private int maxHealth = 100;
@@ -49,7 +50,7 @@ public class EnemyHealth : MonoBehaviour, InterfacesMNG.IDmg, InterfacesMNG.IDmg
           // gameRule = GameObject.Find("GameManager").GetComponent<GameRules>();
      }
 
-     public void TakeDmg(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor)
+     public void TakeDamage(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor)
      {
           FloatingDamage(damage, hitPosition, textRotateTarget, textColor);
           
@@ -60,6 +61,10 @@ public class EnemyHealth : MonoBehaviour, InterfacesMNG.IDmg, InterfacesMNG.IDmg
           }
           Debug.Log(health);
      }
+     
+     public int GetHealth()    => health;
+     public int GetMaxHealth() => maxHealth;
+     public float GetHealthRatio() => health / maxHealth;
      
      public void TakeDmgSpecial(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor,
           string special, int percentage)
@@ -74,11 +79,11 @@ public class EnemyHealth : MonoBehaviour, InterfacesMNG.IDmg, InterfacesMNG.IDmg
           {
                Collider[] nearbyColliders = Physics.OverlapSphere(transform.position, targetRadius, playerLayerMask);
                List<Transform> nearbyEnemies = new List<Transform>();
-               foreach (Collider ncollider in nearbyColliders)
+               foreach (Collider nCollider in nearbyColliders)
                {
-                    if (ncollider.transform != transform)
+                    if (nCollider.transform != transform)
                     {
-                         nearbyEnemies.Add(ncollider.transform);
+                         nearbyEnemies.Add(nCollider.transform);
                     }
                }
                // select two random enemies
@@ -166,7 +171,7 @@ public class EnemyHealth : MonoBehaviour, InterfacesMNG.IDmg, InterfacesMNG.IDmg
           Rigidbody textRB = wsInstance.GetComponentInChildren<Rigidbody>();
           textRB.AddForce(impulse, ForceMode.Impulse);
           
-          //implementacao com getchild, provavelmente vai ter que usar um setactive pra que instancie desligado por padrao
+          //implementacao com getChild, provavelmente vai ter que usar um setActive pra que instancie desligado por padrao
           //pra pegar o filho tem que usar o .transform.GetChild(i) e depois pegar o GO referente a esse transform
           // Transform floatingDmgTF = worldSpaceUIPrefab.transform.GetChild(0);
           // GameObject fDmgGO = floatingDmgTF.gameObject; //pega o FloatingDamage do worldSpaceUI prefab
@@ -196,11 +201,11 @@ public class EnemyHealth : MonoBehaviour, InterfacesMNG.IDmg, InterfacesMNG.IDmg
      {
           Collider[] nearbyColliders = Physics.OverlapSphere(transform.position, radius, playerLayerMask);
           List<Transform> nearbyEnemies = new List<Transform>();
-          foreach (Collider ncollider in nearbyColliders)
+          foreach (Collider nCollider in nearbyColliders)
           {
-               if (ncollider.transform != transform)
+               if (nCollider.transform != transform)
                {
-                    nearbyEnemies.Add(ncollider.transform);
+                    nearbyEnemies.Add(nCollider.transform);
                }
           }
           
@@ -268,7 +273,7 @@ public class EnemyHealth : MonoBehaviour, InterfacesMNG.IDmg, InterfacesMNG.IDmg
                GameObject hitObject = targetHit.collider.gameObject;
                if (hitObject.CompareTag("Player"))
                {
-                    hitObject.GetComponent<InterfacesMNG.IDmg>().TakeDmg(damage, targetHit.point, textRotateTarget, purple);
+                    hitObject.GetComponent<ICombat>().TakeDamage(damage, targetHit.point, textRotateTarget, purple);
                }
           }
           // instancia o ricochetePF entre this.transform e target.transform

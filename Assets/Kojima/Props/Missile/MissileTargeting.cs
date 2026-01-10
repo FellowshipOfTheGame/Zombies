@@ -28,7 +28,7 @@ public class MissileTargeting : MonoBehaviour
         ContactPoint contP = collision.GetContact(0);
         if (collision.gameObject.CompareTag("Player"))
         {
-            collision.gameObject.GetComponent<InterfacesMNG.IDmg>().TakeDmg(damage, contP.point, textRotateTarget, color);
+            collision.gameObject.GetComponent<InterfacesMNG.ICombat>().TakeDamage(damage, contP.point, textRotateTarget, color);
         }
         Destroy(gameObject);
     }
