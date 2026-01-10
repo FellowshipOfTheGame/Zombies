@@ -64,7 +64,7 @@ public class EnemyHealth : MonoBehaviour, ICombat, IGet
      
      public int GetHealth()    => health;
      public int GetMaxHealth() => maxHealth;
-     public float GetHealthRatio() => health / maxHealth;
+     public float GetHealthRatio() => health / (float)maxHealth;
      
      public void TakeDmgSpecial(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor,
           string special, int percentage)

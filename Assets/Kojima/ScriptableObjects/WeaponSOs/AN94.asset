@@ -28,7 +28,8 @@ MonoBehaviour:
     reloadTime: 2.5
     reloadTimePartial: 2
     switchTime: 0.5
-    spread: 1
+    spread: 10
     range: 350
     decay: 10
     recoil: 1.5
+    special: 3

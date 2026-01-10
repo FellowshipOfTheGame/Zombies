@@ -21,7 +21,7 @@ public class WeaponController : MonoBehaviour
     [SerializeField] private WeaponTemplate template;  // add the weapon's template in Unity's spector
     private Transform muzzle;
     private Transform mainCamera;
-
+    
     [Header("Declarations")]
     public WeaponStruct data;
     private Coroutine timerC;
@@ -65,7 +65,7 @@ public class WeaponController : MonoBehaviour
         SetFireMode(currentFireMode);
     }
     
-
+    
     private void Update()
     {
         if (isReloading) { return; }
@@ -147,20 +147,18 @@ public class WeaponController : MonoBehaviour
         print(target.collider.GetComponent<IGet>().GetHealth());
         target.collider.GetComponent<ICombat>().TakeDamage(damage, target.point, mainCamera, Color.white);
     }
-
+    
     private void ExplosiveDamage(RaycastHit target, int damage)
     {
         NormalDamage(target, damage);
-        float radius = 3f;
+        const float radius = 7.5f;
         foreach (Collider col in Physics.OverlapSphere(target.point, radius))
         {
-            if (col.gameObject == target.collider.gameObject) continue;
-
             var combat = col.GetComponent<ICombat>();
-            combat?.TakeDamage(Mathf.RoundToInt(damage * 0.4f), target.point, mainCamera, 0.8f*Color.red);
+            combat?.TakeDamage(Mathf.RoundToInt(damage * 0.3f), col.transform.position, mainCamera, Color.red);
         }
     }
-
+    
     private void LowHealthDamage(RaycastHit target, int damage)
     {
         NormalDamage(target, damage);
@@ -168,15 +166,16 @@ public class WeaponController : MonoBehaviour
             Mathf.FloorToInt(0.5f * damage * (1f-target.collider.gameObject.GetComponent<IGet>().GetHealthRatio())),
             target.point, mainCamera, 0.3f*Color.white);
     }
-
+    
     private void HighHealthDamage(RaycastHit target, int damage)
     {
+        print(target.collider.GetComponent<IGet>().GetHealthRatio());
         target.collider.GetComponent<ICombat>().TakeDamage(
             Mathf.FloorToInt(0.4f * damage * target.collider.GetComponent<IGet>().GetHealthRatio()),
             target.point, mainCamera, 0.5f*Color.black);
         NormalDamage(target, damage);
     }
-
+    
     private void EchoDamage(RaycastHit target, int damage)
     {
         NormalDamage(target, damage);
@@ -206,7 +205,7 @@ public class WeaponController : MonoBehaviour
         }
         isShooting = false;
     }
-
+    
     private IEnumerator ShootSemiAuto()
     {
         isShooting = true;
@@ -214,7 +213,7 @@ public class WeaponController : MonoBehaviour
         yield return new WaitForSeconds(data.fireTime);
         isShooting = false;
     }
-
+    
     private IEnumerator ShootHyper() // funcao de tiro da AN94
     {
         isShooting = true; 
@@ -262,7 +261,7 @@ public class WeaponController : MonoBehaviour
                     damage -= Mathf.FloorToInt(data.damage * target.distance/(3 * data.range)); //DMG * bullet remaining energy
                     
                     if (!target.collider.gameObject.CompareTag("Player")) break; //se nao acertou um player, para o while
-
+                    
                     dealDamage.Invoke(target, damage);
                     playerHUD.ShowHitmarker();
                     
@@ -274,7 +273,7 @@ public class WeaponController : MonoBehaviour
             }
         }
     }
-
+    
     private void Reload()
     {
         isReloading = true;
@@ -302,7 +301,7 @@ public class WeaponController : MonoBehaviour
         isReloading = false;
         partial = false;
     }
-
+    
     public void UpdatePlayerHUD()
     {
         playerHUD = GetComponentInParent<PlayerHUD>();
@@ -326,19 +325,19 @@ public class WeaponController : MonoBehaviour
             _                               => NormalDamage
         };
     }
-
+    
     private void OnDisable()
     {   // se cancelar o reload (como ao trocar de arma), apaga os flags
         partial = false;
         isShooting = false;
         isReloading = false;
     }
-
-
+    
+    
     public void Stop()
     {
         if (isShooting)  StopCoroutine(shootingC);  isShooting = false;
         if (isReloading) StopCoroutine(timerC); isReloading = false;
     }
-
+    
 }
