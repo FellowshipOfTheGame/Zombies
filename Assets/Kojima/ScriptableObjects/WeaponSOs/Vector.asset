@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Vector
   m_EditorClassIdentifier: 
   data:
-    isClosedBolt: 1
+    hasFireSelector: 1
     isFullAuto: 1
     weaponName: Vector
     damage: 35
@@ -32,3 +32,4 @@ MonoBehaviour:
     range: 50
     decay: 10
     recoil: 1.5
+    special: 5

@@ -28,7 +28,8 @@ public struct WeaponStruct
         Explosive,
         LowHealth,
         HighHealth,
-        Echo
+        Echo,
+        Bleed,
     }
     public Special special;
 }

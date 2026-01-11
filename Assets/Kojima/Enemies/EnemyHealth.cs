@@ -1,6 +1,8 @@
 // using System;
 // using System.ComponentModel;
 // using Tests.NetworkTest.Serializers;
+
+using System.Collections;
 using static InterfacesMNG;
 
 using System.Collections.Generic;
@@ -27,9 +29,10 @@ public class EnemyHealth : MonoBehaviour, ICombat, IGet
                       private int health;
      [SerializeField] private float targetRadius = 5f;
                       private float missileSide;
-                      private int stacks = -1;
+                      private int bleedStacks;
                       private readonly Color orange = new (1f, 0.55f, 0.25f);
                       private readonly Color purple = new(0.7f, 0.35f, 1.0f);
+                      private Coroutine bleedCoroutine;
      
      [Header("References")]
      [SerializeField] private GameObject worldSpaceUIPrefab;
@@ -49,7 +52,9 @@ public class EnemyHealth : MonoBehaviour, ICombat, IGet
           
           // gameRule = GameObject.Find("GameManager").GetComponent<GameRules>();
      }
-
+     
+     
+     // ICombat
      public void TakeDamage(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor)
      {
           FloatingDamage(damage, hitPosition, textRotateTarget, textColor);
@@ -61,86 +66,34 @@ public class EnemyHealth : MonoBehaviour, ICombat, IGet
           }
           Debug.Log(health);
      }
-     
-     public int GetHealth()    => health;
-     public int GetMaxHealth() => maxHealth;
-     public float GetHealthRatio() => health / (float)maxHealth;
-     
-     public void TakeDmgSpecial(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor,
-          string special, int percentage)
+
+     public void StackBleed(int stacks, float decayTime, Transform textRotateTarget, Color textColor)
      {
-          health -= damage; FloatingDamage(damage, hitPosition, textRotateTarget, textColor); //dano normal
-          
-          if (special == "Missile")
+          bleedStacks += stacks;
+          // operador mais nojento que ja vi: se nao tem corrotina, comeca uma
+          bleedCoroutine ??= StartCoroutine(Bleed(decayTime, textRotateTarget, textColor));
+     }
+
+     private IEnumerator Bleed(float decayTime, Transform textRotateTarget, Color textColor)
+     {
+          while (true)
           {
-               Missile(damage/4, targetRadius, textRotateTarget);
+               yield return new WaitForSeconds(decayTime);
+               TakeDamage(bleedStacks, transform.position, textRotateTarget, textColor);
+               bleedStacks /= 2;
+               if (bleedStacks == 0) break;
           }
-          else if (special == "Ricochet")
-          {
-               Collider[] nearbyColliders = Physics.OverlapSphere(transform.position, targetRadius, playerLayerMask);
-               List<Transform> nearbyEnemies = new List<Transform>();
-               foreach (Collider nCollider in nearbyColliders)
-               {
-                    if (nCollider.transform != transform)
-                    {
-                         nearbyEnemies.Add(nCollider.transform);
-                    }
-               }
-               // select two random enemies
-               Transform enemy1;
-               switch (nearbyEnemies.Count)
-               {
-                    case 0:
-                         break;
-                    case 1:
-                         enemy1 = nearbyEnemies[Random.Range(0, nearbyEnemies.Count)].GetChild(0);
-                         Ricochet(enemy1, damage/2, hitPosition, textRotateTarget);
-                         break;
-                    default:
-                         enemy1 = nearbyEnemies[Random.Range(0, nearbyEnemies.Count)].GetChild(0);
-                         Transform enemy2 = nearbyEnemies[Random.Range(0, nearbyEnemies.Count)].GetChild(0);
-                         Ricochet(enemy1, damage/2, hitPosition, textRotateTarget);
-                         Ricochet(enemy2, damage/2, hitPosition, textRotateTarget);
-                         Debug.Log(enemy1);
-                         break;
-               }
-          }
-          else 
-          {
-               switch (special)
-               {
-                    // ricochet - purple
-                    case "MaxHealth":
-                         textColor = Color.green;
-                         damage = Mathf.FloorToInt(maxHealth * percentage/100f);
-                         break;
-                    
-                    case "MissingHealth":
-                         textColor = Color.red;
-                         damage = Mathf.FloorToInt((maxHealth - health) * percentage/100f);
-                         break;
-                    
-                    case "Extra":
-                         textColor = Color.grey;
-                         damage = Mathf.FloorToInt(damage * percentage/100f);
-                         break;
-                    
-                    case "Stack":
-                         textColor = Color.grey;
-                         stacks += 2; damage = stacks; Debug.Log(stacks);
-                         break;
-               }
-               health -= damage; FloatingDamage(damage, hitPosition, textRotateTarget, textColor);
-          }
-          
-          if (health <= 0)
-          {
-               Morreu();
-          }
-          Debug.Log(health);
+          bleedCoroutine = null;
      }
      
      
+     // IGet
+     public int GetHealth() => health;
+     public int GetMaxHealth() => maxHealth;
+     public float GetHealthRatio() => health / (float)maxHealth;
+     public int GetStacks() => bleedStacks;
+
+
      private void Morreu()
      {
           // ConnectionSingleton.Instance.Connection.UDP_Send_Message(

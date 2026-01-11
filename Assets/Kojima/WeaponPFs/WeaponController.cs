@@ -144,8 +144,8 @@ public class WeaponController : MonoBehaviour
     
     private void NormalDamage(RaycastHit target, int damage)
     {
-        print(target.collider.GetComponent<IGet>().GetHealth());
-        target.collider.GetComponent<ICombat>().TakeDamage(damage, target.point, mainCamera, Color.white);
+        print(target.collider.GetComponent<IGet>()?.GetHealth());
+        target.collider.GetComponent<ICombat>()?.TakeDamage(damage, target.point, mainCamera, Color.white);
     }
     
     private void ExplosiveDamage(RaycastHit target, int damage)
@@ -155,14 +155,14 @@ public class WeaponController : MonoBehaviour
         foreach (Collider col in Physics.OverlapSphere(target.point, radius))
         {
             var combat = col.GetComponent<ICombat>();
-            combat?.TakeDamage(Mathf.RoundToInt(damage * 0.3f), col.transform.position, mainCamera, Color.red);
+            combat?.TakeDamage(Mathf.RoundToInt(damage * 0.3f), col.transform.position, mainCamera, Color.red/2f + Color.yellow/2f);
         }
     }
     
     private void LowHealthDamage(RaycastHit target, int damage)
     {
         NormalDamage(target, damage);
-        target.collider.GetComponent<ICombat>().TakeDamage(
+        target.collider.GetComponent<ICombat>()?.TakeDamage(
             Mathf.FloorToInt(0.5f * damage * (1f-target.collider.gameObject.GetComponent<IGet>().GetHealthRatio())),
             target.point, mainCamera, 0.3f*Color.white);
     }
@@ -170,7 +170,7 @@ public class WeaponController : MonoBehaviour
     private void HighHealthDamage(RaycastHit target, int damage)
     {
         print(target.collider.GetComponent<IGet>().GetHealthRatio());
-        target.collider.GetComponent<ICombat>().TakeDamage(
+        target.collider.GetComponent<ICombat>()?.TakeDamage(
             Mathf.FloorToInt(0.4f * damage * target.collider.GetComponent<IGet>().GetHealthRatio()),
             target.point, mainCamera, 0.5f*Color.black);
         NormalDamage(target, damage);
@@ -179,9 +179,17 @@ public class WeaponController : MonoBehaviour
     private void EchoDamage(RaycastHit target, int damage)
     {
         NormalDamage(target, damage);
-        target.collider.GetComponent<ICombat>().TakeDamage(
+        target.collider.GetComponent<ICombat>()?.TakeDamage(
             Mathf.FloorToInt(0.3f * damage ),
             target.point, mainCamera, 0.85f*Color.green);
+    }
+
+    private void BleedDamage(RaycastHit target, int damage)
+    {
+        NormalDamage(target, Mathf.FloorToInt(0.5f*damage));
+        target.collider.GetComponent<ICombat>()?.StackBleed(
+            Mathf.FloorToInt(5 + 0.1f*damage), // stack amount
+            0.75f, mainCamera, 0.85f*Color.red);
     }
     
     private IEnumerator ShootFullAuto()
@@ -322,6 +330,7 @@ public class WeaponController : MonoBehaviour
             WeaponStruct.Special.LowHealth  => LowHealthDamage,
             WeaponStruct.Special.HighHealth => HighHealthDamage,
             WeaponStruct.Special.Echo       => EchoDamage,
+            WeaponStruct.Special.Bleed      => BleedDamage,
             _                               => NormalDamage
         };
     }

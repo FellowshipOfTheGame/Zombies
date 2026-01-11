@@ -32,4 +32,4 @@ MonoBehaviour:
     range: 40
     decay: 7
     recoil: 1.5
-    special: 2
+    special: 5

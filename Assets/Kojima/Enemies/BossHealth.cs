@@ -5,8 +5,9 @@
 using UnityEngine;
 using TMPro;
 using Random = UnityEngine.Random;
+using static InterfacesMNG;
 
-public class BossHealth : MonoBehaviour, InterfacesMNG.ICombat
+public class BossHealth : MonoBehaviour, ICombat
 {
      [Header("Variables")]
      [SerializeField] private int maxHealth = 10000;
@@ -45,51 +46,12 @@ public class BossHealth : MonoBehaviour, InterfacesMNG.ICombat
           Debug.Log(health);
      }
 
-     public void TakeDmgSpecial(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor,
-          string special, int percentage)
+     public void StackBleed(int bleedStacks, float decayTime, Transform textRotateTarget, Color textColor)
      {
-          health -= damage; FloatingDamage(damage, hitPosition, textRotateTarget, textColor); //dano normal
-          
-          if (special == "Missile")
-          {
-               Missile(damage/4, targetRadius, textRotateTarget);
-          }
-          else 
-          {
-               switch (special)
-               {
-                    case "MaxHealth":
-                         textColor = Color.green;
-                         damage = Mathf.FloorToInt(maxHealth * percentage/100f);
-                         break;
-                    
-                    case "MissingHealth":
-                         textColor = Color.black;
-                         damage = Mathf.FloorToInt((maxHealth - health) * percentage/100f);
-                         break;
-                    
-                    case "CurrentHealth":
-                         textColor = Color.yellow;
-                         damage = Mathf.FloorToInt(health * percentage/100f);
-                         break;
-
-                    case "Extra":
-                         textColor = Color.grey;
-                         damage = Mathf.FloorToInt(damage * percentage/100f);
-                         break;
-               }
-               
-               health -= damage; FloatingDamage(damage, hitPosition, textRotateTarget, textColor);
-          }
-          
-          if (health <= 0)
-          {
-               // Morreu();
-          }
-          Debug.Log(health);
+          throw new System.NotImplementedException();
      }
-     
-     
+
+
      // public void Morreu()
      // {
      //      ConnectionSingleton.Instance.Connection.UDP_Send_Message(
