@@ -81,7 +81,6 @@ public class WeaponSwitcher : MonoBehaviour
         currentWeapon = selectedWeapon;
         inventory[currentWeapon].SetActive(true);
         weaponController.enabled = true;  // liga o script da arma, ja que script desligado tem que ser manualmente ligado
-        weaponController.UpdatePlayerHUD();
         
         isSwitching = false;
     }

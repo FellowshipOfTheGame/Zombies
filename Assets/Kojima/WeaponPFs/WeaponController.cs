@@ -1,26 +1,24 @@
 using UnityEngine;
 using System.Collections;
-using static InterfacesMNG;
 using Random = UnityEngine.Random;
 
-public class WeaponController : MonoBehaviour
+public class WeaponController : DamageTypes
 {
     [Header("Variables")]
     private bool isReloading;
     private bool isShooting;
     private bool isSwitchingModes;
-    private bool partial;
+    private bool partialReload;
     private const float fireModeSwitchTime = 0.2f;
     private string oldFireMode;
     private string newFireMode;
     private string shortFireMode;
     
-    [Header("References")] 
+    [Header("References")]
     [SerializeField] private AudioClip  shootSound;
     [SerializeField] private GameObject muzzleFlash;
     [SerializeField] private WeaponTemplate template;  // add the weapon's template in Unity's spector
     private Transform muzzle;
-    private Transform mainCamera;
     
     [Header("Declarations")]
     public WeaponStruct data;
@@ -42,14 +40,12 @@ public class WeaponController : MonoBehaviour
     }
     private FireMode currentFireMode;
     
-    //usado pra mudar o especial da arma
-    private delegate void DealDamage(RaycastHit target, int damage);
-    private DealDamage dealDamage;
     
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
-        playerHUD = GetComponentInParent<PlayerHUD>();
+        
+        mainCamera = transform.parent;
         
         data = template.data;
         data.fireTime = 60f/template.data.fireRate;
@@ -65,7 +61,6 @@ public class WeaponController : MonoBehaviour
         SetFireMode(currentFireMode);
     }
     
-    
     private void Update()
     {
         if (isReloading) { return; }
@@ -73,13 +68,13 @@ public class WeaponController : MonoBehaviour
         if (data.ammo == 0 && (Input.GetKeyDown(KeyCode.Mouse0) || Input.GetKeyDown(KeyCode.Mouse1) || Input.GetKeyDown(KeyCode.R)))
         {   // empty reload
             if (timerC != null) { StopCoroutine(timerC); isSwitchingModes = false; }
-            partial = false; Reload(); 
+            partialReload = false; Reload(); 
         }
 
         if (Input.GetKeyDown(KeyCode.R) && data.ammo < data.magSize)
         {   // manual reload
             if (timerC != null) { StopCoroutine(timerC); isSwitchingModes = false; }
-            partial = true; Reload(); 
+            partialReload = true; Reload(); 
         }
         
         if (isReloading || isSwitchingModes) { return; }
@@ -100,6 +95,7 @@ public class WeaponController : MonoBehaviour
         // if (Input.GetKeyDown(KeyCode.Mouse1))
         // { mirar }
     }
+    
     
     private void CycleFireMode()
     {
@@ -140,56 +136,6 @@ public class WeaponController : MonoBehaviour
         if (fireModeC != null) { StopCoroutine(fireModeC); }
         fireModeC = StartCoroutine(playerHUD.FireModePopUp(oldFireMode, newFireMode)); // pop-up visual
         isSwitchingModes = false;
-    }
-    
-    private void NormalDamage(RaycastHit target, int damage)
-    {
-        print(target.collider.GetComponent<IGet>()?.GetHealth());
-        target.collider.GetComponent<ICombat>()?.TakeDamage(damage, target.point, mainCamera, Color.white);
-    }
-    
-    private void ExplosiveDamage(RaycastHit target, int damage)
-    {
-        NormalDamage(target, damage);
-        const float radius = 7.5f;
-        foreach (Collider col in Physics.OverlapSphere(target.point, radius))
-        {
-            var combat = col.GetComponent<ICombat>();
-            combat?.TakeDamage(Mathf.RoundToInt(damage * 0.3f), col.transform.position, mainCamera, Color.red/2f + Color.yellow/2f);
-        }
-    }
-    
-    private void LowHealthDamage(RaycastHit target, int damage)
-    {
-        NormalDamage(target, damage);
-        target.collider.GetComponent<ICombat>()?.TakeDamage(
-            Mathf.FloorToInt(0.5f * damage * (1f-target.collider.gameObject.GetComponent<IGet>().GetHealthRatio())),
-            target.point, mainCamera, 0.3f*Color.white);
-    }
-    
-    private void HighHealthDamage(RaycastHit target, int damage)
-    {
-        print(target.collider.GetComponent<IGet>().GetHealthRatio());
-        target.collider.GetComponent<ICombat>()?.TakeDamage(
-            Mathf.FloorToInt(0.4f * damage * target.collider.GetComponent<IGet>().GetHealthRatio()),
-            target.point, mainCamera, 0.5f*Color.black);
-        NormalDamage(target, damage);
-    }
-    
-    private void EchoDamage(RaycastHit target, int damage)
-    {
-        NormalDamage(target, damage);
-        target.collider.GetComponent<ICombat>()?.TakeDamage(
-            Mathf.FloorToInt(0.3f * damage ),
-            target.point, mainCamera, 0.85f*Color.green);
-    }
-
-    private void BleedDamage(RaycastHit target, int damage)
-    {
-        NormalDamage(target, Mathf.FloorToInt(0.5f*damage));
-        target.collider.GetComponent<ICombat>()?.StackBleed(
-            Mathf.FloorToInt(5 + 0.1f*damage), // stack amount
-            0.75f, mainCamera, 0.85f*Color.red);
     }
     
     private IEnumerator ShootFullAuto()
@@ -268,10 +214,13 @@ public class WeaponController : MonoBehaviour
                     rangeLeft -= target.distance;
                     damage -= Mathf.FloorToInt(data.damage * target.distance/(3 * data.range)); //DMG * bullet remaining energy
                     
+                    // if (!target.collider.gameObject.CompareTag("Player") || !target.collider.gameObject.CompareTag("Penetrable")) break;
                     if (!target.collider.gameObject.CompareTag("Player")) break; //se nao acertou um player, para o while
-                    
-                    dealDamage.Invoke(target, damage);
                     playerHUD.ShowHitmarker();
+                    
+                    // pre-caching pq senao repete muita coisa
+                    InterfacesMNG.ICombat targetICombat = target.collider.GetComponent<InterfacesMNG.ICombat>();
+                    dealDamage.Invoke(targetICombat, target, damage);
                     
                     //prepare to chain raycasts
                     rayOrigin = target.point + 0.5f*rayDirection; // slight offset to prevent self-collision
@@ -282,11 +231,12 @@ public class WeaponController : MonoBehaviour
         }
     }
     
+    
     private void Reload()
     {
         isReloading = true;
         if (isShooting) StopCoroutine(shootingC); isShooting = false;
-        timerC = StartCoroutine(playerHUD.Timer(partial ? data.reloadTimePartial : data.reloadTime,
+        timerC = StartCoroutine(playerHUD.Timer(partialReload ? data.reloadTimePartial : data.reloadTime,
             data.reloadTime, ReloadFinished));
     }
     
@@ -295,7 +245,7 @@ public class WeaponController : MonoBehaviour
         data.totalAmmo += data.ammo;
         if (data.totalAmmo > data.magSize) //se tiver municao suficiente pra um pente
         {
-            data.ammo = partial ? data.magSize + 1 : data.magSize;
+            data.ammo = partialReload ? data.magSize + 1 : data.magSize;
             data.totalAmmo -= data.ammo;
         }
         else //se tiver pouca municao
@@ -307,19 +257,9 @@ public class WeaponController : MonoBehaviour
         playerHUD.CurrentAmmo(data.ammo);
         playerHUD.TotalAmmo(data.totalAmmo);
         isReloading = false;
-        partial = false;
+        partialReload = false;
     }
     
-    public void UpdatePlayerHUD()
-    {
-        playerHUD = GetComponentInParent<PlayerHUD>();
-        playerHUD.CurrentAmmo(data.ammo);
-        playerHUD.TotalAmmo(data.totalAmmo);
-        playerHUD.MagSize(data.magSize);
-        playerHUD.WeaponInfo(data.weaponName, data.caliber);
-        playerHUD.FireMode(shortFireMode);
-        mainCamera = transform.parent;
-    }
     
     private void OnEnable()
     {
@@ -331,13 +271,17 @@ public class WeaponController : MonoBehaviour
             WeaponStruct.Special.HighHealth => HighHealthDamage,
             WeaponStruct.Special.Echo       => EchoDamage,
             WeaponStruct.Special.Bleed      => BleedDamage,
+            WeaponStruct.Special.True       => TrueDamage,
             _                               => NormalDamage
         };
+        
+        playerHUD = GetComponentInParent<PlayerHUD>();
+        playerHUD.UpdatePlayerHUD(data, shortFireMode);
     }
     
     private void OnDisable()
     {   // se cancelar o reload (como ao trocar de arma), apaga os flags
-        partial = false;
+        partialReload = false;
         isShooting = false;
         isReloading = false;
     }

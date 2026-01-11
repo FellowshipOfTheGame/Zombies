@@ -30,6 +30,7 @@ public struct WeaponStruct
         HighHealth,
         Echo,
         Bleed,
+        True,
     }
     public Special special;
 }

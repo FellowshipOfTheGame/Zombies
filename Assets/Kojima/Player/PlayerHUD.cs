@@ -150,4 +150,13 @@ public class PlayerHUD : MonoBehaviour
     {
         shieldBar.gameObject.SetActive(false);
     }
+    
+    public void UpdatePlayerHUD(WeaponStruct data, string shortFireMode)
+    {
+        CurrentAmmo(data.ammo);
+        TotalAmmo(data.totalAmmo);
+        MagSize(data.magSize);
+        WeaponInfo(data.weaponName, data.caliber);
+        FireMode(shortFireMode);
+    }
 }
