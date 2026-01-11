@@ -218,6 +218,7 @@ MonoBehaviour:
   waveCounter: {fileID: 105835610473490450}
   remainingEnemies: {fileID: 4951018368703719441}
   healthBar: {fileID: 6470602070869249800}
+  shieldBar: {fileID: 6401067653842871215}
   hitmarker: {fileID: 5005605540294839001}
 --- !u!82 &185501053006609931
 AudioSource:
@@ -449,6 +450,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9196067622321421338, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -544,6 +549,17 @@ GameObject:
 --- !u!114 &5095556543342082008 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6587312709075869054, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
+  m_PrefabInstance: {fileID: 2152117744876677798}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6401067653842871215 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4974492635432241417, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
   m_PrefabInstance: {fileID: 2152117744876677798}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}

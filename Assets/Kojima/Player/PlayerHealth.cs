@@ -12,6 +12,7 @@ public class PlayerHealth : MonoBehaviour
      [Header("Variables")]
      [SerializeField] private int maxHealth = 200; 
                       private int currentHealth;
+                      private int shield;
      [SerializeField] private float regenPerSecond = 1f;
      [SerializeField] private float regenIncreaseRate = 0.25f;
      [SerializeField] private float regenTarget = 10f;
@@ -37,37 +38,62 @@ public class PlayerHealth : MonoBehaviour
 
      private void Update()
      {
-          if (Input.GetKeyDown(KeyCode.Minus)) { TakeDamage(5, transform.position, transform); }
+          if (Input.GetKeyDown(KeyCode.Minus)) TakeDamage(5, transform.position, transform);
+          if (Input.GetKeyDown(KeyCode.Equals)) AddShield(5);
+     }
+     
+     private void AddShield(int addShield)
+     {
+          shield += addShield;
+          playerHUD.ShowShield();
+          playerHUD.Shield(shield);
      }
 
      private void TakeDamage(int damage, Vector3 hitPosition, Transform textRotateTarget)
      {
-          currentHealth -= damage; FloatingDamage(damage, hitPosition, textRotateTarget, Color.white);
-
-          if (regenC != null) { StopCoroutine(regenC); }
-          
-          if (currentHealth <= 0)
+          if (damage < shield)
           {
-               // Morreu();
-               currentHealth = 0;
+               shield -= damage;
+               FloatingDamage(damage, hitPosition, textRotateTarget, 0.75f*Color.white);
+               playerHUD.Shield(shield);
           }
-          playerHUD.Health(currentHealth);
-          Debug.Log(currentHealth);
-
-          regenC = StartCoroutine(RegenDelay());
+          else if (damage == shield)
+          {
+               shield = 0; playerHUD.HideShield();
+               FloatingDamage(damage, hitPosition, textRotateTarget, 0.75f*Color.white);
+          }
+          else
+          {
+               if (regenC != null) StopCoroutine(regenC);
+               // regenC = null;
+               
+               currentHealth -= damage - shield;
+               playerHUD.Health(currentHealth);
+               FloatingDamage(damage, hitPosition, textRotateTarget, Color.white);
+               
+               shield = 0; playerHUD.HideShield();
+               
+               // regenC ??= StartCoroutine(RegenDelay());
+               regenC = StartCoroutine(RegenDelay());
+               if (currentHealth <= 0) print("morreu");
+          }
+          
+          print(currentHealth);
      }
 
      private IEnumerator RegenDelay()
      {
+          print("started regen delay");
           yield return new WaitForSeconds(regenDelayTime);
           regenC = StartCoroutine(RegenHealth());
      }
      
      private IEnumerator RegenHealth()
      {
+          print("started regen health");
           float currentRegenPerSecond = regenPerSecond;
           float regenTickTime = 1/currentRegenPerSecond;
-          while (currentHealth < maxHealth)
+          while (currentHealth < maxHealth) // vida++ com ticks de tempo cada vez menores ate que chegue na vida maxima
           {
                Debug.Log(currentRegenPerSecond.ToString("F2"));
                ++currentHealth; playerHUD.Health(currentHealth);
@@ -75,6 +101,8 @@ public class PlayerHealth : MonoBehaviour
                currentRegenPerSecond += regenIncreaseRate * (1- Mathf.Pow(currentRegenPerSecond/regenTarget, 2) );
                regenTickTime = 1 / currentRegenPerSecond;
           }
+          print("stopped regen health");
+          regenC = null;
      }
      
      // public void Morreu()

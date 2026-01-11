@@ -27,6 +27,7 @@ public class EnemyHealth : MonoBehaviour, ICombat, IGet
      [Header("Variables")]
      [SerializeField] private int maxHealth = 100;
                       private int health;
+                      private int shield;
      [SerializeField] private float targetRadius = 5f;
                       private float missileSide;
                       private int bleedStacks;
@@ -55,16 +56,33 @@ public class EnemyHealth : MonoBehaviour, ICombat, IGet
      
      
      // ICombat
+     public void AddHealth(int addHealth)
+     {
+          health = Mathf.Clamp(health + addHealth, 0, maxHealth);
+     }
+
+     public void AddShield(int addShield)
+     {
+          shield += addShield;
+     }
+
      public void TakeDamage(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor)
      {
           FloatingDamage(damage, hitPosition, textRotateTarget, textColor);
-          
-          health -= damage;
-          if (health <= 0)
+
+          if (damage < shield)
           {
-               Morreu();
+               shield -= damage;
+               // PlayerHUD.Shield(shield);
           }
-          Debug.Log(health);
+          else
+          {
+               health -= damage - shield;
+               shield = 0;
+               
+               Debug.Log(health);
+               if (health <= 0) Morreu();
+          }
      }
 
      public void StackBleed(int stacks, float decayTime, Transform textRotateTarget, Color textColor)

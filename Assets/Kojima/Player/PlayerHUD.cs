@@ -25,6 +25,7 @@ public class PlayerHUD : MonoBehaviour
     [SerializeField] private TextMeshProUGUI waveCounter; // D2
     [SerializeField] private TextMeshProUGUI remainingEnemies; // D2
     [SerializeField] private TextMeshProUGUI healthBar; // D3
+    [SerializeField] private TextMeshProUGUI shieldBar;
     [SerializeField] private GameObject hitmarker;
     
     private void Start()
@@ -134,5 +135,19 @@ public class PlayerHUD : MonoBehaviour
     public void Health(int health)
     {
         healthBar.text = health.ToString("D3");
+    }
+    
+    public void Shield(int health)
+    {
+        shieldBar.text = health.ToString();
+    }
+
+    public void ShowShield()
+    {
+        shieldBar.gameObject.SetActive(true);
+    }
+    public void HideShield()
+    {
+        shieldBar.gameObject.SetActive(false);
     }
 }

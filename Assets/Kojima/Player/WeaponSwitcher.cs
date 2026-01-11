@@ -35,7 +35,7 @@ public class WeaponSwitcher : MonoBehaviour
     {
         if (isSwitching) return;
         
-        if (Input.GetKeyDown(KeyCode.Equals)) AddWeapon(transform.GetChild(2).gameObject);
+        // if (Input.GetKeyDown(KeyCode.Equals)) AddWeapon(transform.GetChild(2).gameObject);
         if (Input.GetKeyDown(KeyCode.T)) ThrowCurrentWeapon();
         
         //se apertou pra trocar de arma
