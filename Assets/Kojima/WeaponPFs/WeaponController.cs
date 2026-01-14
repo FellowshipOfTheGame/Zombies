@@ -19,9 +19,9 @@ public class WeaponController : DamageTypes
     [SerializeField] private GameObject muzzleFlash;
     [SerializeField] private WeaponTemplate template;  // add the weapon's template in Unity's spector
     private Transform muzzle;
+    public float SwitchTime => data.switchTime; // precisa disso pro WeaponSwitcher pegar a informacao do DamageTypes.data
     
     [Header("Declarations")]
-    public WeaponStruct data;
     private Coroutine timerC;
     private Coroutine fireModeC;
     private Coroutine shootingC;
@@ -59,6 +59,8 @@ public class WeaponController : DamageTypes
         if (data.weaponName == "AN94") { currentFireMode = FireMode.HyperAuto; }
         
         SetFireMode(currentFireMode);
+        
+        OnEnable(); // so pra ter certeza
     }
     
     private void Update()
@@ -271,12 +273,15 @@ public class WeaponController : DamageTypes
             WeaponStruct.Special.HighHealth => HighHealthDamage,
             WeaponStruct.Special.Echo       => EchoDamage,
             WeaponStruct.Special.Bleed      => BleedDamage,
+            WeaponStruct.Special.Poison     => PoisonDamage,
+            WeaponStruct.Special.DoT        => DamageOverTime,
             WeaponStruct.Special.True       => TrueDamage,
             _                               => NormalDamage
         };
         
         playerHUD = GetComponentInParent<PlayerHUD>();
         playerHUD.UpdatePlayerHUD(data, shortFireMode);
+        partialReload = false;
     }
     
     private void OnDisable()
@@ -284,13 +289,6 @@ public class WeaponController : DamageTypes
         partialReload = false;
         isShooting = false;
         isReloading = false;
-    }
-    
-    
-    public void Stop()
-    {
-        if (isShooting)  StopCoroutine(shootingC);  isShooting = false;
-        if (isReloading) StopCoroutine(timerC); isReloading = false;
     }
     
 }

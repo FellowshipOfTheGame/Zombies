@@ -14,9 +14,12 @@ public class Health : MonoBehaviour, IGet, ICombat
      
      [Header("References")] 
      [SerializeField] private GameObject worldSpaceUIPrefab;
-     
+
      [Header("Interfaces")]
-     private int  bleedStacks;
+     private int poisonStacks;
+     private Coroutine poisonCoroutine;
+     private int damageToBleed;
+     private int bleedIndex;
      private Coroutine bleedCoroutine;
      
      
@@ -41,7 +44,7 @@ public class Health : MonoBehaviour, IGet, ICombat
           if (damage <= shield)
           {
                shield -= damage;
-               textColor = 0.75f*Color.white;
+               textColor *= 0.5f;
           }
           else
           {
@@ -54,37 +57,79 @@ public class Health : MonoBehaviour, IGet, ICombat
           FloatingDamage(damage, hitPosition, textRotateTarget, textColor);
           print(health);
      }
-     
-     protected virtual void Morreu()
-     {
-          print("morreu");
-     }
-     
-     public virtual void StackBleed(int stacks, float decayTime, Transform textRotateTarget, Color textColor)
-     {
-          bleedStacks += stacks;
-          // operador mais nojento que ja vi: se nao tem corrotina, comeca uma
-          bleedCoroutine ??= StartCoroutine(Bleed(decayTime, textRotateTarget, textColor));
-     }
-     
-     protected virtual IEnumerator Bleed(float decayTime, Transform textRotateTarget, Color textColor)
-     {
-          while (true)
-          {
-               yield return new WaitForSeconds(decayTime);
-               TakeDamage(bleedStacks, transform.position, textRotateTarget, textColor);
-               bleedStacks /= 2;
-               if (bleedStacks == 0) break;
-          }
-          bleedCoroutine = null;
-     }
-     
+
      public virtual void TrueDamage(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor)
      {
-          int tempShield = shield;
-          shield = 0;
-          TakeDamage(damage, hitPosition, textRotateTarget, textColor);
-          shield = tempShield;
+          health -= damage;
+          if (health <= 0) Morreu();
+          FloatingDamage(damage, hitPosition, textRotateTarget, textColor);
+     }
+
+     public void DelayedDamage(int damage, float delay, Transform textRotateTarget, Color textColor)
+     {
+          StartCoroutine(Echo(damage, delay, textRotateTarget, textColor));
+     }
+     
+     private IEnumerator Echo(int damage, float delay, Transform textRotateTarget, Color textColor)
+     {
+          yield return new WaitForSeconds(delay);
+          TakeDamage(damage, transform.position, textRotateTarget, textColor);
+     }
+     
+     public void DamageOverTime(int dot, int ticks, float tickTime, Transform textRotateTarget, Color textColor)
+     {
+          StartCoroutine(DotTicker(dot, ticks, tickTime, textRotateTarget, textColor));
+     }
+     
+     protected virtual IEnumerator DotTicker(int dot, int ticks, float tickTime, Transform textRotateTarget, Color textColor)
+     {
+          for ( ; ticks > 0; ticks--)
+          {
+               yield return new WaitForSeconds(tickTime);
+               TakeDamage(dot, transform.position, textRotateTarget, textColor);
+          }
+     }
+     
+     
+     public virtual void PoisonDamage(int stacks, float halfLife, Transform textRotateTarget, Color textColor)
+     {
+          poisonStacks += stacks;
+          poisonCoroutine ??= StartCoroutine(PoisonTicker(halfLife, textRotateTarget, textColor)); // se nao tem corrotina, comeca uma
+     }
+     
+     protected virtual IEnumerator PoisonTicker(float decayTime, Transform textRotateTarget, Color textColor)
+     {
+          while (poisonStacks != 0)
+          {
+               yield return new WaitForSeconds(decayTime);
+               TakeDamage(poisonStacks, transform.position, textRotateTarget, textColor);
+               poisonStacks /= 2;
+          }
+          poisonCoroutine = null;
+     }
+     
+     public virtual void BleedDamage(int bleedDamage, float tickTime, Transform textRotateTarget, Color textColor)
+     {
+          damageToBleed += bleedDamage;
+          bleedIndex = 0;
+          bleedCoroutine ??= StartCoroutine(BleedTicker(tickTime, textRotateTarget, textColor)); // se nao tem corrotina, comeca uma
+     }
+     
+     protected virtual IEnumerator BleedTicker(float tickTime, Transform textRotateTarget, Color textColor)
+     {
+          for ( ; damageToBleed > 0; ++bleedIndex)
+          {
+               yield return new WaitForSeconds(tickTime);
+               
+               // clamp so pra ter certeza de nao passar de 1
+               // int tickDamage = Mathf.CeilToInt(Math.Clamp((0.30f + bleedIndex * 0.04f), 0.3f, 1f) * damageToBleed);
+               
+               // uma porcentagem do bleedDamage que vai aumentando com o tempo pra curva de dano nao ser infinita/longa
+               int tickDamage = Mathf.CeilToInt((0.30f + bleedIndex*0.04f) * damageToBleed);
+               TakeDamage(tickDamage, transform.position, textRotateTarget, textColor);
+               damageToBleed -= tickDamage;
+          }
+          bleedCoroutine = null;
      }
      
      
@@ -92,8 +137,13 @@ public class Health : MonoBehaviour, IGet, ICombat
      public int GetHealth() => health;
      public int GetMaxHealth() => maxHealth;
      public float GetHealthRatio() => health / (float)maxHealth;
-     public int GetStacks() => bleedStacks;
+     public int GetStacks() => poisonStacks;
      
+     
+     protected virtual void Morreu()
+     {
+          print("morreu");
+     }
      
      protected virtual void FloatingDamage(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor)
      {
@@ -138,5 +188,15 @@ public class Health : MonoBehaviour, IGet, ICombat
           //      case 3: textMesh.color = Color.red;    textMesh.text += "!!";
           //              textMesh.fontStyle = FontStyles.Bold; break;
           // }
+     }
+
+     protected void OnDisable()
+     {
+          StopAllCoroutines();
+          poisonStacks = 0;
+          poisonCoroutine = null;
+          damageToBleed = 0;
+          bleedIndex = 0;
+          bleedCoroutine = null;
      }
 }
