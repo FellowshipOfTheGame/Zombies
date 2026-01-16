@@ -27,7 +27,7 @@ public class WeaponSwitcher : MonoBehaviour
             inventory[^1].SetActive(false);
         }
         
-        SwitchWeapon();  // seleciona a arma primaria
+        SwitchWeapon(); // seleciona a arma primaria
     }
     
     
@@ -88,8 +88,8 @@ public class WeaponSwitcher : MonoBehaviour
     
     private void AddWeapon(GameObject weapon)
     {
-        if (inventory.Count < inventorySize) { AddToInventory(weapon); }
-        else if (currentWeapon == 0) { selectedWeapon = Random.Range(1, inventory.Count); }  // cant throw primary weapon
+        if (inventory.Count < inventorySize) AddToInventory(weapon);
+        else if (currentWeapon == 0) selectedWeapon = Random.Range(1, inventory.Count); // cant throw primary weapon
         else  // but can throw other weapons
         {
             ThrowCurrentWeapon();

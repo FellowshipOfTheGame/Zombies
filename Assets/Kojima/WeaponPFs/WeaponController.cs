@@ -209,20 +209,19 @@ public class WeaponController : DamageTypes
             Vector3 rayDirection = transform.up;  // pros prefabs de teste, essa e a direcao do cano
             rayDirection = spreadRotation * rayDirection;
             
-            while (damage > 0)  // chain raycasts to pierce through enemies
+            while (damage >= 0)  // chain raycasts to pierce through enemies
             {
                 if (Physics.Raycast(rayOrigin, rayDirection, out RaycastHit target, rangeLeft))
                 {
                     rangeLeft -= target.distance;
-                    damage -= Mathf.FloorToInt(data.damage * target.distance/(3 * data.range)); //DMG * bullet remaining energy
+                    damage -= Mathf.FloorToInt(data.damage * target.distance/(3 * data.range)); //DMG * bullet remaining energy, arbitrarily 3*range
                     
                     // if (!target.collider.gameObject.CompareTag("Player") || !target.collider.gameObject.CompareTag("Penetrable")) break;
                     if (!target.collider.gameObject.CompareTag("Player")) break; //se nao acertou um player, para o while
                     playerHUD.ShowHitmarker();
                     
                     // pre-caching pq senao repete muita coisa
-                    InterfacesMNG.ICombat targetICombat = target.collider.GetComponent<InterfacesMNG.ICombat>();
-                    dealDamage.Invoke(targetICombat, target, damage);
+                    DealDamage(target.collider.GetComponent<InterfacesMNG.ICombat>(), target, damage);
                     
                     //prepare to chain raycasts
                     rayOrigin = target.point + 0.5f*rayDirection; // slight offset to prevent self-collision
@@ -265,18 +264,17 @@ public class WeaponController : DamageTypes
     
     private void OnEnable()
     {
-        dealDamage = data.special switch
+        specialDamage = data.special switch
         {
-            WeaponStruct.Special.None       => NormalDamage,
-            WeaponStruct.Special.Explosive  => ExplosiveDamage,
-            WeaponStruct.Special.LowHealth  => LowHealthDamage,
-            WeaponStruct.Special.HighHealth => HighHealthDamage,
             WeaponStruct.Special.Echo       => EchoDamage,
+            WeaponStruct.Special.True       => TrueDamage,
             WeaponStruct.Special.Bleed      => BleedDamage,
             WeaponStruct.Special.Poison     => PoisonDamage,
             WeaponStruct.Special.DoT        => DamageOverTime,
-            WeaponStruct.Special.True       => TrueDamage,
-            _                               => NormalDamage
+            WeaponStruct.Special.Explosive  => ExplosiveDamage,
+            WeaponStruct.Special.LowHealth  => LowHealthDamage,
+            WeaponStruct.Special.HighHealth => HighHealthDamage,
+            _                               => null
         };
         
         playerHUD = GetComponentInParent<PlayerHUD>();

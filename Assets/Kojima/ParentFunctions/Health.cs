@@ -76,17 +76,17 @@ public class Health : MonoBehaviour, IGet, ICombat
           TakeDamage(damage, transform.position, textRotateTarget, textColor);
      }
      
-     public void DamageOverTime(int dot, int ticks, float tickTime, Transform textRotateTarget, Color textColor)
+     public void DamageOverTime(int dps, float duration, Transform textRotateTarget, Color textColor)
      {
-          StartCoroutine(DotTicker(dot, ticks, tickTime, textRotateTarget, textColor));
+          StartCoroutine(DotTicker(dps, duration, textRotateTarget, textColor));
      }
      
-     protected virtual IEnumerator DotTicker(int dot, int ticks, float tickTime, Transform textRotateTarget, Color textColor)
+     protected virtual IEnumerator DotTicker(int dps, float duration, Transform textRotateTarget, Color textColor)
      {
-          for ( ; ticks > 0; ticks--)
+          for ( ; duration > 0; duration -= 0.2f)
           {
-               yield return new WaitForSeconds(tickTime);
-               TakeDamage(dot, transform.position, textRotateTarget, textColor);
+               yield return new WaitForSeconds(0.2f);
+               TakeDamage(Mathf.RoundToInt(dps/5f), transform.position, textRotateTarget, textColor);
           }
      }
      

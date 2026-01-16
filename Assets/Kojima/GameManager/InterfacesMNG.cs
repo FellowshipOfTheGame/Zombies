@@ -11,7 +11,7 @@ public static class InterfacesMNG
         void DelayedDamage(int damage, float tickTime, Transform textRotateTarget, Color textColor);
         
         // DoT com base em acumulo, decaimento linear
-        void DamageOverTime(int dot, int ticks, float tickTime, Transform textRotateTarget, Color textColor);
+        void DamageOverTime(int dps, float duration, Transform textRotateTarget, Color textColor);
         
         // DoT com base em stacks, decaimento geometrico/exponencial
         void PoisonDamage(int poisonStacks, float halfLife, Transform textRotateTarget, Color textColor);

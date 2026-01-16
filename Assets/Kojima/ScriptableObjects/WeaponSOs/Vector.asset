@@ -16,7 +16,7 @@ MonoBehaviour:
     hasFireSelector: 1
     isFullAuto: 1
     weaponName: Vector
-    damage: 10
+    damage: 0
     burstSize: 2
     bulletCount: 1
     fireRate: 1200
@@ -32,8 +32,6 @@ MonoBehaviour:
     range: 50
     decay: 10
     recoil: 1.5
-    special: 7
-    sRange: 5
-    sRatio: 0.5
-    sTickTime: 1
-    sCount: 5
+    special: 5
+    sInt: 10
+    sFloat: 1

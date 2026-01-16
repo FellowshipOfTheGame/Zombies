@@ -25,20 +25,18 @@ public struct WeaponStruct
     public enum Special
     {
         None,
-        Explosive,  // damage + sRatio*damage with sRange
-        LowHealth,  // damage + up to sRatio*damage
-        HighHealth, // damage + up to sRatio*damage
-        Echo,       // damage + sRatio*damage with sTickTime delay
-        True,       // damage
-        Poison,     // damage*(1-sRatio) + damage*sRatio stacks with sTickTime
-        Bleed,      // damage*(1-sRatio) + damage*sRatio dot with sTickTime
-        DoT,        // damage*(1-sRatio) + damage*sRatio dot sCount times with sTickTime
+        Explosive,  // damage= sInt over a sFloat area
+        LowHealth,  // damage= up to dmg*sFloat bonus
+        HighHealth, // damage= up to dmg*sFloat bonus
+        Echo,       // damage= sInt after a sFloat delay
+        True,       // damage= 
+        Poison,     // damage= sInt stacks with sFloat tickTime
+        Bleed,      // damage= sInt damage with sFloat tickTime
+        DoT,        // damage= sInt dps, sFloat time duration, ticks every .2s
     }
     public Special special;
-    public float sRange;
-    public float sRatio;
-    public float sTickTime;
-    public int sCount;
+    [Tooltip("damage, stacks")] public int sInt;
+    [Tooltip("range, tick time")] public float sFloat;
 }
 
 [CreateAssetMenu(fileName = "Weapon_name", menuName = "Weapon Template")]
