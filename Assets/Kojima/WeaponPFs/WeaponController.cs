@@ -262,20 +262,9 @@ public class WeaponController : DamageTypes
     }
     
     
-    private void OnEnable()
+    private new void OnEnable()
     {
-        specialDamage = data.special switch
-        {
-            WeaponStruct.Special.Echo       => EchoDamage,
-            WeaponStruct.Special.True       => TrueDamage,
-            WeaponStruct.Special.Bleed      => BleedDamage,
-            WeaponStruct.Special.Poison     => PoisonDamage,
-            WeaponStruct.Special.DoT        => DamageOverTime,
-            WeaponStruct.Special.Explosive  => ExplosiveDamage,
-            WeaponStruct.Special.LowHealth  => LowHealthDamage,
-            WeaponStruct.Special.HighHealth => HighHealthDamage,
-            _                               => null
-        };
+        base.OnEnable();
         
         playerHUD = GetComponentInParent<PlayerHUD>();
         playerHUD.UpdatePlayerHUD(data, shortFireMode);

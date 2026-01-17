@@ -97,11 +97,11 @@ public class Health : MonoBehaviour, IGet, ICombat
           poisonCoroutine ??= StartCoroutine(PoisonTicker(halfLife, textRotateTarget, textColor)); // se nao tem corrotina, comeca uma
      }
      
-     protected virtual IEnumerator PoisonTicker(float decayTime, Transform textRotateTarget, Color textColor)
+     protected virtual IEnumerator PoisonTicker(float halfLife, Transform textRotateTarget, Color textColor)
      {
-          while (poisonStacks != 0)
+          while (poisonStacks > 0)
           {
-               yield return new WaitForSeconds(decayTime);
+               yield return new WaitForSeconds(halfLife);
                TakeDamage(poisonStacks, transform.position, textRotateTarget, textColor);
                poisonStacks /= 2;
           }
@@ -114,6 +114,13 @@ public class Health : MonoBehaviour, IGet, ICombat
           bleedIndex = 0;
           bleedCoroutine ??= StartCoroutine(BleedTicker(tickTime, textRotateTarget, textColor)); // se nao tem corrotina, comeca uma
      }
+
+     public virtual void Hemorrhage(int bleedDamage, float execute, Transform textRotateTarget, Color textColor)
+     {
+          damageToBleed += bleedDamage;
+          bleedIndex = 0;
+          bleedCoroutine ??= StartCoroutine(HemorrhageTicker(execute, textRotateTarget, textColor)); // se nao tem corrotina, comeca uma
+     }
      
      protected virtual IEnumerator BleedTicker(float tickTime, Transform textRotateTarget, Color textColor)
      {
@@ -121,12 +128,24 @@ public class Health : MonoBehaviour, IGet, ICombat
           {
                yield return new WaitForSeconds(tickTime);
                
-               // clamp so pra ter certeza de nao passar de 1
-               // int tickDamage = Mathf.CeilToInt(Math.Clamp((0.30f + bleedIndex * 0.04f), 0.3f, 1f) * damageToBleed);
-               
                // uma porcentagem do bleedDamage que vai aumentando com o tempo pra curva de dano nao ser infinita/longa
                int tickDamage = Mathf.CeilToInt((0.30f + bleedIndex*0.04f) * damageToBleed);
                TakeDamage(tickDamage, transform.position, textRotateTarget, textColor);
+               damageToBleed -= tickDamage;
+          }
+          bleedCoroutine = null;
+     }
+     
+     protected virtual IEnumerator HemorrhageTicker(float execute, Transform textRotateTarget, Color textColor)
+     {
+          for ( ; damageToBleed > 0; ++bleedIndex)
+          {
+               yield return new WaitForSeconds(0.5f);
+               
+               // uma porcentagem do bleedDamage que vai aumentando com o tempo pra curva de dano nao ser infinita/longa
+               int tickDamage = Mathf.CeilToInt((0.30f + bleedIndex*0.05f) * damageToBleed);
+               TakeDamage(tickDamage, transform.position, textRotateTarget, textColor);
+               if (health/(float)maxHealth <= execute/100) TrueDamage(health, transform.position, textRotateTarget, Color.black);
                damageToBleed -= tickDamage;
           }
           bleedCoroutine = null;
@@ -148,19 +167,20 @@ public class Health : MonoBehaviour, IGet, ICombat
      protected virtual void FloatingDamage(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor)
      {
           GameObject wsInstance = Instantiate(worldSpaceUIPrefab, hitPosition, Quaternion.identity);
-          Destroy(wsInstance, 0.5f);
+          float ratio = Mathf.Log(1.75f * Vector3.Distance(hitPosition, textRotateTarget.position) + 1.25f);
           
           TextMeshProUGUI textMesh = wsInstance.GetComponentInChildren<TextMeshProUGUI>();
           textMesh.text = damage.ToString();
           wsInstance.GetComponentInChildren<RotateText>().textRotateTarget = textRotateTarget;
           wsInstance.transform.rotation = textRotateTarget.rotation;
+          wsInstance.transform.localScale = Vector3.one * ratio;
           textMesh.color = textColor;
           
           //cria um vetor pra forca e um pra direcao perpend. \ inverte o lado \ multiplica os componentes \ atribui a forca
           Vector3 impulse = new Vector3(Random.Range(2f, 4f), Random.Range(2f, 4f), 5f);
           Vector3 forceDirection = Vector3.Cross(textRotateTarget.forward, wsInstance.transform.up).normalized;
           forceDirection *= Random.Range(0, 1f)>0.5f ? 1f : -1f; forceDirection.y += 1f;
-          impulse = Vector3.Scale(forceDirection, impulse);
+          impulse = Vector3.Scale(forceDirection, impulse) * (ratio/3f + 0.8f);
           Rigidbody textRB = wsInstance.GetComponentInChildren<Rigidbody>();
           textRB.AddForce(impulse, ForceMode.Impulse);
           

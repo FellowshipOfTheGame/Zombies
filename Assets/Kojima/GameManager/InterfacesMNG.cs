@@ -18,6 +18,7 @@ public static class InterfacesMNG
         
         // DoT com base em acumulo, decaimento geometrico/exponencial
         void BleedDamage(int bleedDamage, float tickTime, Transform textRotateTarget, Color textColor);
+        void Hemorrhage(int bleedDamage, float execute, Transform textRotateTarget, Color textColor);
     }
     
     public interface IGet

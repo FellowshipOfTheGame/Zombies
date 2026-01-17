@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using static InterfacesMNG;
 
@@ -18,9 +19,27 @@ public class DamageTypes : MonoBehaviour
     private readonly Color     cDoT = new(0.8f, 0.3f, 0.9f);
     private readonly Color  cPoison = new(0.1f, 1.0f, 0.1f);
     private readonly Color   cBleed = new(1.0f, 0.1f, 0.1f);
+    private readonly Color  cBleed2 = new(.69f, 0.0f, 0.0f);
     private readonly Color    cTrue = new(0, 0, 0);
-    
-    
+
+    protected void OnEnable()
+    {
+        specialDamage = data.special switch
+        {
+            WeaponStruct.Special.Explosive  => ExplosiveDamage,
+            WeaponStruct.Special.LowHealth  => LowHealthDamage,
+            WeaponStruct.Special.HighHealth => HighHealthDamage,
+            WeaponStruct.Special.Echo       => EchoDamage,
+            WeaponStruct.Special.DoT        => DamageOverTime,
+            WeaponStruct.Special.Poison     => PoisonDamage,
+            WeaponStruct.Special.Bleed      => BleedDamage,
+            WeaponStruct.Special.Hemorrhage => Hemorrhage,
+            WeaponStruct.Special.True       => TrueDamage,
+            _                               => null
+        };
+    }
+
+
     // sem pre-caching
     // protected void NormalDamage(RaycastHit target, int damage)
     // {
@@ -83,6 +102,11 @@ public class DamageTypes : MonoBehaviour
     protected void BleedDamage(ICombat cachedICombat, RaycastHit target, int damage)
     {
         cachedICombat?.BleedDamage(data.sInt, data.sFloat, mainCamera, cBleed);
+    }
+
+    protected void Hemorrhage(ICombat cachedICombat, RaycastHit target, int damage)
+    {
+        cachedICombat?.Hemorrhage(data.sInt, data.sFloat, mainCamera, cBleed2);
     }
     
     protected void TrueDamage(ICombat cachedICombat, RaycastHit target, int damage)

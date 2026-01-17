@@ -32,7 +32,8 @@ public struct WeaponStruct
         True,       // damage= 
         Poison,     // damage= sInt stacks with sFloat tickTime
         Bleed,      // damage= sInt damage with sFloat tickTime
-        DoT,        // damage= sInt dps, sFloat time duration, ticks every .2s
+        Hemorrhage, // damage= sInt damage with sFloat execute, ticks every .5s
+        DoT,        // damage= sInt dps, sFloat time duration, ticks every .2s (sInt/5 /tick)
     }
     public Special special;
     [Tooltip("damage, stacks")] public int sInt;
