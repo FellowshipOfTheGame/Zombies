@@ -159,11 +159,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 200
+  worldSpaceUIPrefab: {fileID: 3433633269811599418, guid: 7e3e78000d4e32194801cbf4ed71b6c4, type: 3}
   regenPerSecond: 1
   regenIncreaseRate: 0.25
   regenTarget: 10
   regenDelayTime: 4
-  worldSpaceUIPrefab: {fileID: 3433633269811599418, guid: 7e3e78000d4e32194801cbf4ed71b6c4, type: 3}
 --- !u!114 &1605655904093145302
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -206,20 +206,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45eb56f4a604ef39a97887166ae252d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  crosshair: {fileID: 7094072674921107982}
-  fpsCounter: {fileID: 2249523862599328338}
-  timeSlider: {fileID: 2007355092270407907}
   ammoText: {fileID: 206930518871800530}
   magSizeText: {fileID: 5095556543342082008}
   totalAmmoText: {fileID: 2080631550611440781}
   weaponInfoText: {fileID: 480573760082833102}
   fireModeText: {fileID: 3012772875276705782}
-  fireModePopUp: {fileID: 8446768435646756772}
   waveCounter: {fileID: 105835610473490450}
   remainingEnemies: {fileID: 4951018368703719441}
   healthBar: {fileID: 6470602070869249800}
+  timeSlider: {fileID: 2007355092270407907}
+  crosshair: {fileID: 7094072674921107982}
+  fpsCounter: {fileID: 2249523862599328338}
   shieldBar: {fileID: 6401067653842871215}
+  effectText: {fileID: 1495151295141031107}
   hitmarker: {fileID: 5005605540294839001}
+  fireModePopUp: {fileID: 8446768435646756772}
 --- !u!82 &185501053006609931
 AudioSource:
   m_ObjectHideFlags: 0
@@ -354,12 +355,48 @@ PrefabInstance:
       propertyPath: m_Name
       value: HUD
       objectReference: {fileID: 0}
+    - target: {fileID: 676106749503653477, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
+      propertyPath: m_text
+      value: 'Effect name: dmg/duration'
+      objectReference: {fileID: 0}
+    - target: {fileID: 676106749503653477, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
+      propertyPath: m_fontColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 676106749503653477, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
+      propertyPath: m_fontColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 676106749503653477, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
+      propertyPath: m_fontColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 676106749503653477, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 1219408331652654692, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
+      propertyPath: m_Name
+      value: EffectsHolder
+      objectReference: {fileID: 0}
     - target: {fileID: 1222460784262443345, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1222460784262443345, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2135145653751626024, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
+      propertyPath: m_Name
+      value: CenterDot
+      objectReference: {fileID: 0}
+    - target: {fileID: 3272567158447325298, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
+      propertyPath: m_Name
+      value: Effect
+      objectReference: {fileID: 0}
+    - target: {fileID: 3272567158447325298, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5168505471021192261, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
@@ -455,7 +492,12 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 7257004400819983963, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
+    - {fileID: 3389476679024181488, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
+    - {fileID: 5230435198335053930, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
+    - {fileID: 7333677561836233370, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
+    - {fileID: 6921972029872401864, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
@@ -484,6 +526,17 @@ MonoBehaviour:
 --- !u!114 &480573760082833102 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1978924006286034024, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
+  m_PrefabInstance: {fileID: 2152117744876677798}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1495151295141031107 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 676106749503653477, guid: 9906585da67f6ed2cbaa9e9d6e7e3471, type: 3}
   m_PrefabInstance: {fileID: 2152117744876677798}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}

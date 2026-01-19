@@ -10,7 +10,7 @@ public static class InterfacesMNG
         void TrueDamage(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor);
         void DelayedDamage(int damage, float tickTime, Transform textRotateTarget, Color textColor);
         
-        // DoT com base em acumulo, decaimento linear
+        // DoT com valor constante
         void DamageOverTime(int dps, float duration, Transform textRotateTarget, Color textColor);
         
         // DoT com base em stacks, decaimento geometrico/exponencial
@@ -19,6 +19,10 @@ public static class InterfacesMNG
         // DoT com base em acumulo, decaimento geometrico/exponencial
         void BleedDamage(int bleedDamage, float tickTime, Transform textRotateTarget, Color textColor);
         void Hemorrhage(int bleedDamage, float execute, Transform textRotateTarget, Color textColor);
+        
+        // HoT com valor constante
+        void HealingOverTime(int hps, float duration, Transform textRotateTarget, Color textColor);
+        void ShieldOverTime(int shield, float duration, Transform textRotateTarget, Color textColor);
     }
     
     public interface IGet

@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,26 +8,38 @@ using UnityEngine.UI;
 public class PlayerHUD : MonoBehaviour
 {
     [Header("Variables")]
-    private readonly Color wine      = new(0.69f, 0, 0);
-    private readonly Color lightGray = new(0.75f, 0.75f, 0.75f);
+    private readonly Color wine  = new(0.69f, 0, 0);
+    private readonly Color lGray = new(0.75f, 0.75f, 0.75f);
+    private readonly int offset = 35; // altura dos elementos de efeito no hud
+    private readonly Vector2 anchor = new(32, 115);
 
-    [Header("References")] 
-    [SerializeField] private GameObject crosshair;
-    [SerializeField] private GameObject fpsCounter; // D2
-    [SerializeField] private Slider     timeSlider;
+    [Header("Static")] 
     // [SerializeField] private GameObject ammoHUD;
     [SerializeField] private TextMeshProUGUI ammoText; // D2
     [SerializeField] private TextMeshProUGUI magSizeText; // D2
     [SerializeField] private TextMeshProUGUI totalAmmoText; // D3
     [SerializeField] private TextMeshProUGUI weaponInfoText; // weapon name - bullet caliber
-    [SerializeField] private TextMeshProUGUI fireModeText; // SEMI
-    [SerializeField] private TextMeshProUGUI fireModePopUp; // FULL AUTO > 2-SHOT BURST
+    [SerializeField] private TextMeshProUGUI fireModeText; // SEMI, FULL
     // [SerializeField] private GameObject waveHUD;
     [SerializeField] private TextMeshProUGUI waveCounter; // D2
     [SerializeField] private TextMeshProUGUI remainingEnemies; // D2
     [SerializeField] private TextMeshProUGUI healthBar; // D3
+    
+    [Header("Toggleable")]
+    [SerializeField] private Slider timeSlider;
+    [SerializeField] private GameObject crosshair;
+    [SerializeField] private GameObject fpsCounter; // D2
     [SerializeField] private TextMeshProUGUI shieldBar;
+    
+    [Header("Effects")] // hud entry, can be for DoT, slowness etc
+    private List<GameObject> effects = new(); // create a new instance of the text's GO to add into effects
+    [SerializeField] public TextMeshProUGUI effectText;
+    
+    [Header("Pop-up")]
     [SerializeField] private GameObject hitmarker;
+    [SerializeField] private TextMeshProUGUI fireModePopUp; // FULL AUTO > 2-SHOT BURST
+    
+    
     
     private void Start()
     {
@@ -44,7 +57,7 @@ public class PlayerHUD : MonoBehaviour
     public void ShowHitmarker()
     {
         hitmarker.SetActive(true);
-        Invoke("HideHitmarker", 0.1f);
+        Invoke(nameof(HideHitmarker), 0.1f);
     }
 
     public void HideHitmarker() { hitmarker.SetActive(false); }
@@ -72,9 +85,10 @@ public class PlayerHUD : MonoBehaviour
     }
     
     public void CurrentAmmo(int ammo) { ammoText.text = ammo.ToString("D2") + "/"; }
-    public void MagSize(int magSize) { magSizeText.text = magSize.ToString(); }
+    private void MagSize(int magSize) { magSizeText.text = magSize.ToString(); }
     public void TotalAmmo(int totalAmmo) { totalAmmoText.text = totalAmmo.ToString("D3"); }
-    public void WeaponInfo(string weaponName, string ammoCaliber)
+
+    private void WeaponInfo(string weaponName, string ammoCaliber)
     { weaponInfoText.text = weaponName + " - " + ammoCaliber; }
     public void FireMode(string fireMode) { fireModeText.text = fireMode; }
     public IEnumerator FireModePopUp(string oldMode, string newMode)
@@ -106,12 +120,12 @@ public class PlayerHUD : MonoBehaviour
         for (float i = 0; i <= 50; i++)
         {   // wine --> lightGray
             float index = i/50f;
-            waveCounter.color = Color.Lerp(wine, lightGray, index);
-            remainingEnemies.color = Color.Lerp(wine, lightGray, index);
+            waveCounter.color = Color.Lerp(wine, lGray, index);
+            remainingEnemies.color = Color.Lerp(wine, lGray, index);
             yield return new WaitForSeconds(0.02f);
         }
-        waveCounter.color = lightGray;
-        remainingEnemies.color = lightGray;
+        waveCounter.color = lGray;
+        remainingEnemies.color = lGray;
         waveCounter.text = wave.ToString("D2");
         
         yield return new WaitForSeconds(0.5f);
@@ -124,8 +138,8 @@ public class PlayerHUD : MonoBehaviour
         for (float i = 0; i <= 50; i++)
         {   // lightGray --> red
             float index = i / 50f;
-            waveCounter.color = Color.Lerp(lightGray, wine, index);
-            remainingEnemies.color = Color.Lerp(lightGray, wine, index);
+            waveCounter.color = Color.Lerp(lGray, wine, index);
+            remainingEnemies.color = Color.Lerp(lGray, wine, index);
             yield return new WaitForSeconds(0.02f);
         }
         waveCounter.color = wine;
@@ -151,12 +165,36 @@ public class PlayerHUD : MonoBehaviour
         shieldBar.gameObject.SetActive(false);
     }
     
-    public void UpdatePlayerHUD(WeaponStruct data, string shortFireMode)
+    public void UpdateWeaponHUD(WeaponStruct data, string shortFireMode)
     {
         CurrentAmmo(data.ammo);
         TotalAmmo(data.totalAmmo);
         MagSize(data.magSize);
         WeaponInfo(data.weaponName, data.caliber);
         FireMode(shortFireMode);
+    }
+
+    public TextMeshProUGUI AddEffect(Color textColor)
+    {
+        GameObject entry = GameObject.Instantiate(effectText.gameObject, effectText.transform.parent);
+        entry.SetActive(true);
+        effects.Add(entry);
+        OrderEffects();
+        TextMeshProUGUI entryText = entry.GetComponent<TextMeshProUGUI>();
+        entryText.color = textColor;
+        return entryText;
+    }
+    
+    public void RemoveEffect(TextMeshProUGUI effect)
+    {
+        effects.Remove(effect.gameObject);
+        Destroy(effect.gameObject);
+        OrderEffects();
+    }
+
+    private void OrderEffects()
+    {
+        for (int i = 0; i < effects.Count; i++)
+            effects[i].gameObject.transform.position = anchor + new Vector2(0, i*offset);
     }
 }

@@ -34,6 +34,8 @@ public struct WeaponStruct
         Bleed,      // damage= sInt damage with sFloat tickTime
         Hemorrhage, // damage= sInt damage with sFloat execute, ticks every .5s
         DoT,        // damage= sInt dps, sFloat time duration, ticks every .2s (sInt/5 /tick)
+        Healing,    // damage, and sInt healing
+        HoT,        // damage, and sInt healing with sFloat tickTime
     }
     public Special special;
     [Tooltip("damage, stacks")] public int sInt;

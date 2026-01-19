@@ -66,6 +66,7 @@ public class WeaponSwitcher : MonoBehaviour
         
         // pega informacoes da arma selecionada
         weaponController = inventory[selectedWeapon].GetComponent<WeaponController>();
+        weaponController.OnEquip();
         
         // pega informacoes da arma atual, caso nao de pra pegar a info da arma nova
         // weaponController = GetComponentInChildren<WeaponController>();

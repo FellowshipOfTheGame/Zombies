@@ -45,8 +45,6 @@ public class WeaponController : DamageTypes
     {
         audioSource = GetComponent<AudioSource>();
         
-        mainCamera = transform.parent;
-        
         data = template.data;
         data.fireTime = 60f/template.data.fireRate;
         
@@ -59,8 +57,6 @@ public class WeaponController : DamageTypes
         if (data.weaponName == "AN94") { currentFireMode = FireMode.HyperAuto; }
         
         SetFireMode(currentFireMode);
-        
-        OnEnable(); // so pra ter certeza
     }
     
     private void Update()
@@ -267,8 +263,16 @@ public class WeaponController : DamageTypes
         base.OnEnable();
         
         playerHUD = GetComponentInParent<PlayerHUD>();
-        playerHUD.UpdatePlayerHUD(data, shortFireMode);
+        playerHUD.UpdateWeaponHUD(data, shortFireMode);
         partialReload = false;
+        
+    }
+
+    public void OnEquip()
+    {
+        mainCamera = transform.parent;
+        playerICombat = transform.parent.parent.GetComponent<InterfacesMNG.ICombat>();
+        print(playerICombat);
     }
     
     private void OnDisable()

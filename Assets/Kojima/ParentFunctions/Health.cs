@@ -16,11 +16,11 @@ public class Health : MonoBehaviour, IGet, ICombat
      [SerializeField] private GameObject worldSpaceUIPrefab;
 
      [Header("Interfaces")]
-     private int poisonStacks;
-     private Coroutine poisonCoroutine;
-     private int damageToBleed;
-     private int bleedIndex;
-     private Coroutine bleedCoroutine;
+     protected int poisonStacks;
+     protected Coroutine poisonC;
+     protected int damageToBleed;
+     protected int bleedIndex;
+     protected Coroutine bleedC;
      
      
      protected virtual void Start()
@@ -33,6 +33,13 @@ public class Health : MonoBehaviour, IGet, ICombat
      {
           health = Mathf.Clamp(health + addHealth, 0, maxHealth);
      }
+     
+     // caso precise curar outros players e ver a cura
+     // public virtual void AddHealth(int addHealth, Transform textRotateTarget, Color textColor)
+     // {
+     //      health = Mathf.Clamp(health + addHealth, 0, maxHealth);
+     //      FloatingDamage(addHealth, transform.position, textRotateTarget, textColor);
+     // }
      
      public virtual void AddShield(int addShield)
      {
@@ -57,20 +64,20 @@ public class Health : MonoBehaviour, IGet, ICombat
           FloatingDamage(damage, hitPosition, textRotateTarget, textColor);
           print(health);
      }
-
+     
      public virtual void TrueDamage(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor)
      {
           health -= damage;
           if (health <= 0) Morreu();
           FloatingDamage(damage, hitPosition, textRotateTarget, textColor);
      }
-
+     
      public void DelayedDamage(int damage, float delay, Transform textRotateTarget, Color textColor)
      {
           StartCoroutine(Echo(damage, delay, textRotateTarget, textColor));
      }
      
-     private IEnumerator Echo(int damage, float delay, Transform textRotateTarget, Color textColor)
+     protected virtual IEnumerator Echo(int damage, float delay, Transform textRotateTarget, Color textColor)
      {
           yield return new WaitForSeconds(delay);
           TakeDamage(damage, transform.position, textRotateTarget, textColor);
@@ -94,7 +101,7 @@ public class Health : MonoBehaviour, IGet, ICombat
      public virtual void PoisonDamage(int stacks, float halfLife, Transform textRotateTarget, Color textColor)
      {
           poisonStacks += stacks;
-          poisonCoroutine ??= StartCoroutine(PoisonTicker(halfLife, textRotateTarget, textColor)); // se nao tem corrotina, comeca uma
+          poisonC ??= StartCoroutine(PoisonTicker(halfLife, textRotateTarget, textColor)); // se nao tem corrotina, comeca uma
      }
      
      protected virtual IEnumerator PoisonTicker(float halfLife, Transform textRotateTarget, Color textColor)
@@ -105,21 +112,21 @@ public class Health : MonoBehaviour, IGet, ICombat
                TakeDamage(poisonStacks, transform.position, textRotateTarget, textColor);
                poisonStacks /= 2;
           }
-          poisonCoroutine = null;
+          poisonC = null;
      }
      
      public virtual void BleedDamage(int bleedDamage, float tickTime, Transform textRotateTarget, Color textColor)
      {
           damageToBleed += bleedDamage;
           bleedIndex = 0;
-          bleedCoroutine ??= StartCoroutine(BleedTicker(tickTime, textRotateTarget, textColor)); // se nao tem corrotina, comeca uma
+          bleedC ??= StartCoroutine(BleedTicker(tickTime, textRotateTarget, textColor)); // se nao tem corrotina, comeca uma
      }
 
      public virtual void Hemorrhage(int bleedDamage, float execute, Transform textRotateTarget, Color textColor)
      {
           damageToBleed += bleedDamage;
           bleedIndex = 0;
-          bleedCoroutine ??= StartCoroutine(HemorrhageTicker(execute, textRotateTarget, textColor)); // se nao tem corrotina, comeca uma
+          bleedC ??= StartCoroutine(HemorrhageTicker(execute, textRotateTarget, textColor)); // se nao tem corrotina, comeca uma
      }
      
      protected virtual IEnumerator BleedTicker(float tickTime, Transform textRotateTarget, Color textColor)
@@ -133,7 +140,7 @@ public class Health : MonoBehaviour, IGet, ICombat
                TakeDamage(tickDamage, transform.position, textRotateTarget, textColor);
                damageToBleed -= tickDamage;
           }
-          bleedCoroutine = null;
+          bleedC = null;
      }
      
      protected virtual IEnumerator HemorrhageTicker(float execute, Transform textRotateTarget, Color textColor)
@@ -148,7 +155,34 @@ public class Health : MonoBehaviour, IGet, ICombat
                if (health/(float)maxHealth <= execute/100) TrueDamage(health, transform.position, textRotateTarget, Color.black);
                damageToBleed -= tickDamage;
           }
-          bleedCoroutine = null;
+          bleedC = null;
+     }
+     
+     public void HealingOverTime(int hps, float duration, Transform textRotateTarget, Color textColor)
+     {
+          StartCoroutine(HotTicker(hps, duration));
+     }
+     
+     protected virtual IEnumerator HotTicker(int hps, float duration)
+     {
+          for ( ; duration > 0; duration -= 0.2f)
+          {
+               yield return new WaitForSeconds(0.2f);
+               AddHealth(Mathf.RoundToInt(hps/5f));
+          }
+     }
+
+     public void ShieldOverTime(int sps, float duration, Transform textRotateTarget, Color textColor)
+     {
+          StartCoroutine(ShieldTicker(sps, duration));
+     }
+     protected virtual IEnumerator ShieldTicker(int sps, float duration)
+     {
+          for ( ; duration > 0; duration -= 0.2f)
+          {
+               yield return new WaitForSeconds(0.2f);
+               AddShield(Mathf.RoundToInt(sps/5f));
+          }
      }
      
      
@@ -214,9 +248,9 @@ public class Health : MonoBehaviour, IGet, ICombat
      {
           StopAllCoroutines();
           poisonStacks = 0;
-          poisonCoroutine = null;
+          poisonC = null;
           damageToBleed = 0;
           bleedIndex = 0;
-          bleedCoroutine = null;
+          bleedC = null;
      }
 }
