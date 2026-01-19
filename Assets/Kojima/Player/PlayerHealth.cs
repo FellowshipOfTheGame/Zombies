@@ -1,4 +1,3 @@
-
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -19,7 +18,8 @@ public class PlayerHealth : Health
      private string bleedPrefix;
      private TextMeshProUGUI bleedEntry;
      private TextMeshProUGUI poisonEntry;
-
+     
+     
      protected override void Start()
      {
           base.Start();
@@ -39,6 +39,31 @@ public class PlayerHealth : Health
           if (Input.GetKeyDown(KeyCode.Alpha5)) HealingOverTime(5,5f, transform, new Color(0, .69f, 0));
           if (Input.GetKeyDown(KeyCode.Alpha4)) ShieldOverTime(5,5f, transform, Color.white);
      }
+     private IEnumerator RegenDelay()
+     {
+          yield return new WaitForSeconds(regenDelayTime);
+          regenC = StartCoroutine(RegenHealth());
+     }
+     
+     private IEnumerator RegenHealth()
+     {
+          float currentRegenPerSecond = regenPerSecond;
+          float regenTickTime = 1/currentRegenPerSecond;
+          while (health < maxHealth) // vida++ com ticks de tempo cada vez menores ate que chegue na vida maxima
+          {
+               Debug.Log(currentRegenPerSecond.ToString("F2"));
+               ++health; playerHUD.Health(health);
+               yield return new WaitForSeconds(regenTickTime);
+               currentRegenPerSecond += regenIncreaseRate * (1- Mathf.Pow(currentRegenPerSecond/regenTarget, 2) );
+               regenTickTime = 1 / currentRegenPerSecond;
+          }
+          regenC = null;
+     }
+     
+     
+     // ////////////////////////////// //
+     // Overwrites for HUD integration //
+     // ////////////////////////////// //
      
      public override void AddShield(int addShield)
      {
@@ -46,6 +71,7 @@ public class PlayerHealth : Health
           playerHUD.ShowShield();
           playerHUD.Shield(shield);
      }
+     
      
      public override void TakeDamage(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor)
      {
@@ -77,29 +103,8 @@ public class PlayerHealth : Health
           
           print(health);
      }
-
-     private IEnumerator RegenDelay()
-     {
-          yield return new WaitForSeconds(regenDelayTime);
-          regenC = StartCoroutine(RegenHealth());
-     }
      
-     private IEnumerator RegenHealth()
-     {
-          float currentRegenPerSecond = regenPerSecond;
-          float regenTickTime = 1/currentRegenPerSecond;
-          while (health < maxHealth) // vida++ com ticks de tempo cada vez menores ate que chegue na vida maxima
-          {
-               Debug.Log(currentRegenPerSecond.ToString("F2"));
-               ++health; playerHUD.Health(health);
-               yield return new WaitForSeconds(regenTickTime);
-               currentRegenPerSecond += regenIncreaseRate * (1- Mathf.Pow(currentRegenPerSecond/regenTarget, 2) );
-               regenTickTime = 1 / currentRegenPerSecond;
-          }
-          regenC = null;
-     }
      
-     // overrides to integrate functions to the hud
      protected override IEnumerator Echo(int damage, float delay, Transform textRotateTarget, Color textColor)
      {
           TextMeshProUGUI effectEntry = playerHUD.AddEffect(textColor);
@@ -109,6 +114,11 @@ public class PlayerHealth : Health
           
           playerHUD.RemoveEffect(effectEntry);
      }
+     
+     
+     // ////////////////////////////// //
+     // constant damage/heal over time //
+     // ////////////////////////////// //
      
      protected override IEnumerator DotTicker(int dps, float duration, Transform textRotateTarget, Color textColor)
      {
@@ -126,12 +136,54 @@ public class PlayerHealth : Health
           playerHUD.RemoveEffect(effectEntry);
      }
      
+     
+     protected override IEnumerator HotTicker(int hps, float duration)
+     {
+          TextMeshProUGUI effectEntry = playerHUD.AddEffect(Color.green * 0.69f);
+          effectEntry.text = "healing: " + hps*duration;
+          
+          float tickTime = 1f / hps;
+          duration -= tickTime;
+          for ( ; duration >= 0; duration -= tickTime)
+          {
+               yield return new WaitForSeconds(tickTime);
+               AddHealth(1);
+               playerHUD.Health(health);
+               effectEntry.text = "healing: " + (hps * duration).ToString("F0");
+          }
+          playerHUD.RemoveEffect(effectEntry);
+     }
+     
+     
+     protected override IEnumerator ShieldTicker(int sps, float duration)
+     {
+          TextMeshProUGUI effectEntry = playerHUD.AddEffect(Color.white);
+          effectEntry.text = "Shielding: " + (sps * duration).ToString("F0");
+          
+          float tickTime = 1f / sps;
+          duration -= tickTime;
+          for ( ; duration >= 0; duration -= tickTime)
+          {
+               yield return new WaitForSeconds(tickTime);
+               AddShield(1);
+               
+               effectEntry.text =  "Shielding: " + (sps * duration).ToString("F0");
+          }
+          playerHUD.RemoveEffect(effectEntry);
+     }
+     
+     
+     // //////////////////////////////// //
+     // tick-based damage/heal over time //
+     // //////////////////////////////// //
+     
      public override void PoisonDamage(int stacks, float halfLife, Transform textRotateTarget, Color textColor)
      {
           poisonStacks += stacks;
           if (poisonC == null) StartCoroutine(PoisonTicker(halfLife, textRotateTarget, textColor));
           else poisonEntry.text = "Poisoned: " + poisonStacks;
      }
+     
      protected override IEnumerator PoisonTicker(float halfLife, Transform textRotateTarget, Color textColor)
      {
           poisonEntry = playerHUD.AddEffect(textColor);
@@ -149,6 +201,7 @@ public class PlayerHealth : Health
           playerHUD.RemoveEffect(poisonEntry);
      }
      
+     
      public override void BleedDamage(int bleedDamage, float tickTime, Transform textRotateTarget, Color textColor)
      {
           damageToBleed += bleedDamage;
@@ -161,6 +214,7 @@ public class PlayerHealth : Health
           }
           else bleedEntry.text = bleedPrefix + damageToBleed;
      }
+     
      protected override IEnumerator BleedTicker(float tickTime, Transform textRotateTarget, Color textColor)
      {
           bleedEntry = playerHUD.AddEffect(textColor);
@@ -181,6 +235,7 @@ public class PlayerHealth : Health
           playerHUD.RemoveEffect(bleedEntry);
      }
      
+     
      public override void Hemorrhage(int bleedDamage, float execute, Transform textRotateTarget, Color textColor)
      {
           damageToBleed += bleedDamage;
@@ -193,6 +248,7 @@ public class PlayerHealth : Health
           }
           else bleedEntry.text = bleedPrefix + damageToBleed;
      }
+     
      protected override IEnumerator HemorrhageTicker(float execute, Transform textRotateTarget, Color textColor)
      {
           bleedEntry = playerHUD.AddEffect(textColor);
@@ -217,39 +273,5 @@ public class PlayerHealth : Health
           }
           bleedC = null;
           playerHUD.RemoveEffect(bleedEntry);
-     }
-     
-     protected override IEnumerator HotTicker(int hps, float duration)
-     {
-          TextMeshProUGUI effectEntry = playerHUD.AddEffect(Color.green * 0.69f);
-          effectEntry.text = "healing: " + hps*duration;
-          
-          float tickTime = 1f / hps;
-          duration -= tickTime;
-          for ( ; duration >= 0; duration -= tickTime)
-          {
-               yield return new WaitForSeconds(tickTime);
-               AddHealth(1);
-               playerHUD.Health(health);
-               effectEntry.text = "healing: " + (hps * duration).ToString("F0");
-          }
-          playerHUD.RemoveEffect(effectEntry);
-     }
-
-     protected override IEnumerator ShieldTicker(int sps, float duration)
-     {
-          TextMeshProUGUI effectEntry = playerHUD.AddEffect(Color.white);
-          effectEntry.text = "Shielding: " + (sps * duration).ToString("F0");
-          
-          float tickTime = 1f / sps;
-          duration -= tickTime;
-          for ( ; duration >= 0; duration -= tickTime)
-          {
-               yield return new WaitForSeconds(tickTime);
-               AddShield(1);
-               
-               effectEntry.text =  "Shielding: " + (sps * duration).ToString("F0");
-          }
-          playerHUD.RemoveEffect(effectEntry);
      }
 }
