@@ -10,9 +10,9 @@ public class PlayerHUD : MonoBehaviour
     [Header("Variables")]
     private readonly Color wine  = new(0.69f, 0, 0);
     private readonly Color lGray = new(0.75f, 0.75f, 0.75f);
-    private readonly int offset = 35; // altura dos elementos de efeito no hud
+    private const int offset = 35; // altura dos elementos de efeito no hud
     private readonly Vector2 anchor = new(32, 115);
-
+    
     [Header("Static")] 
     // [SerializeField] private GameObject ammoHUD;
     [SerializeField] private TextMeshProUGUI ammoText; // D2
@@ -38,7 +38,6 @@ public class PlayerHUD : MonoBehaviour
     [Header("Pop-up")]
     [SerializeField] private GameObject hitmarker;
     [SerializeField] private TextMeshProUGUI fireModePopUp; // FULL AUTO > 2-SHOT BURST
-    
     
     
     private void Start()

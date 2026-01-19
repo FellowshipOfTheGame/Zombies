@@ -20,6 +20,6 @@ public class FadeAway : MonoBehaviour
             yield return new WaitForSeconds(0.01f);
             textMesh.alpha = opacity;
         }
-        Destroy(gameObject);
+        Destroy(transform.parent.gameObject);
     }
 }
