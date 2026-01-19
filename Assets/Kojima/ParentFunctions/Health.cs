@@ -90,10 +90,11 @@ public class Health : MonoBehaviour, IGet, ICombat
      
      protected virtual IEnumerator DotTicker(int dps, float duration, Transform textRotateTarget, Color textColor)
      {
-          for ( ; duration > 0; duration -= 0.2f)
+          float tickTime = 1f / dps;
+          for ( ; duration > 0; duration -= tickTime)
           {
-               yield return new WaitForSeconds(0.2f);
-               TakeDamage(Mathf.RoundToInt(dps/5f), transform.position, textRotateTarget, textColor);
+               yield return new WaitForSeconds(tickTime);
+               TakeDamage(1, transform.position, textRotateTarget, textColor);
           }
      }
      
@@ -165,10 +166,11 @@ public class Health : MonoBehaviour, IGet, ICombat
      
      protected virtual IEnumerator HotTicker(int hps, float duration)
      {
-          for ( ; duration > 0; duration -= 0.2f)
+          float tickTime = 1f / hps;
+          for ( ; duration > 0; duration -= tickTime)
           {
-               yield return new WaitForSeconds(0.2f);
-               AddHealth(Mathf.RoundToInt(hps/5f));
+               yield return new WaitForSeconds(tickTime);
+               AddHealth(1);
           }
      }
 
@@ -178,10 +180,11 @@ public class Health : MonoBehaviour, IGet, ICombat
      }
      protected virtual IEnumerator ShieldTicker(int sps, float duration)
      {
-          for ( ; duration > 0; duration -= 0.2f)
+          float tickTime = 1f / sps;
+          for ( ; duration > 0; duration -= tickTime)
           {
-               yield return new WaitForSeconds(0.2f);
-               AddShield(Mathf.RoundToInt(sps/5f));
+               yield return new WaitForSeconds(tickTime);
+               AddShield(1);
           }
      }
      

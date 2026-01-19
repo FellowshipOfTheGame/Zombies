@@ -32,6 +32,6 @@ MonoBehaviour:
     range: 50
     decay: 5
     recoil: 1.5
-    special: 11
-    sInt: 1
-    sFloat: 3
+    special: 9
+    sInt: 10
+    sFloat: 1
