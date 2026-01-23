@@ -33,5 +33,5 @@ MonoBehaviour:
     decay: 5
     recoil: 1.5
     special: 9
-    sInt: 10
-    sFloat: 1
+    sInt: 3
+    sFloat: 5

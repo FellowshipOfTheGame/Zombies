@@ -169,6 +169,7 @@ public class Health : MonoBehaviour, IGet, ICombat
      protected virtual IEnumerator DotTicker(int dps, float duration, Transform textRotateTarget, Color textColor)
      {
           float tickTime = 1f / dps;
+          duration -= tickTime;
           for ( ; duration > 0; duration -= tickTime)
           {
                yield return new WaitForSeconds(tickTime);
