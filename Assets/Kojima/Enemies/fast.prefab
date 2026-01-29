@@ -95,6 +95,8 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -116,9 +118,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!136 &7967767227728085913
 CapsuleCollider:
@@ -154,12 +158,6 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eabf3518698b25421bd2f75c2b83c61b, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 100
-  targetRadius: 10
-  worldSpaceUIPrefab: {fileID: 3433633269811599418, guid: 7e3e78000d4e32194801cbf4ed71b6c4, type: 3}
-  missilePrefab: {fileID: 8652016100836586637, guid: baf0057927a3f188dbcd150877e9f7d9, type: 3}
-  ricochetPrefab: {fileID: 0}
-  playerLayerMask:
-    serializedVersion: 2
-    m_Bits: 8
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
+  maxHealth: 200
+  wsText: {fileID: 6478085826771963009, guid: 2bd69bf2b3aa73049a0c1d4c849d7869, type: 3}

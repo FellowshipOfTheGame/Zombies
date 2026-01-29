@@ -88,7 +88,7 @@ public class PlayerMovement : MonoBehaviour
 
         characterController.Move(currentSpeed * Time.deltaTime * move);
     }
-
+    
     // Faz o jogador pular
     private void Jump()
     {

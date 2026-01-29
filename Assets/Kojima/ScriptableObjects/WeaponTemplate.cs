@@ -22,6 +22,7 @@ public struct WeaponStruct
     public float  range;
     public int    decay;
     public float  recoil;
+    public GameObject bulletPrefab;
     public enum Special
     {
         None,

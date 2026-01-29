@@ -73,19 +73,19 @@ public class PlayerHealth : Health
      }
      
      
-     public override void TakeDamage(int damage, Vector3 hitPosition, Transform textRotateTarget, Color textColor)
+     public override void TakeDamage(int damage, Vector3 hitPosition, Transform playerCamera, Color textColor)
      {
           if (damage < shield)
           {
                shield -= damage;
-               FloatingDamage(damage, hitPosition, textRotateTarget, 0.75f*Color.white);
+               FloatingDamage(damage, hitPosition, playerCamera, 0.75f*Color.white);
                playerHUD.Shield(shield);
           }
           else if (damage == shield)
           {
                shield = 0;
                playerHUD.HideShield();
-               FloatingDamage(damage, hitPosition, textRotateTarget, 0.75f*Color.white);
+               FloatingDamage(damage, hitPosition, playerCamera, 0.75f*Color.white);
           }
           else
           {
@@ -93,7 +93,7 @@ public class PlayerHealth : Health
                
                health -= damage - shield;
                playerHUD.Health(health);
-               FloatingDamage(damage, hitPosition, textRotateTarget, Color.white);
+               FloatingDamage(damage, hitPosition, playerCamera, Color.white);
                
                shield = 0; playerHUD.HideShield();
                
@@ -105,12 +105,12 @@ public class PlayerHealth : Health
      }
      
      
-     protected override IEnumerator Echo(int damage, float delay, Transform textRotateTarget, Color textColor)
+     protected override IEnumerator Echo(int damage, float delay, Transform playerCamera, Color textColor)
      {
           TextMeshProUGUI effectEntry = playerHUD.AddEffect(textColor);
           effectEntry.text = "Echo: " + damage;
           
-          yield return StartCoroutine(base.Echo(damage, delay, textRotateTarget, textColor));
+          yield return StartCoroutine(base.Echo(damage, delay, playerCamera, textColor));
           
           playerHUD.RemoveEffect(effectEntry);
      }
@@ -120,7 +120,7 @@ public class PlayerHealth : Health
      // constant damage/heal over time //
      // ////////////////////////////// //
      
-     protected override IEnumerator DotTicker(int dps, float duration, Transform textRotateTarget, Color textColor)
+     protected override IEnumerator DotTicker(int dps, float duration, Transform playerCamera, Color textColor)
      {
           TextMeshProUGUI effectEntry = playerHUD.AddEffect(textColor);
           effectEntry.text = "Dot: " + (dps * duration).ToString("F0");
@@ -130,7 +130,7 @@ public class PlayerHealth : Health
           for ( ; duration >= 0; duration -= tickTime)
           {
                yield return new WaitForSeconds(tickTime);
-               TakeDamage(1, transform.position, textRotateTarget, textColor);
+               TakeDamage(1, transform.position, playerCamera, textColor);
                effectEntry.text =  "Dot: " + (dps * duration).ToString("F0");
           }
           playerHUD.RemoveEffect(effectEntry);
@@ -177,14 +177,14 @@ public class PlayerHealth : Health
      // tick-based damage/heal over time //
      // //////////////////////////////// //
      
-     public override void PoisonDamage(int stacks, float halfLife, Transform textRotateTarget, Color textColor)
+     public override void PoisonDamage(int stacks, float halfLife, Transform playerCamera, Color textColor)
      {
           poisonStacks += stacks;
-          if (poisonC == null) StartCoroutine(PoisonTicker(halfLife, textRotateTarget, textColor));
+          if (poisonC == null) StartCoroutine(PoisonTicker(halfLife, playerCamera, textColor));
           else poisonEntry.text = "Poisoned: " + poisonStacks;
      }
      
-     protected override IEnumerator PoisonTicker(float halfLife, Transform textRotateTarget, Color textColor)
+     protected override IEnumerator PoisonTicker(float halfLife, Transform playerCamera, Color textColor)
      {
           poisonEntry = playerHUD.AddEffect(textColor);
           poisonEntry.text = "Poisoned: " + poisonStacks;
@@ -192,7 +192,7 @@ public class PlayerHealth : Health
           while (poisonStacks > 0)
           {
                yield return new WaitForSeconds(halfLife);
-               TakeDamage(poisonStacks, transform.position, textRotateTarget, textColor);
+               TakeDamage(poisonStacks, transform.position, playerCamera, textColor);
                poisonStacks /= 2;
                
                poisonEntry.text = "Poisoned: " + poisonStacks;
@@ -202,7 +202,7 @@ public class PlayerHealth : Health
      }
      
      
-     public override void BleedDamage(int bleedDamage, float tickTime, Transform textRotateTarget, Color textColor)
+     public override void BleedDamage(int bleedDamage, float tickTime, Transform playerCamera, Color textColor)
      {
           damageToBleed += bleedDamage;
           bleedIndex = 0;
@@ -210,12 +210,12 @@ public class PlayerHealth : Health
           if (bleedC == null)
           {
                bleedPrefix = "Bleeding: ";
-               bleedC = StartCoroutine(BleedTicker(tickTime, textRotateTarget, textColor));
+               bleedC = StartCoroutine(BleedTicker(tickTime, playerCamera, textColor));
           }
           else bleedEntry.text = bleedPrefix + damageToBleed;
      }
      
-     protected override IEnumerator BleedTicker(float tickTime, Transform textRotateTarget, Color textColor)
+     protected override IEnumerator BleedTicker(float tickTime, Transform playerCamera, Color textColor)
      {
           bleedEntry = playerHUD.AddEffect(textColor);
           bleedEntry.text = "Bleeding: " + damageToBleed;
@@ -226,7 +226,7 @@ public class PlayerHealth : Health
                
                // uma porcentagem do bleedDamage que vai aumentando com o tempo pra curva de dano nao ser infinita/longa
                int tickDamage = Mathf.CeilToInt((0.30f + bleedIndex*0.04f) * damageToBleed);
-               TakeDamage(tickDamage, transform.position, textRotateTarget, textColor);
+               TakeDamage(tickDamage, transform.position, playerCamera, textColor);
                damageToBleed -= tickDamage;
                
                bleedEntry.text = "Bleeding: " + damageToBleed;
@@ -236,7 +236,7 @@ public class PlayerHealth : Health
      }
      
      
-     public override void Hemorrhage(int bleedDamage, float execute, Transform textRotateTarget, Color textColor)
+     public override void Hemorrhage(int bleedDamage, float execute, Transform playerCamera, Color textColor)
      {
           damageToBleed += bleedDamage;
           bleedIndex = 0;
@@ -244,12 +244,12 @@ public class PlayerHealth : Health
           if (bleedC == null)
           {
                bleedPrefix = "Hemorrhage: ";
-               bleedC = StartCoroutine(HemorrhageTicker(execute, textRotateTarget, textColor));
+               bleedC = StartCoroutine(HemorrhageTicker(execute, playerCamera, textColor));
           }
           else bleedEntry.text = bleedPrefix + damageToBleed;
      }
      
-     protected override IEnumerator HemorrhageTicker(float execute, Transform textRotateTarget, Color textColor)
+     protected override IEnumerator HemorrhageTicker(float execute, Transform playerCamera, Color textColor)
      {
           bleedEntry = playerHUD.AddEffect(textColor);
           bleedEntry.text = "Hemorrhage: " + damageToBleed;
@@ -260,10 +260,10 @@ public class PlayerHealth : Health
                
                // uma porcentagem do bleedDamage que vai aumentando com o tempo pra curva de dano nao ser infinita/longa
                int tickDamage = Mathf.CeilToInt((0.30f + bleedIndex*0.05f) * damageToBleed);
-               TakeDamage(tickDamage, transform.position, textRotateTarget, textColor);
+               TakeDamage(tickDamage, transform.position, playerCamera, textColor);
                if (health / (float)maxHealth <= execute / 100)
                {
-                    TrueDamage(health, transform.position, textRotateTarget, Color.black);
+                    TrueDamage(health, transform.position, playerCamera, Color.black);
                     damageToBleed = 0;
                     break;
                }

@@ -10,29 +10,29 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a46facf2a55f8b94286ba31f8fb8315b, type: 3}
-  m_Name: 1911
-  m_EditorClassIdentifier: 
+  m_Name: NoobTube
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponTemplate
   data:
-    hasFireSelector: 0
-    isFullAuto: 0
-    weaponName: M1911A1
-    damage: 35
+    hasFireSelector: 1
+    isFullAuto: 1
+    weaponName: NoobTube
+    damage: 50
     burstSize: 1
     bulletCount: 1
     fireRate: 600
     fireTime: 0
-    magSize: 7
-    ammo: 7
+    magSize: 30
+    ammo: 30
     totalAmmo: 300
-    caliber: .45ACP
+    caliber: Caliber
     reloadTime: 2.5
     reloadTimePartial: 2
     switchTime: 0.5
     spread: 1
-    range: 50
+    range: 100
     decay: 10
     recoil: 1.5
-    bulletPrefab: {fileID: 3344039364533734617, guid: 7ae3246f6fc13ca4a82ad4551b8b8f10, type: 3}
-    special: 4
+    bulletPrefab: {fileID: 0}
+    special: 0
     sInt: 0
-    sFloat: 5
+    sFloat: 0

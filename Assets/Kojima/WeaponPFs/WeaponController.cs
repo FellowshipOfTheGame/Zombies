@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using Random = UnityEngine.Random;
 
 public class WeaponController : DamageTypes
@@ -26,9 +27,10 @@ public class WeaponController : DamageTypes
     private Coroutine fireModeC;
     private Coroutine shootingC;
     private PlayerHUD playerHUD;
-    private AudioSource audioSource;
     
-    // usado pra definir qual funcao chamar ao atirar ao inves de usar ifs ou switches
+    // [Header("Delegates")]
+    private delegate void BulletDelegate();
+    private BulletDelegate bulletDelegateDelegate;
     private delegate IEnumerator FireDelegate();
     private FireDelegate shootFunction; 
     private enum FireMode
@@ -39,6 +41,10 @@ public class WeaponController : DamageTypes
         HyperAuto // special hardcoded fire mode for AN94
     }
     private FireMode currentFireMode;
+    
+    [Header("Pre-caching")]
+    private Collider playerCollider;
+    private AudioSource audioSource;
     
     
     private void Start()
@@ -59,9 +65,20 @@ public class WeaponController : DamageTypes
         SetFireMode(currentFireMode);
     }
     
+    private new void OnEnable()
+    {
+        base.OnEnable();
+
+        bulletDelegateDelegate = (data.bulletPrefab == null) ? RaycastBullet : PrefabBullet;
+        
+        playerHUD = GetComponentInParent<PlayerHUD>();
+        playerHUD.UpdateWeaponHUD(data, shortFireMode);
+        partialReload = false;
+    }
+    
     private void Update()
     {
-        if (isReloading) { return; }
+        if (isReloading) return;
 
         if (data.ammo == 0 && (Input.GetKeyDown(KeyCode.Mouse0) || Input.GetKeyDown(KeyCode.Mouse1) || Input.GetKeyDown(KeyCode.R)))
         {   // empty reload
@@ -75,7 +92,7 @@ public class WeaponController : DamageTypes
             partialReload = true; Reload(); 
         }
         
-        if (isReloading || isSwitchingModes) { return; }
+        if (isReloading || isSwitchingModes) return;
         if (Input.GetKeyDown(KeyCode.C) && data.hasFireSelector)
         {
             if (isShooting) { StopCoroutine(shootingC); isShooting = false; } 
@@ -86,7 +103,7 @@ public class WeaponController : DamageTypes
         }
         
         //checar isReloading duas vezes pra nao dar erro de recarregar e atirar ao mesmo tempo
-        if (isReloading || isSwitchingModes || isShooting) { return; }
+        if (isReloading || isSwitchingModes || isShooting) return;
         if (Input.GetKeyDown(KeyCode.Mouse0))
         { shootingC = StartCoroutine(shootFunction()); }
         
@@ -188,44 +205,54 @@ public class WeaponController : DamageTypes
         audioSource.PlayOneShot(shootSound);
         GameObject muzzleFlareInstantiate = Instantiate(muzzleFlash, muzzle.position, muzzle.rotation);
         Destroy(muzzleFlareInstantiate, 0.02f);
-        --data.ammo; playerHUD.CurrentAmmo(data.ammo);
         
-        for (int i = 0; i < data.bulletCount; i++) //atirar varios raycasts se for escopeta
+        data.ammo--;
+        playerHUD.CurrentAmmo(data.ammo);
+        for (int i = 0; i < data.bulletCount; i++) bulletDelegateDelegate.Invoke();
+    }
+
+    private void RaycastBullet()
+    {
+        int damage = data.damage;
+        float rangeLeft = 3 * data.range;
+        
+        Quaternion spreadRotation = Quaternion.Euler(
+            Random.Range(-data.spread/2, data.spread/2), 
+            Random.Range(-data.spread/2, data.spread/2), 
+            0f);
+        
+        Vector3 rayOrigin = playerCamera.transform.position;  // tiro sai da camera
+        // Vector3 rayOrigin = muzzle.position; // tiro sai da arma
+        Vector3 rayDirection = transform.up;  // pros prefabs de teste, essa e a direcao do cano
+        rayDirection = spreadRotation * rayDirection;
+        
+        while (damage >= 0)  // chain raycasts to pierce through enemies
         {
-            int damage = data.damage;
-            float rangeLeft = 3 * data.range;
-            
-            Quaternion spreadRotation = Quaternion.Euler(
-                Random.Range(-data.spread/2, data.spread/2), 
-                Random.Range(-data.spread/2, data.spread/2), 
-                0f);
-            
-            Vector3 rayOrigin = mainCamera.transform.position;  // tiro sai da camera
-            // Vector3 rayOrigin = muzzle.position; // tiro sai da arma
-            Vector3 rayDirection = transform.up;  // pros prefabs de teste, essa e a direcao do cano
-            rayDirection = spreadRotation * rayDirection;
-            
-            while (damage >= 0)  // chain raycasts to pierce through enemies
+            if (Physics.Raycast(rayOrigin, rayDirection, out RaycastHit target, rangeLeft))
             {
-                if (Physics.Raycast(rayOrigin, rayDirection, out RaycastHit target, rangeLeft))
-                {
-                    rangeLeft -= target.distance;
-                    damage -= Mathf.FloorToInt(data.damage * target.distance/(3 * data.range)); //DMG * bullet remaining energy, arbitrarily 3*range
-                    
-                    // if (!target.collider.gameObject.CompareTag("Player") || !target.collider.gameObject.CompareTag("Penetrable")) break;
-                    if (!target.collider.gameObject.CompareTag("Player")) break; //se nao acertou um player, para o while
-                    playerHUD.ShowHitmarker();
-                    
-                    // pre-caching pq senao repete muita coisa
-                    DealDamage(target.collider.GetComponent<InterfacesMNG.ICombat>(), target, damage);
-                    
-                    //prepare to chain raycasts
-                    rayOrigin = target.point + 0.5f*rayDirection; // slight offset to prevent self-collision
-                    damage -= data.decay;
-                }
-                else break;
+                rangeLeft -= target.distance;
+                damage -= Mathf.FloorToInt(data.damage * target.distance/(3 * data.range)); //DMG * bullet remaining energy, arbitrarily 3*range
+                
+                // if (!target.collider.gameObject.CompareTag("Player") || !target.collider.gameObject.CompareTag("Penetrable")) break;
+                if (!target.collider.gameObject.CompareTag("Player")) break; //se nao acertou um player, para o while
+                playerHUD.ShowHitmarker();
+                
+                // pre-caching pq senao repete muita coisa
+                DealDamage(target.collider.GetComponent<InterfacesMNG.ICombat>(), target);
+                
+                //prepare to chain raycasts
+                rayOrigin = target.point + 0.5f*rayDirection; // slight offset to prevent self-collision
+                damage -= data.decay;
             }
+            else break;
         }
+        
+    }
+
+    private void PrefabBullet()
+    {
+        GameObject bulletInstance = Instantiate(data.bulletPrefab, muzzle.position, muzzle.rotation);
+        bulletInstance.GetComponent<Bullet>().Initialize(20f * transform.up, data.damage, data.sFloat, playerCamera.parent, cExplode);
     }
     
     
@@ -256,23 +283,25 @@ public class WeaponController : DamageTypes
         isReloading = false;
         partialReload = false;
     }
-    
-    
-    private new void OnEnable()
-    {
-        base.OnEnable();
-        
-        playerHUD = GetComponentInParent<PlayerHUD>();
-        playerHUD.UpdateWeaponHUD(data, shortFireMode);
-        partialReload = false;
-        
-    }
 
     public void OnEquip()
     {
-        mainCamera = transform.parent;
+        playerCamera = transform.parent;
+        playerCollider = playerCamera.parent.gameObject.GetComponent<Collider>();
         playerICombat = transform.parent.parent.GetComponent<InterfacesMNG.ICombat>();
-        print(playerICombat);
+    }
+
+    protected override void ExplosiveDamage(InterfacesMNG.ICombat cachedICombat, RaycastHit target)
+    {
+        List<Collider> colliders = new List<Collider>(Physics.OverlapSphere(target.point, data.sFloat));
+        
+        if (colliders.Contains(playerCollider))
+        {
+            colliders.Remove(playerCollider);
+            DamageCollider(playerCollider, target.point, data.sInt/2); // halve self-damage
+        }
+        
+        foreach (Collider col in colliders) DamageCollider(col, target.point, data.sInt);
     }
     
     private void OnDisable()

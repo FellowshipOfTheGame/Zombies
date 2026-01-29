@@ -5,6 +5,7 @@ using UnityEngine;
 public class FadeAway : MonoBehaviour
 {
     private TextMeshProUGUI textMesh;
+    [SerializeField] private float delay = 0.25f;
     
     private void Start()
     {
@@ -14,10 +15,10 @@ public class FadeAway : MonoBehaviour
 
     private IEnumerator Fade()
     {
-        yield return new WaitForSeconds(0.25f);
-        for (float opacity = 1f; opacity > 0; opacity -= 0.1f)
+        yield return new WaitForSeconds(delay);
+        for (float opacity = 1f; opacity > 0; opacity -= Time.deltaTime*10)
         {
-            yield return new WaitForSeconds(0.01f);
+            yield return new WaitForEndOfFrame();
             textMesh.alpha = opacity;
         }
         Destroy(transform.parent.gameObject);
