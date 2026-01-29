@@ -1,7 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using TMPro;
-using Random = UnityEngine.Random;
 using static InterfacesMNG;
 
 

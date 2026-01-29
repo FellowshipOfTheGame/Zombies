@@ -19,7 +19,7 @@ public class Bullet : MonoBehaviour
         // StartCoroutine(Timer(fuseTime, ()=> Explode(range, damage)));
         // "The ()=> Explode(range,damage) part is a parameter‑less delegate that, when invoked, runs Explode with the values you captured (range and damage)."
 
-        StartCoroutine(Timer(4f, () => Explode(range, damage, color)) );
+        StartCoroutine(Timer(1f, () => Explode(range, damage, color)) );
 
         // switch (special)
         // {
@@ -78,19 +78,19 @@ public class Bullet : MonoBehaviour
         Destroy(gameObject);
     }
     
-    private void Implode(float range, int damage, Color color)
-    {
-        Collider[] colliders = Physics.OverlapSphere(transform.position, range);
-        foreach (Collider col in colliders)
-        {
-            Vector3 direction = (transform.position - col.transform.position).normalized;
-            // float falloff = Mathf.Pow(1f - (direction.magnitude / range), 2f); // decai exponencialmente
-            
-            col.GetComponent<Health>()?.TakeDamage(damage, col.transform.position, playerCamera, color);
-            col.attachedRigidbody?.AddForce(2f * direction,  ForceMode.Impulse);
-        }
-        Destroy(gameObject);
-    }
+    // private void Implode(float range, int damage, Color color)
+    // {
+    //     Collider[] colliders = Physics.OverlapSphere(transform.position, range);
+    //     foreach (Collider col in colliders)
+    //     {
+    //         Vector3 direction = (transform.position - col.transform.position).normalized;
+    //         // float falloff = Mathf.Pow(1f - (direction.magnitude / range), 2f); // decai exponencialmente
+    //         
+    //         col.GetComponent<Health>()?.TakeDamage(damage, col.transform.position, playerCamera, color);
+    //         col.attachedRigidbody?.AddForce(2f * direction,  ForceMode.Impulse);
+    //     }
+    //     Destroy(gameObject);
+    // }
 
     private void DamageCollider(Collider col, int damage, float range, Color color)
     {
@@ -99,6 +99,11 @@ public class Bullet : MonoBehaviour
         // float falloff = Mathf.Pow(1f - (direction.magnitude / range), 2f); // decai exponencialmente
             
         col.GetComponent<ICombat>()?.TakeDamage(Mathf.FloorToInt(damage * fallOff), col.transform.position, playerCamera, color);
-        col.attachedRigidbody?.AddForce(5f * fallOff * direction,  ForceMode.Impulse);
+        
+        if (col.attachedRigidbody)
+        {
+            if (col.attachedRigidbody.linearDamping > 0) col.attachedRigidbody.AddForce(100 * damage * fallOff * direction);
+            else col.attachedRigidbody.AddForce(10 * damage * fallOff * direction);
+        }
     }
 }

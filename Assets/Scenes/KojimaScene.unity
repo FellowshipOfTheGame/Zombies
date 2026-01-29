@@ -383,7 +383,7 @@ GameObject:
   - component: {fileID: 415254882}
   m_Layer: 0
   m_Name: Chao
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -857,10 +857,6 @@ PrefabInstance:
     - target: {fileID: 5135437652465674835, guid: 303eb4bfeaaf2d906b9ed7cae586dd31, type: 3}
       propertyPath: m_Interpolate
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8145685145233958827, guid: 303eb4bfeaaf2d906b9ed7cae586dd31, type: 3}
-      propertyPath: m_Enabled
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

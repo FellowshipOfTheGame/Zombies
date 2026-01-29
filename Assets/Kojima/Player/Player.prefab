@@ -18,7 +18,6 @@ GameObject:
   - component: {fileID: 4735164568990000258}
   - component: {fileID: 1722816878073955608}
   - component: {fileID: 185501053006609931}
-  - component: {fileID: 8145685145233958827}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -109,7 +108,7 @@ Rigidbody:
   m_GameObject: {fileID: 654281398916619796}
   serializedVersion: 5
   m_Mass: 1
-  m_LinearDamping: 0
+  m_LinearDamping: 10
   m_AngularDamping: 0
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
@@ -180,12 +179,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c20bdb6ebaed56342917e701577cf07a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkSpeed: 5
-  runSpeed: 10
-  acceleration: 1
-  mouseSensitivity: 250
-  jumpHeight: 0.75
-  playerCamera: {fileID: 1651573643715026828}
 --- !u!114 &4735164568990000258
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -322,31 +315,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!143 &8145685145233958827
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 654281398916619796}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Height: 2
-  m_Radius: 0.5
-  m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &2152117744876677798
 PrefabInstance:
   m_ObjectHideFlags: 0
