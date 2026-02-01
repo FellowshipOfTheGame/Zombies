@@ -51,7 +51,6 @@ public class PlayerHealth : Health
           float regenTickTime = 1/currentRegenPerSecond;
           while (health < maxHealth) // vida++ com ticks de tempo cada vez menores ate que chegue na vida maxima
           {
-               Debug.Log(currentRegenPerSecond.ToString("F2"));
                ++health; playerHUD.Health(health);
                yield return new WaitForSeconds(regenTickTime);
                currentRegenPerSecond += regenIncreaseRate * (1- Mathf.Pow(currentRegenPerSecond/regenTarget, 2) );
