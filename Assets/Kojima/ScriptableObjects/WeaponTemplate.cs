@@ -3,26 +3,43 @@ using UnityEngine;
 [System.Serializable]
 public struct WeaponStruct
 {
-    public bool   hasFireSelector;
-    public bool   isFullAuto;
+    [Header("Information")]
     public string weaponName;
-    public int    damage;
-    public int    burstSize; // se for 1, desliga a opcao de burst
-    public int    bulletCount;
-    public float  fireRate;
-    public float  fireTime;
-    public int    magSize;
-    public int    ammo;
-    public int    totalAmmo;
     public string caliber;
-    public float  reloadTime;
-    public float  reloadTimePartial;
-    public float  switchTime;
-    public float  spread;
-    public float  range;
-    public int    decay;
-    public float  recoil;
+    
+    [Header("Fire Mode")]
+    [Tooltip("1 for no burst / 2+ for burst")]
+    public int  burstSize; // se for 1, desliga a opcao de burst
+    public bool isFullAuto;
+    public bool hasFireSelector;
+    public float fireModeSwitchTime;
+    
+    [Header("Stats")]
+    public int   damage;
+    [Tooltip("How many bullets per shot")]
+    public int   bulletCount;
+    [Tooltip("Bullets per minute")]
+    public float fireRate;
+    public int   magSize;
+    public int   totalAmmo;
+    public float reloadTime;
+    [Tooltip("Reload time on a partial reload")]
+    public float reloadTimePartial;
+    public float weaponSwitchTime;
+    [Tooltip("Solid angle (3D cone) of spread")]
+    public float spread;
+    public float range;
+    [Tooltip("Damage reduction when going through things")]
+    public int   decay;
+    public float recoil;
+    
+    [Header("Can be empty")]
+    [Tooltip("Current ammo in the magazine")]
+    public int   ammo;
+    public float fireTime;
+    [Tooltip("Will use raycast if the bullet prefab is left empty")]
     public GameObject bulletPrefab;
+    
     public enum Special
     {
         None,
@@ -38,6 +55,7 @@ public struct WeaponStruct
         Healing,    // damage, and sInt healing
         HoT,        // damage, and sInt healing with sFloat tickTime
     }
+    [Header("Special damage")]
     public Special special;
     [Tooltip("damage, stacks")] public int sInt;
     [Tooltip("range, tick time")] public float sFloat;
@@ -48,23 +66,33 @@ public class WeaponTemplate : ScriptableObject
 {
     public WeaponStruct data = new()
     {
-        hasFireSelector = true,
-        isFullAuto = true,
         weaponName = "Weapon_Name",
-        damage = 50,
+        caliber = "Caliber",
+        
         burstSize = 1,
+        isFullAuto = true,
+        hasFireSelector = true,
+        fireModeSwitchTime = 0.2f,
+        
+        damage = 50,
         bulletCount = 1,
         fireRate = 600f,
         magSize = 30,
-        ammo = 30,
         totalAmmo = 300,
-        caliber = "Caliber",
         reloadTime = 2.5f,
         reloadTimePartial = 2.0f,
-        switchTime = 0.5f,
+        weaponSwitchTime = 0.5f,
         spread = 1f,
         range = 100f,
         decay = 10,
-        recoil = 1.5f
+        recoil = 1.5f,
+        
+        ammo = 0,
+        fireTime = 0,
+        bulletPrefab = null,
+        
+        special = WeaponStruct.Special.None,
+        sInt = 0,
+        sFloat = 0,
     };
 }

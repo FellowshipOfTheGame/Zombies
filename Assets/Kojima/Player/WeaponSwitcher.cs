@@ -72,8 +72,8 @@ public class WeaponSwitcher : MonoBehaviour
         // weaponController = GetComponentInChildren<WeaponController>();
         
         // usa a funcao de timer do HUD
-        StartCoroutine(playerHUD.Timer(weaponController.SwitchTime, 
-            weaponController.SwitchTime, EquipWeapon));
+        StartCoroutine(playerHUD.Timer(weaponController.WeaponSwitchTime, 
+            weaponController.WeaponSwitchTime, EquipWeapon));
     }
     
     

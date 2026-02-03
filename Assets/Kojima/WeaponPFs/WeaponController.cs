@@ -5,12 +5,13 @@ using Random = UnityEngine.Random;
 
 public class WeaponController : DamageTypes
 {
-    [Header("Variables")]
+    [Header("Flags")]
     private bool isReloading;
     private bool isShooting;
     private bool isSwitchingModes;
     private bool partialReload;
-    private const float fireModeSwitchTime = 0.2f;
+    
+    [Header("FireMode")]
     private string oldFireMode;
     private string newFireMode;
     private string shortFireMode;
@@ -20,7 +21,7 @@ public class WeaponController : DamageTypes
     [SerializeField] private GameObject muzzleFlash;
     [SerializeField] private WeaponTemplate template;  // add the weapon's template in Unity's spector
     private Transform muzzle;
-    public float SwitchTime => data.switchTime; // precisa disso pro WeaponSwitcher pegar a informacao do DamageTypes.data
+    public float WeaponSwitchTime => data.weaponSwitchTime; // precisa disso pro WeaponSwitcher pegar a informacao do DamageTypes.data
     
     [Header("Declarations")]
     private Coroutine timerC;
@@ -30,7 +31,7 @@ public class WeaponController : DamageTypes
     
     // [Header("Delegates")]
     private delegate void BulletDelegate();
-    private BulletDelegate bulletDelegateDelegate;
+    private BulletDelegate bulletDelegate;
     private delegate IEnumerator FireDelegate();
     private FireDelegate shootFunction; 
     private enum FireMode
@@ -49,28 +50,26 @@ public class WeaponController : DamageTypes
     
     private void Start()
     {
-        audioSource = GetComponent<AudioSource>();
-        
         data = template.data;
-        data.fireTime = 60f/template.data.fireRate;
-        
         muzzle = transform.GetChild(0);
+        audioSource = GetComponent<AudioSource>();
+        bulletDelegate = (data.bulletPrefab == null) ? RaycastBullet : PrefabBullet;
         
         // currentFireMode = o modo com mais tiros possivel
         currentFireMode = data.isFullAuto ? FireMode.FullAuto : 
             data.burstSize > 1 ? FireMode.Burst : FireMode.SemiAuto;
-        
-        if (data.weaponName == "AN94") { currentFireMode = FireMode.HyperAuto; }
-        
         SetFireMode(currentFireMode);
+        
+        if (data.ammo == 0) data.ammo = data.magSize;
+        if (data.fireTime == 0) data.fireTime = 60f/template.data.fireRate;
+        if (data.weaponName == "AN94") currentFireMode = FireMode.HyperAuto;
     }
     
     private new void OnEnable()
     {
         base.OnEnable();
-
-        bulletDelegateDelegate = (data.bulletPrefab == null) ? RaycastBullet : PrefabBullet;
         
+        // anything that can change on runtime
         playerHUD = GetComponentInParent<PlayerHUD>();
         playerHUD.UpdateWeaponHUD(data, shortFireMode);
         partialReload = false;
@@ -97,7 +96,7 @@ public class WeaponController : DamageTypes
         {
             if (isShooting) { StopCoroutine(shootingC); isShooting = false; } 
             
-            timerC = StartCoroutine(playerHUD.Timer(fireModeSwitchTime, fireModeSwitchTime,
+            timerC = StartCoroutine(playerHUD.Timer(data.fireModeSwitchTime, data.fireModeSwitchTime,
                 CycleFireMode));
             isSwitchingModes = true;
         }
@@ -208,7 +207,7 @@ public class WeaponController : DamageTypes
         
         data.ammo--;
         playerHUD.CurrentAmmo(data.ammo);
-        for (int i = 0; i < data.bulletCount; i++) bulletDelegateDelegate.Invoke();
+        for (int i = 0; i < data.bulletCount; i++) bulletDelegate.Invoke();
     }
 
     private void RaycastBullet()

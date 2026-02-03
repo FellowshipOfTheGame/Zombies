@@ -4,15 +4,10 @@ using UnityEngine;
 
 public class PlayerHealth : Health
 {
-     [Header("Variables")]
-     [SerializeField] private float regenPerSecond = 1f;
-     [SerializeField] private float regenIncreaseRate = 0.25f;
-     [SerializeField] private float regenTarget = 10f;
-     [SerializeField] private float regenDelayTime = 4f;
-     
      [Header("Declarations")]
-     private PlayerHUD playerHUD;
      private Coroutine regenC;
+     private PlayerHUD playerHUD;
+     private PlayerStruct data;
      
      [Header("Effects")] // text update to unique effects / effects that cannot repeat / that cannot overwrite each other
      private string bleedPrefix;
@@ -23,37 +18,40 @@ public class PlayerHealth : Health
      protected override void Start()
      {
           base.Start();
+
+          data = data = GetComponent<PlayerStats>().playerSO.data;
+          
           playerHUD = GetComponent<PlayerHUD>();
           playerHUD.Health(health);
      }
      
      private void Update()
      {
-          if (Input.GetKeyDown(KeyCode.Minus)) TakeDamage(5, transform.position, transform, Color.white);
           if (Input.GetKeyDown(KeyCode.Equals)) AddShield(10);
-          if (Input.GetKeyDown(KeyCode.Alpha0)) DamageOverTime(5, 5f, transform, new Color(0.8f, 0.3f, 0.9f));
-          if (Input.GetKeyDown(KeyCode.Alpha9)) BleedDamage(25, 0.75f, transform, new Color(1.0f, 0.1f, 0.1f));
+          if (Input.GetKeyDown(KeyCode.Minus)) TakeDamage(5, transform.position, transform,      Color.white);
+          if (Input.GetKeyDown(KeyCode.Alpha0)) DamageOverTime(5, 5f, transform,     new Color(0.8f, 0.3f, 0.9f));
+          if (Input.GetKeyDown(KeyCode.Alpha9)) BleedDamage(25, 0.75f, transform,        new Color(1.0f, 0.1f, 0.1f));
           if (Input.GetKeyDown(KeyCode.Alpha8)) Hemorrhage(25, 5f, transform, new Color(.69f, 0.0f, 0.0f));
-          if (Input.GetKeyDown(KeyCode.Alpha7)) DelayedDamage(10,1f, transform, new Color(1.0f, 1.0f, 0.1f));
-          if (Input.GetKeyDown(KeyCode.Alpha6)) PoisonDamage(25, 0.75f, transform, new Color(0.1f, 1.0f, 0.1f));
-          if (Input.GetKeyDown(KeyCode.Alpha5)) HealingOverTime(5,5f, transform, new Color(0, .69f, 0));
-          if (Input.GetKeyDown(KeyCode.Alpha4)) ShieldOverTime(5,5f, transform, Color.white);
+          if (Input.GetKeyDown(KeyCode.Alpha7)) DelayedDamage(10,1f, transform,             new Color(1.0f, 1.0f, 0.1f));
+          if (Input.GetKeyDown(KeyCode.Alpha6)) PoisonDamage(25, 0.75f, transform,  new Color(0.1f, 1.0f, 0.1f));
+          if (Input.GetKeyDown(KeyCode.Alpha5)) HealingOverTime(5,5f, transform,     new Color(0, .69f, 0));
+          if (Input.GetKeyDown(KeyCode.Alpha4)) ShieldOverTime(5,5f, transform,      Color.white);
      }
      private IEnumerator RegenDelay()
      {
-          yield return new WaitForSeconds(regenDelayTime);
+          yield return new WaitForSeconds(data.regenDelay);
           regenC = StartCoroutine(RegenHealth());
      }
      
      private IEnumerator RegenHealth()
      {
-          float currentRegenPerSecond = regenPerSecond;
+          float currentRegenPerSecond = data.regenStart;
           float regenTickTime = 1/currentRegenPerSecond;
-          while (health < maxHealth) // vida++ com ticks de tempo cada vez menores ate que chegue na vida maxima
+          while (health < data.maxHealth) // vida++ com ticks de tempo cada vez menores ate que chegue na vida maxima
           {
                ++health; playerHUD.Health(health);
                yield return new WaitForSeconds(regenTickTime);
-               currentRegenPerSecond += regenIncreaseRate * (1- Mathf.Pow(currentRegenPerSecond/regenTarget, 2) );
+               currentRegenPerSecond += data.regenIncrease * (1- Mathf.Pow(currentRegenPerSecond/data.regenMax, 2) );
                regenTickTime = 1 / currentRegenPerSecond;
           }
           regenC = null;
@@ -260,7 +258,7 @@ public class PlayerHealth : Health
                // uma porcentagem do bleedDamage que vai aumentando com o tempo pra curva de dano nao ser infinita/longa
                int tickDamage = Mathf.CeilToInt((0.30f + bleedIndex*0.05f) * damageToBleed);
                TakeDamage(tickDamage, transform.position, playerCamera, textColor);
-               if (health / (float)maxHealth <= execute / 100)
+               if (health / (float)data.maxHealth <= execute / 100)
                {
                     TrueDamage(health, transform.position, playerCamera, Color.black);
                     damageToBleed = 0;

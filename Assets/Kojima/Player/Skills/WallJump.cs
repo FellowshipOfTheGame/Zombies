@@ -1,18 +1,10 @@
-using System.ComponentModel;
 using UnityEngine;
 
 public class WallJump : PlayerMovement
 {
     private bool isGrounded;
-    private readonly float wallDamping = 1f;
-    
-    protected override void Start()
-    {
-        var pm = GetComponent<PlayerMovement>();
-        if (pm) Destroy(pm);
-        
-        base.Start();
-    }
+    [SerializeField] private float wallDamping = 1f;
+
     protected override void FixedUpdate()
     {
         if (isGrounded) rb.AddForce(maxSeed * moveInput, ForceMode.VelocityChange);
@@ -31,7 +23,7 @@ public class WallJump : PlayerMovement
 
     private void JumpFromGround()
     {
-        rb.AddForce(jumpSpeed * Vector3.up, ForceMode.VelocityChange);
+        rb.AddForce(data.jumpSpeed * Vector3.up, ForceMode.VelocityChange);
     }
 
     private void JumpFromWall()
@@ -42,7 +34,7 @@ public class WallJump : PlayerMovement
         
         bool hit = Physics.Raycast(transform.position, normal, 0.7f);
         normal = (new Vector3(0, 0.75f, 0) + (hit ? -normal : normal)).normalized;
-        rb.AddForce(jumpSpeed/1.15f * normal, ForceMode.VelocityChange);
+        rb.AddForce(data.jumpSpeed/1.15f * normal, ForceMode.VelocityChange);
     }
 
     protected override void OnCollisionEnter(Collision collision)
@@ -53,7 +45,7 @@ public class WallJump : PlayerMovement
             case "Ground":
                 isGrounded = true;
                 canJump = true;
-                rb.linearDamping = groundDamping;
+                rb.linearDamping = data.groundDamping;
                 break;
             case "Wall" when !isGrounded:
                 canJump = true;
@@ -61,7 +53,7 @@ public class WallJump : PlayerMovement
                 break;
         }
         
-        maxSeed = speedRatio * rb.linearDamping / 5f;
+        maxSeed = data.speedRatio * rb.linearDamping / 5f;
     }
 
     protected override void OnCollisionExit(Collision collision)

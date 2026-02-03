@@ -6,7 +6,7 @@ using static InterfacesMNG;
 public class Health : MonoBehaviour, IGet, ICombat
 {
      [Header("Variables")]
-     [SerializeField] protected int maxHealth = 200; 
+     [SerializeField] private int maxHealth = 200; 
      protected int health;
      protected int shield;
      

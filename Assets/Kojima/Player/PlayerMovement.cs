@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    protected PlayerStruct data;
+    
     [Header("Camera")]
     private float yaw;
     private float pitch;
@@ -12,21 +14,20 @@ public class PlayerMovement : MonoBehaviour
     protected float maxSeed;
     protected Vector3 moveInput;
     protected Rigidbody rb;
-    protected readonly float speedRatio = 1f;
-    protected readonly float groundDamping = 10f;
-    
+
     [Header("Jump")]
     protected bool canJump;
     protected bool jumpRequest;
-    protected float jumpSpeed = 10f;
-
+    
 
     protected virtual void Start()
     {
+        data = GetComponent<PlayerStats>().playerSO.data;
+        
         mainCamera = transform.GetChild(0).transform;
 
         rb = GetComponent<Rigidbody>();
-        maxSeed = speedRatio * rb.linearDamping / 5f;
+        maxSeed = data.speedRatio * rb.linearDamping / 5f;
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -47,7 +48,7 @@ public class PlayerMovement : MonoBehaviour
         Vector3 right = transform.right; // X‑axis of the player
 
         moveInput = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
-        moveInput = ((forward * moveInput.z) + (right * moveInput.x)).normalized;
+        moveInput = (forward * moveInput.z + right * moveInput.x).normalized;
     }
 
     protected virtual void FixedUpdate()
@@ -60,7 +61,7 @@ public class PlayerMovement : MonoBehaviour
             jumpRequest = false;
             canJump = false;
             rb.linearDamping = 0f;
-            rb.AddForce(jumpSpeed * Vector3.up, ForceMode.VelocityChange);
+            rb.AddForce(data.jumpSpeed * Vector3.up, ForceMode.VelocityChange);
         }
     }
 
@@ -69,7 +70,7 @@ public class PlayerMovement : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             canJump = true;
-            rb.linearDamping = groundDamping;
+            rb.linearDamping = data.groundDamping;
         }
     }
 

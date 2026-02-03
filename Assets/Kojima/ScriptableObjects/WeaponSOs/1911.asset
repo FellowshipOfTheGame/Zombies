@@ -13,26 +13,27 @@ MonoBehaviour:
   m_Name: 1911
   m_EditorClassIdentifier: 
   data:
-    hasFireSelector: 0
-    isFullAuto: 0
     weaponName: M1911A1
-    damage: 35
+    caliber: .45ACP
     burstSize: 1
+    isFullAuto: 0
+    hasFireSelector: 0
+    fireModeSwitchTime: 0.2
+    damage: 35
     bulletCount: 1
     fireRate: 600
-    fireTime: 0
     magSize: 7
-    ammo: 7
     totalAmmo: 300
-    caliber: .45ACP
     reloadTime: 2.5
     reloadTimePartial: 2
-    switchTime: 0.5
+    weaponSwitchTime: 0.5
     spread: 1
     range: 50
     decay: 10
     recoil: 1.5
+    ammo: 0
+    fireTime: 0
     bulletPrefab: {fileID: 3344039364533734617, guid: 7ae3246f6fc13ca4a82ad4551b8b8f10, type: 3}
-    special: 4
+    special: 0
     sInt: 0
     sFloat: 5
