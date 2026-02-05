@@ -9,9 +9,12 @@ public class DamageTypes : MonoBehaviour
     protected SpecialDamage specialDamage;
     protected delegate void NormalDelegate(ICombat cachedICombat, RaycastHit target);
     protected NormalDelegate normalDelegate;
+    
+    protected LayerMask hitMask;
+    protected ICombat playerICombat;
     protected Transform playerCamera;
     protected WeaponStruct data;
-    protected ICombat playerICombat;
+
     
     [Header("Colors")] // dano no shield color*=0.5f
     protected readonly Color  cNormal = new(1, 1, 1);
@@ -24,6 +27,11 @@ public class DamageTypes : MonoBehaviour
     protected readonly Color   cBleed = new(1.0f, 0.1f, 0.1f);
     protected readonly Color  cBleed2 = new(.69f, 0.0f, 0.0f);
     protected readonly Color    cTrue = new(0, 0, 0);
+
+    protected void Awake()
+    {
+        hitMask = LayerMask.GetMask("Default", "Enemy");
+    }
 
     protected void OnEnable()
     {

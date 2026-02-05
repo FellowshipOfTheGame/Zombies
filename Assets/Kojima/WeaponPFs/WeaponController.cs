@@ -21,6 +21,7 @@ public class WeaponController : DamageTypes
     [SerializeField] private GameObject muzzleFlash;
     [SerializeField] private WeaponTemplate template;  // add the weapon's template in Unity's spector
     private Transform muzzle;
+    
     public float WeaponSwitchTime => data.weaponSwitchTime; // precisa disso pro WeaponSwitcher pegar a informacao do DamageTypes.data
     
     [Header("Declarations")]
@@ -227,7 +228,7 @@ public class WeaponController : DamageTypes
         
         while (damage >= 0)  // chain raycasts to pierce through enemies
         {
-            if (Physics.Raycast(rayOrigin, rayDirection, out RaycastHit target, rangeLeft))
+            if (Physics.Raycast(rayOrigin, rayDirection, out RaycastHit target, rangeLeft, hitMask))
             {
                 rangeLeft -= target.distance;
                 damage -= Mathf.FloorToInt(data.damage * target.distance/(3 * data.range)); //DMG * bullet remaining energy, arbitrarily 3*range
