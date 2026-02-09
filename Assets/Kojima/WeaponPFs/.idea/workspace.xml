@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="45e2c7e0-c498-41e5-a836-c748e78c2d11" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../../Scripts/Upgrade/Upgrade.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../Scripts/Upgrade/Upgrade.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../TextMesh Pro.meta" beforeDir="false" afterPath="$PROJECT_DIR$/../../TextMesh Pro.meta" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -24,17 +23,17 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "git-widget-placeholder": "Dev",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Dev&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="45e2c7e0-c498-41e5-a836-c748e78c2d11" name="Changes" comment="" />
@@ -45,6 +44,7 @@
       <workItem from="1768025673553" duration="58000" />
       <workItem from="1768025733215" duration="3000" />
       <workItem from="1768025834651" duration="13000" />
+      <workItem from="1770593148265" duration="13000" />
     </task>
     <servers />
   </component>

@@ -33,7 +33,7 @@ public class DamageTypes : MonoBehaviour
         hitMask = LayerMask.GetMask("Default", "Enemy");
     }
 
-    protected void OnEnable()
+    protected virtual void OnEnable()
     {
         if (data.damage > 0) normalDelegate = NormalDamage;
         specialDamage = data.special switch
@@ -94,7 +94,7 @@ public class DamageTypes : MonoBehaviour
         float healthRatio = target.collider.GetComponent<IGet>().GetHealthRatio();
         if ( healthRatio > 0)
             cachedICombat?.TakeDamage(
-                Mathf.FloorToInt(data.sFloat/100f * data.damage * (1f - healthRatio)),
+                Mathf.CeilToInt(data.sFloat/100f * data.damage * (1f - healthRatio)),
                 target.point, playerCamera, cLowH);
     }
     

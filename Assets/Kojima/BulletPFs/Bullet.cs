@@ -9,18 +9,18 @@ public class Bullet : MonoBehaviour
     private Transform playerCamera;
     private delegate void DamageDelegate();
     private DamageDelegate damageDelegate;
-
-    public void Initialize(Vector3 speed, int damage, float range, Transform canvas, Color color) // WeaponStruct.Special special)
+    
+    public void Initialize(WeaponStruct data, Transform playerCameraTransform, Color color) // WeaponStruct.Special special)
     {
-        playerCamera = canvas;
+        playerCamera = playerCameraTransform;
         
-        gameObject.GetComponent<Rigidbody>().AddForce(speed, ForceMode.Impulse);
+        gameObject.GetComponent<Rigidbody>().AddRelativeForce(20*Vector3.forward, ForceMode.Impulse);
         
         // StartCoroutine(Timer(fuseTime, ()=> Explode(range, damage)));
         // "The ()=> Explode(range,damage) part is a parameter‑less delegate that, when invoked, runs Explode with the values you captured (range and damage)."
-
-        StartCoroutine(Timer(1f, () => Explode(range, damage, color)) );
-
+        
+        StartCoroutine(Timer(1f, () => Explode(data.damage, data.sFloat, color)) );
+        
         // switch (special)
         // {
         //     case WeaponStruct.Special.Explosive: damageDelegate = 
@@ -50,23 +50,22 @@ public class Bullet : MonoBehaviour
         //         break;
         // }
     }
-
+    
     // private void OnCollisionEnter(Collision other)
     // {
     //     ICombat iCombat = other.gameObject.GetComponent<ICombat>();
     // }
-
-    // as an action: private IEnumerator Timer<T1,T2>(float time, Action<T1,T2> callback, T1 arg1, T2 arg2)
+    
     private static IEnumerator Timer(float time, Action callback)
     {
         yield return new WaitForSeconds(time);
         callback.Invoke();
     }
-
-    private void Explode(float range, int damage, Color color)
+    
+    private void Explode(int damage, float range, Color color)
     {
         Collider playerCollider = playerCamera.GetComponent<Collider>();
-        List<Collider> colliders = new List<Collider>(Physics.OverlapSphere(transform.position, range));
+        var colliders = new List<Collider>(Physics.OverlapSphere(transform.position, range));
         
         if (colliders.Contains(playerCollider))
         {
@@ -91,7 +90,7 @@ public class Bullet : MonoBehaviour
     //     }
     //     Destroy(gameObject);
     // }
-
+    
     private void DamageCollider(Collider col, int damage, float range, Color color)
     {
         Vector3 direction = col.transform.position - transform.position;

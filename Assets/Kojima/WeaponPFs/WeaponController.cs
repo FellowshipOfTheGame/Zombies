@@ -19,10 +19,9 @@ public class WeaponController : DamageTypes
     [Header("References")]
     [SerializeField] private AudioClip  shootSound;
     [SerializeField] private GameObject muzzleFlash;
-    [SerializeField] private WeaponTemplate template;  // add the weapon's template in Unity's spector
+    [SerializeField] private WeaponTemplate weaponSO;
     private Transform muzzle;
-    
-    public float WeaponSwitchTime => data.weaponSwitchTime; // precisa disso pro WeaponSwitcher pegar a informacao do DamageTypes.data
+    public float WeaponSwitchTime => data.weaponSwitchTime; // expose for WeaponSwitcher.cs
     
     [Header("Declarations")]
     private Coroutine timerC;
@@ -51,22 +50,23 @@ public class WeaponController : DamageTypes
     
     private void Start()
     {
-        data = template.data;
         muzzle = transform.GetChild(0);
         audioSource = GetComponent<AudioSource>();
-        bulletDelegate = (data.bulletPrefab == null) ? RaycastBullet : PrefabBullet;
         
-        // currentFireMode = o modo com mais tiros possivel
-        currentFireMode = data.isFullAuto ? FireMode.FullAuto : 
+        data = weaponSO.data;
+        
+        // currentFireMode = fastest mode available
+        if (data.weaponName == "AN94") currentFireMode = FireMode.HyperAuto;
+        else currentFireMode = data.isFullAuto ? FireMode.FullAuto : 
             data.burstSize > 1 ? FireMode.Burst : FireMode.SemiAuto;
         SetFireMode(currentFireMode);
         
         if (data.ammo == 0) data.ammo = data.magSize;
-        if (data.fireTime == 0) data.fireTime = 60f/template.data.fireRate;
-        if (data.weaponName == "AN94") currentFireMode = FireMode.HyperAuto;
+        if (data.fireTime == 0) data.fireTime = 60f/weaponSO.data.fireRate;
+        bulletDelegate = data.bulletPrefab == null ? RaycastBullet : PrefabBullet;
     }
     
-    private new void OnEnable()
+    protected override void OnEnable()
     {
         base.OnEnable();
         
@@ -82,21 +82,37 @@ public class WeaponController : DamageTypes
 
         if (data.ammo == 0 && (Input.GetKeyDown(KeyCode.Mouse0) || Input.GetKeyDown(KeyCode.Mouse1) || Input.GetKeyDown(KeyCode.R)))
         {   // empty reload
-            if (timerC != null) { StopCoroutine(timerC); isSwitchingModes = false; }
-            partialReload = false; Reload(); 
+            if (timerC != null)
+            {
+                StopCoroutine(timerC);
+                isSwitchingModes = false;
+            }
+            
+            partialReload = false;
+            Reload(); 
         }
 
         if (Input.GetKeyDown(KeyCode.R) && data.ammo < data.magSize)
         {   // manual reload
-            if (timerC != null) { StopCoroutine(timerC); isSwitchingModes = false; }
-            partialReload = true; Reload(); 
+            if (timerC != null)
+            {
+                StopCoroutine(timerC);
+                isSwitchingModes = false;
+            }
+            
+            partialReload = true;
+            Reload(); 
         }
         
         if (isReloading || isSwitchingModes) return;
         if (Input.GetKeyDown(KeyCode.C) && data.hasFireSelector)
         {
-            if (isShooting) { StopCoroutine(shootingC); isShooting = false; } 
-            
+            if (isShooting)
+            {
+                StopCoroutine(shootingC);
+                isShooting = false;
+            }
+
             timerC = StartCoroutine(playerHUD.Timer(data.fireModeSwitchTime, data.fireModeSwitchTime,
                 CycleFireMode));
             isSwitchingModes = true;
@@ -148,15 +164,15 @@ public class WeaponController : DamageTypes
                 break;
         }
         playerHUD.FireMode(shortFireMode);
-        if (fireModeC != null) { StopCoroutine(fireModeC); }
-        fireModeC = StartCoroutine(playerHUD.FireModePopUp(oldFireMode, newFireMode)); // pop-up visual
+        if (fireModeC != null) StopCoroutine(fireModeC);
+        fireModeC = StartCoroutine(playerHUD.FireModePopUp(oldFireMode, newFireMode)); // pop-up
         isSwitchingModes = false;
     }
     
     private IEnumerator ShootFullAuto()
     {
         isShooting = true;
-        while (data.ammo > 0 && Input.GetKey(KeyCode.Mouse0)) // enquanto tiver municao e continuar atirando
+        while (data.ammo > 0 && Input.GetKey(KeyCode.Mouse0))
         {
             Shoot();
             yield return new WaitForSeconds(data.fireTime);
@@ -166,10 +182,10 @@ public class WeaponController : DamageTypes
     
     private IEnumerator ShootBurst()
     {
-        isShooting = true; int i = 0;
-        while (data.ammo > 0 && i < data.burstSize)
+        isShooting = true;
+        for (int i = 0; data.ammo > 0 && i < data.burstSize; i++)
         {
-            Shoot(); ++i;
+            Shoot();
             yield return new WaitForSeconds(data.fireTime);
         }
         isShooting = false;
@@ -183,18 +199,15 @@ public class WeaponController : DamageTypes
         isShooting = false;
     }
     
-    private IEnumerator ShootHyper() // funcao de tiro da AN94
+    private IEnumerator ShootHyper()
     {
         isShooting = true; 
         Shoot();
-        yield return new WaitForSeconds(1f/1300);
-        if (data.ammo !=0)
+        yield return new WaitForSeconds(60f/1300);
+        while (data.ammo > 0 && Input.GetKey(KeyCode.Mouse0))
         {
-            while (data.ammo > 0 && Input.GetKey(KeyCode.Mouse0))
-            {
-                Shoot();
-                yield return new WaitForSeconds(data.fireTime);
-            }
+            Shoot();
+            yield return new WaitForSeconds(data.fireTime);
         }
         isShooting = false;
     }
@@ -223,7 +236,7 @@ public class WeaponController : DamageTypes
         
         Vector3 rayOrigin = playerCamera.transform.position;  // tiro sai da camera
         // Vector3 rayOrigin = muzzle.position; // tiro sai da arma
-        Vector3 rayDirection = transform.up;  // pros prefabs de teste, essa e a direcao do cano
+        Vector3 rayDirection = transform.up;  // considering the test prefabs orientation
         rayDirection = spreadRotation * rayDirection;
         
         while (damage >= 0)  // chain raycasts to pierce through enemies
@@ -231,13 +244,14 @@ public class WeaponController : DamageTypes
             if (Physics.Raycast(rayOrigin, rayDirection, out RaycastHit target, rangeLeft, hitMask))
             {
                 rangeLeft -= target.distance;
-                damage -= Mathf.FloorToInt(data.damage * target.distance/(3 * data.range)); //DMG * bullet remaining energy, arbitrarily 3*range
+                // arbitrarily set damage = damage * remaining energy
+                damage -= Mathf.FloorToInt(data.damage * target.distance/(3 * data.range));
                 
-                // if (!target.collider.gameObject.CompareTag("Player") || !target.collider.gameObject.CompareTag("Penetrable")) break;
-                if (!target.collider.gameObject.CompareTag("Player")) break; //se nao acertou um player, para o while
+                // add whatever penetrable tag compare here
+                if (!target.collider.gameObject.CompareTag("Player")) break;
                 playerHUD.ShowHitmarker();
                 
-                // pre-caching pq senao repete muita coisa
+                // pre-cache interface to reduce GetComponent calls
                 DealDamage(target.collider.GetComponent<InterfacesMNG.ICombat>(), target);
                 
                 //prepare to chain raycasts
@@ -252,7 +266,7 @@ public class WeaponController : DamageTypes
     private void PrefabBullet()
     {
         GameObject bulletInstance = Instantiate(data.bulletPrefab, muzzle.position, muzzle.rotation);
-        bulletInstance.GetComponent<Bullet>().Initialize(20f * transform.up, data.damage, data.sFloat, playerCamera.parent, cExplode);
+        bulletInstance.GetComponent<Bullet>().Initialize(data, playerCamera.parent, cExplode);
     }
     
     
