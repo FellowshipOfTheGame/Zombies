@@ -58,7 +58,7 @@ public struct WeaponStruct
     [Header("Special damage")]
     public Special special;
     [Tooltip("damage, stacks")] public int sInt;
-    [Tooltip("range, tick time")] public float sFloat;
+    [Tooltip("percentage, range, tick time")] public float sFloat;
 }
 
 

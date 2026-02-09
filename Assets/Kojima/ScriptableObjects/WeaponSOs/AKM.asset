@@ -13,22 +13,27 @@ MonoBehaviour:
   m_Name: AKM
   m_EditorClassIdentifier: 
   data:
-    isClosedBolt: 1
-    isFullAuto: 1
     weaponName: AKM
-    damage: 50
+    caliber: 7.62x39mm
     burstSize: 1
+    isFullAuto: 1
+    hasFireSelector: 1
+    fireModeSwitchTime: 0.2
+    damage: 50
     bulletCount: 1
     fireRate: 600
-    fireTime: 0
     magSize: 30
-    ammo: 30
     totalAmmo: 300
-    caliber: 7.62x39mm
     reloadTime: 2.5
     reloadTimePartial: 2
-    switchTime: 0.5
-    spread: 1
+    weaponSwitchTime: 0.5
+    spread: 12.5
     range: 350
     decay: 10
     recoil: 1.5
+    ammo: 30
+    fireTime: 0
+    bulletPrefab: {fileID: 0}
+    special: 0
+    sInt: 0
+    sFloat: 0

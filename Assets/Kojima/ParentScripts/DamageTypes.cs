@@ -103,7 +103,8 @@ public class DamageTypes : MonoBehaviour
         IGet iGet = target.collider.GetComponent<IGet>();
         if ( iGet.GetHealth() > 0)
             cachedICombat?.TakeDamage(
-                Mathf.FloorToInt(data.damage * data.sFloat/100 * ((iGet.GetHealth()+data.damage)/(float)iGet.GetMaxHealth())),
+                Mathf.CeilToInt(data.damage * data.sFloat/100 * 
+                                 Mathf.Clamp01((iGet.GetHealth()+data.damage)/(float)iGet.GetMaxHealth())),
                 target.point, playerCamera, cHighH);
     }
     

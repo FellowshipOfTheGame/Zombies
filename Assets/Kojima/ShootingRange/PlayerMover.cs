@@ -1,18 +1,12 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMover : MonoBehaviour
 {
-    // pegar o player
-    // setar a vida como distancia
-    // ter um alvo que mostra onde foram os tiros
-    // adicionar mensagens com o sistema de effects no player (tipo bleeding tals) pra falar os botoes de controle
-    //  R pra resetar a board
-    // fazer algo pra calcular o MOA e spread dependendo dos tiros na board
+    private ShootingRangeHealth srh;
     
-    [SerializeField] private GameObject player;
     private PlayerHUD playerHUD;
+    [SerializeField] private GameObject player;
     
     private int playerDistanceIndex = 1;
     [SerializeField] private GameObject playerPositions;
@@ -21,6 +15,7 @@ public class PlayerMover : MonoBehaviour
     private void Start()
     {
         playerHUD = player.GetComponent<PlayerHUD>();
+        srh = FindFirstObjectByType<ShootingRangeHealth>();
         foreach (Transform point in playerPositions.transform) distancePoints.Add(point);
         MovePlayer();
     }
@@ -49,6 +44,7 @@ public class PlayerMover : MonoBehaviour
 
     private void MovePlayer()
     {
+        srh.UpdateDotSize(distancePoints[playerDistanceIndex].position.z);
         player.transform.position = distancePoints[playerDistanceIndex].position;
         playerHUD.Health("Distance: " + distancePoints[playerDistanceIndex].name);
     }
