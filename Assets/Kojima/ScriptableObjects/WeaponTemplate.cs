@@ -61,6 +61,7 @@ public struct WeaponStruct
     [Tooltip("range, tick time")] public float sFloat;
 }
 
+
 [CreateAssetMenu(fileName = "Weapon_name", menuName = "Weapon Template")]
 public class WeaponTemplate : ScriptableObject
 {

@@ -150,6 +150,11 @@ public class PlayerHUD : MonoBehaviour
         healthBar.text = health.ToString("D3");
     }
     
+    public void Health(string health)
+    {
+        healthBar.text = health;
+    }
+    
     public void Shield(int health)
     {
         shieldBar.text = health.ToString();
