@@ -229,15 +229,14 @@ public class WeaponController : DamageTypes
         int damage = data.damage;
         float rangeLeft = 3 * data.range;
         
-        Quaternion spreadRotation = Quaternion.Euler(
-            Random.Range(-data.spread/2, data.spread/2), 
-            Random.Range(-data.spread/2, data.spread/2), 
-            0f);
-        
-        Vector3 rayOrigin = playerCamera.transform.position;  // tiro sai da camera
-        // Vector3 rayOrigin = muzzle.position; // tiro sai da arma
-        Vector3 rayDirection = transform.up;  // considering the test prefabs orientation
-        rayDirection = spreadRotation * rayDirection;
+        float vspread = Random.Range(0, Mathf.Tan(data.spread / 2 * Mathf.Deg2Rad));
+        vspread *= 1 - Random.Range(0,1f) / 2; // [r dampener] -> [0 1] [0.5 0.875] [1 0.5]
+        float angle = Random.Range(0, 2*Mathf.PI);
+
+        Vector3 rayOrigin = playerCamera.transform.position;
+        // Vector3 rayDirection = new (vspread*Mathf.Cos(angle), vspread*Mathf.Sin(angle), 1f); // com forward pra frente
+        Vector3 rayDirection = new (vspread*Mathf.Cos(angle), 1f, vspread*Mathf.Sin(angle)); // com forward pra cima
+        rayDirection = transform.TransformDirection(rayDirection);
         
         while (damage >= 0)  // chain raycasts to pierce through enemies
         {

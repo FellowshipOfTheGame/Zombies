@@ -13,25 +13,27 @@ MonoBehaviour:
   m_Name: Vector
   m_EditorClassIdentifier: 
   data:
-    hasFireSelector: 1
-    isFullAuto: 1
     weaponName: Vector
-    damage: 10
-    burstSize: 2
-    bulletCount: 1
-    fireRate: 1200
-    fireTime: 0
-    magSize: 30
-    ammo: 30
-    totalAmmo: 300
     caliber: .45ACP
+    burstSize: 2
+    isFullAuto: 1
+    hasFireSelector: 1
+    fireModeSwitchTime: 0.2
+    damage: 10
+    bulletCount: 1
+    fireRate: 5000
+    magSize: 200
+    totalAmmo: 300
     reloadTime: 2.5
     reloadTimePartial: 2
-    switchTime: 0.5
-    spread: 1
+    weaponSwitchTime: 0.5
+    spread: 10
     range: 50
     decay: 5
     recoil: 1.5
-    special: 9
+    ammo: 0
+    fireTime: 0
+    bulletPrefab: {fileID: 0}
+    special: 4
     sInt: 3
     sFloat: 5

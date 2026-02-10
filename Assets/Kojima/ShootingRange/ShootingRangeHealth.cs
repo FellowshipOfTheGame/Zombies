@@ -20,6 +20,7 @@ public class ShootingRangeHealth : Health, InterfacesMNG.IGet
 		if (Input.GetKeyDown(KeyCode.R))
 		{
 			accumulatedDamage = 0;
+			print("acc: " + accumulatedDamage + " / dmg: " + 0);
 			foreach (Transform dot in hitDotHolder) Destroy(dot.gameObject);
 		}
 	}
