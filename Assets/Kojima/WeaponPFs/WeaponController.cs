@@ -21,6 +21,7 @@ public class WeaponController : DamageTypes
     [SerializeField] private GameObject muzzleFlash;
     [SerializeField] private WeaponTemplate weaponSO;
     private Transform muzzle;
+    private Transform shootPoint;
     public float WeaponSwitchTime => data.weaponSwitchTime; // expose for WeaponSwitcher.cs
     
     [Header("Declarations")]
@@ -50,10 +51,10 @@ public class WeaponController : DamageTypes
     
     private void Start()
     {
+        data = weaponSO.data;
         muzzle = transform.GetChild(0);
         audioSource = GetComponent<AudioSource>();
         
-        data = weaponSO.data;
         
         // currentFireMode = fastest mode available
         if (data.weaponName == "AN94") currentFireMode = FireMode.HyperAuto;
@@ -233,7 +234,7 @@ public class WeaponController : DamageTypes
         vspread *= 1 - Random.Range(0,1f) / 2; // [r dampener] -> [0 1] [0.5 0.875] [1 0.5]
         float angle = Random.Range(0, 2*Mathf.PI);
 
-        Vector3 rayOrigin = playerCamera.transform.position;
+        Vector3 rayOrigin = shootPoint.position;
         // Vector3 rayDirection = new (vspread*Mathf.Cos(angle), vspread*Mathf.Sin(angle), 1f); // com forward pra frente
         Vector3 rayDirection = new (vspread*Mathf.Cos(angle), 1f, vspread*Mathf.Sin(angle)); // com forward pra cima
         rayDirection = transform.TransformDirection(rayDirection);
@@ -300,6 +301,7 @@ public class WeaponController : DamageTypes
     public void OnEquip()
     {
         playerCamera = transform.parent;
+        shootPoint = playerCamera.GetChild(1);
         playerCollider = playerCamera.parent.gameObject.GetComponent<Collider>();
         playerICombat = transform.parent.parent.GetComponent<InterfacesMNG.ICombat>();
     }
