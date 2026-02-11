@@ -16,7 +16,7 @@ MonoBehaviour:
     canWallJump: 1
     canDoubleJump: 0
     maxHealth: 200
-    jumpSpeed: 10
+    jumpSpeed: 12
     groundDamping: 10
     speedRatio: 1
     regenDelay: 4
