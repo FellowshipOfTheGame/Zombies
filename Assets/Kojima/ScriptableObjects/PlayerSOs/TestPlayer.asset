@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerTemplate
   data:
     canWallJump: 1
-    canDoubleJump: 0
+    canDoubleJump: 1
     maxHealth: 200
     jumpSpeed: 12
     groundDamping: 10

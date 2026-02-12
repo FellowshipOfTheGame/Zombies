@@ -13,8 +13,8 @@ public class PlayerMovement : MonoBehaviour
     
     [Header("Movement")]
     protected float maxSpeed;
-    protected Vector3 moveInput;
     protected Rigidbody rb;
+    private Vector3 moveInput;
 
     [Header("Jump")]
     protected bool isOnGround;
@@ -37,7 +37,7 @@ public class PlayerMovement : MonoBehaviour
         Cursor.visible = false;
     }
 
-    private void Update()
+    protected virtual void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space) && canJump) jumpRequest = true;
         
@@ -65,7 +65,7 @@ public class PlayerMovement : MonoBehaviour
         
         if (isOnGround) // ground jump
         {
-            isOnGround = isOnSurface = jumpRequest = canJump = false;
+            jumpRequest = canJump = false;
             rb.linearDamping = data.groundDamping/5;
             rb.AddForce(data.jumpSpeed * Vector3.up, ForceMode.VelocityChange);
         }
@@ -73,7 +73,7 @@ public class PlayerMovement : MonoBehaviour
 
     protected IEnumerator Gravity()
     {
-        while (!isOnSurface)
+        while (!isOnGround || !isOnSurface)
         {
             yield return new WaitForFixedUpdate();
             rb.AddForce(10 * maxSpeed * Vector3.down, ForceMode.Acceleration);
@@ -81,34 +81,43 @@ public class PlayerMovement : MonoBehaviour
         onAirC = null;
     }
     
-    // reset ground jump
-    protected virtual void OnCollisionEnter(Collision collision)
+    protected virtual void OnCollisionEnter(Collision col)
     {
-        isOnSurface = true;
-        
-        if (collision.gameObject.CompareTag("Ground"))
+        // either on the ground, or on a surface
+        if (col.gameObject.CompareTag("Ground"))
         {
             canJump = isOnGround = true;
             rb.linearDamping = data.groundDamping;
+        }
+        else
+        {
+            isOnSurface = true;
         }
         
         maxSpeed = data.speedRatio * rb.linearDamping / 5;
     }
 
-    protected virtual void OnCollisionExit(Collision collision)
+    protected virtual void OnCollisionExit(Collision col)
     {
-        if (!isOnGround)
+        if (col.gameObject.CompareTag("Ground")) // if left the ground
         {
-            isOnSurface = false;
-            rb.linearDamping = data.groundDamping/5;
-            onAirC ??= StartCoroutine(Gravity());
+            isOnGround = canJump = false;
+            if (!isOnSurface) Float(); // and if is not touching a wall, then float
         }
         
-        if (collision.gameObject.CompareTag("Ground"))
+        else if (col.gameObject.CompareTag("Wall")) // if un-touched the wall
         {
-            canJump = isOnGround = false;
+            isOnSurface = false;
+            if(!isOnGround) Float(); // and if is not on the ground, then float
         }
         
         maxSpeed = data.speedRatio * rb.linearDamping / 5;
+    }
+
+    private void Float()
+    {
+        // isOnGround = isOnSurface = false;
+        rb.linearDamping = data.groundDamping/5;
+        onAirC ??= StartCoroutine(Gravity());
     }
 }

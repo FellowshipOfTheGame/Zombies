@@ -25,16 +25,20 @@ public class WallJump : PlayerMovement
         }
     }
     
-    protected override void OnCollisionEnter(Collision collision)
+    protected override void OnCollisionEnter(Collision col)
     {
-        base.OnCollisionEnter(collision);
+        base.OnCollisionEnter(col); // set the collision flags
         
-        if (collision.gameObject.CompareTag("Wall") && !isOnGround)
-        {
-            canJump = isOnSurface = true;
-            rb.linearDamping = data.groundDamping;
-        }
+        if (isOnSurface && !isOnGround) canJump = true; // if floating and touch a wall
+    }
+
+    protected override void OnCollisionExit(Collision col)
+    {
+        base.OnCollisionExit(col);
         
-        maxSpeed = data.speedRatio * rb.linearDamping / 5f;
+        if (isOnSurface && !isOnGround) canJump = true; // if touching a wall and jump
+        
+        // if didn't use the wall jump when un-touching a wall, then lose it
+        if (canJump && !isOnGround && col.gameObject.CompareTag("Wall")) canJump = false;
     }
 }
