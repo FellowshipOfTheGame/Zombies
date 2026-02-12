@@ -15,7 +15,6 @@ public class DoubleJump : PlayerMovement
     {
         if (doubleJumpRequest)
         {
-            print("double jump");
             doubleJumpRequest = false;
             canDoubleJump = false;
             rb.AddForce(data.jumpSpeed * Vector3.up, ForceMode.VelocityChange);
